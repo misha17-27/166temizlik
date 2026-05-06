@@ -1,11 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PageHero } from "@/components/InnerPage";
 import { SitePage } from "@/components/SiteChrome";
 import { site } from "@/lib/site-data";
 
 const contactCards = [
-  { title: "Telefon", value: site.phoneLabel, href: site.phoneHref, icon: "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png" },
+  { title: "Telefon", value: "166", href: site.phoneHref, icon: "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png" },
   { title: "Mobil telefon", value: "+994 10 123 01 66", href: "tel:+994101230166", icon: "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png" },
   { title: "Mobil telefon", value: site.mobileLabel, href: site.mobileHref, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png" },
   { title: "Ünvan", value: site.address, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png" },
@@ -18,41 +17,82 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <SitePage>
-      <PageHero title="Əlaqə" subtitle="Müraciət et, biz əlaqə saxlayaq!" />
-      <section className="bg-white py-16 max-md:py-10">
-        <div className="container-shell grid grid-cols-[0.9fr_1.1fr] gap-12 max-lg:grid-cols-1">
-          <div>
-            <h2 className="text-[28px] font-bold text-black">Bizimlə əlaqə</h2>
-            <div className="mt-8 grid gap-4">
+    <SitePage active="contact">
+      <section className="relative overflow-hidden bg-white pb-24 pt-[130px] max-lg:pt-16">
+        <div className="absolute -left-28 bottom-10 h-[380px] w-[520px] rounded-[55%] bg-[#f8f8ff]" />
+        <div className="absolute -right-20 top-[300px] h-[360px] w-[170px] rounded-[55%] bg-[#e8fbff]" />
+        <div className="container-shell relative grid grid-cols-2 items-start gap-20 max-lg:grid-cols-1 max-lg:gap-12">
+          <form className="rounded-[10px] bg-white p-[72px] shadow-[0_12px_42px_rgb(25_34_70_/_8%)] max-md:p-7">
+            <h1 className="mb-8 text-[34px] font-bold leading-tight text-[#6252ee] max-md:text-[26px]">
+              Müraciət et, biz əlaqə saxlayaq!
+            </h1>
+            <div className="grid gap-7">
+              {["Ad", "Telefon", "Email"].map((placeholder) => (
+                <input
+                  key={placeholder}
+                  placeholder={placeholder}
+                  className="h-[48px] rounded-[4px] bg-[#fafafa] px-4 text-[15px] text-[#222] outline-none placeholder:text-[#9aa0ad]"
+                />
+              ))}
+              <textarea
+                placeholder="Mesaj"
+                className="min-h-[100px] rounded-[4px] bg-[#fafafa] px-4 py-3 text-[15px] text-[#222] outline-none placeholder:text-[#9aa0ad]"
+              />
+              <button className="ml-auto inline-flex items-center gap-4 rounded-full bg-brand-yellow px-8 py-4 text-[15px] font-medium text-black">
+                Göndər <span className="text-[22px] leading-none">→</span>
+              </button>
+            </div>
+          </form>
+
+          <div className="pt-14 max-lg:pt-0">
+            <h2 className="mb-8 text-[39px] font-bold text-[#6252ee] max-md:text-[30px]">Bizimlə əlaqə</h2>
+            <div className="space-y-7">
               {contactCards.map((item) => (
-                <div key={`${item.title}-${item.value}`} className="flex items-center gap-5 rounded-[16px] bg-[#eef6ff] p-5">
-                  <div className="relative h-12 w-12 shrink-0">
-                    <Image src={item.icon} alt="" fill sizes="48px" className="object-contain" />
+                <div key={`${item.title}-${item.value}`} className="flex items-center gap-5">
+                  <div className="relative grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full bg-[#f4f0ff]">
+                    <Image src={item.icon} alt="" width={28} height={28} className="object-contain" />
                   </div>
-                  <div>
-                    <h3 className="text-[16px] font-bold text-black">{item.title}</h3>
+                  <div className="text-[#20294b]">
+                    <h3 className="text-[20px] font-medium leading-tight">{item.title}</h3>
                     {item.href ? (
-                      <Link href={item.href} className="mt-1 block text-[15px] text-black/75">{item.value}</Link>
+                      <Link href={item.href} className="mt-1 block text-[16px] font-normal">
+                        {item.value}
+                      </Link>
                     ) : (
-                      <p className="mt-1 text-[15px] text-black/75">{item.value}</p>
+                      <p className="mt-1 text-[16px] font-normal">{item.value}</p>
                     )}
                   </div>
                 </div>
               ))}
             </div>
+            <div className="mt-7 flex gap-2">
+              {["f", "◎", "☏", "▶"].map((item) => (
+                <span key={item} className="grid h-9 w-9 place-items-center rounded-[4px] bg-brand-yellow text-[18px] font-bold text-[#5447e8]">
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
-          <div className="rounded-[18px] bg-[#f5f5f5] p-8 shadow-[0_16px_36px_rgb(15_23_42_/_8%)] max-md:p-5">
-            <h2 className="text-[26px] font-bold text-black">Suallarınız var?</h2>
-            <p className="mt-3 text-[15px] leading-7 text-black/70">Formu doldurun və ya WhatsApp vasitəsilə yazın. Komandamız sizinlə ən qısa zamanda əlaqə saxlayacaq.</p>
-            <form className="mt-7 grid gap-4">
-              <input className="rounded-[10px] border border-black/10 bg-white px-5 py-4 text-[15px] outline-none" placeholder="Adınız" />
-              <input className="rounded-[10px] border border-black/10 bg-white px-5 py-4 text-[15px] outline-none" placeholder="Telefon nömrəsi" />
-              <textarea className="min-h-[130px] rounded-[10px] border border-black/10 bg-white px-5 py-4 text-[15px] outline-none" placeholder="Mesajınız" />
-              <Link href={site.whatsappHref} className="rounded-full bg-brand-blue px-8 py-4 text-center text-[13px] font-bold text-white">
-                WHATSAPP İLƏ YAZIN
-              </Link>
-            </form>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0074ca] to-[#12d5df] py-24 text-white max-md:py-14">
+        <div className="absolute -top-20 left-0 h-[160px] w-full rotate-[-4deg] bg-white" />
+        <div className="container-shell relative grid min-h-[410px] grid-cols-[0.9fr_1fr] items-center gap-12 max-lg:grid-cols-1">
+          <div>
+            <h2 className="text-[44px] font-normal max-md:text-[32px]">Suallarınız var?</h2>
+            <Link href={site.whatsappHref} className="mt-12 inline-flex rounded-full bg-white px-8 py-3 text-[15px] font-medium text-[#17b840]">
+              WhatsApp ilə Yazın&nbsp; ☎
+            </Link>
+          </div>
+          <div className="relative ml-auto h-[540px] w-[520px] overflow-hidden rounded-[46px] max-lg:mx-auto max-md:h-[300px] max-md:w-full">
+            <Image
+              src="https://166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg"
+              alt="166 Təmizlik suallar"
+              fill
+              sizes="(max-width: 768px) 100vw, 520px"
+              className="object-cover grayscale"
+            />
           </div>
         </div>
       </section>

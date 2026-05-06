@@ -3,14 +3,16 @@ import Link from "next/link";
 import { services, site } from "@/lib/site-data";
 
 const navItems = [
-  { label: "Ana səhifə", href: "/" },
-  { label: "Xidmətlər", href: "/temizlik-xidmetleri/", hasMenu: true },
-  { label: "Şirkət haqqında", href: "/sirket-haqqinda/", hasMenu: true },
-  { label: "Qalereya", href: "/qalereya/" },
-  { label: "Əlaqə", href: "/166-temizlik-elaqe/" },
+  { key: "home", label: "Ana səhifə", href: "/" },
+  { key: "services", label: "Xidmətlər", href: "/temizlik-xidmetleri/", hasMenu: true },
+  { key: "about", label: "Şirkət haqqında", href: "/sirket-haqqinda/", hasMenu: true },
+  { key: "gallery", label: "Qalereya", href: "/qalereya/" },
+  { key: "contact", label: "Əlaqə", href: "/166-temizlik-elaqe/" },
 ];
 
-export function Header() {
+export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
+
+export function Header({ active = "home" }: { active?: HeaderActive }) {
   return (
     <header className="sticky top-0 z-50 blue-band">
       <div className="mx-auto flex h-[90px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-6 max-md:h-[88px] max-md:w-[calc(100%-20px)] max-md:gap-2">
@@ -19,18 +21,23 @@ export function Header() {
         </Link>
 
         <nav className="flex flex-1 items-center justify-end gap-3 text-[15px] font-semibold text-white max-lg:hidden">
-          {navItems.map((item, index) => (
+          {navItems.map((item) => {
+            const isActive = item.key === active;
+            return (
             <Link
               key={item.label}
               href={item.href}
               prefetch={false}
-              style={index === 0 ? { color: "#0074ca" } : undefined}
-              className={`whitespace-nowrap rounded-full px-5 py-3 transition ${index === 0 ? "bg-white" : "hover:bg-white/12"}`}
+              style={isActive ? { color: "#0074ca" } : undefined}
+              className={`whitespace-nowrap rounded-full px-5 py-3 transition ${
+                isActive ? "bg-white" : "text-white hover:bg-white/12"
+              }`}
             >
               {item.label}
               {item.hasMenu ? <span className="ml-3 text-sm">▼</span> : null}
             </Link>
-          ))}
+          );
+          })}
         </nav>
 
         <div className="flex items-center gap-4 max-md:gap-1">
@@ -137,10 +144,10 @@ export function FloatingButtons() {
   );
 }
 
-export function SitePage({ children }: { children: React.ReactNode }) {
+export function SitePage({ children, active }: { children: React.ReactNode; active?: HeaderActive }) {
   return (
     <main>
-      <Header />
+      <Header active={active} />
       {children}
       <CtaFooter />
       <FloatingButtons />
