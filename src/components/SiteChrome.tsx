@@ -10,6 +10,14 @@ const navItems = [
   { key: "contact", label: "Əlaqə", href: "/166-temizlik-elaqe/" },
 ];
 
+const aboutMenu = [
+  { label: "Bloq", href: "/bloq/" },
+  { label: "Avadanlıq və maddələr", href: "/temizlik-xidmeti/" },
+  { label: "Partnyorlar", href: "/partnyorlar/" },
+  { label: "Əməkdaşlarımız", href: "/emekdaslarimiz/" },
+  { label: "Vakansiya", href: "/vakansiya/" },
+];
+
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
 export function Header({ active = "home" }: { active?: HeaderActive }) {
@@ -23,20 +31,40 @@ export function Header({ active = "home" }: { active?: HeaderActive }) {
         <nav className="flex flex-1 items-center justify-end gap-3 text-[15px] font-semibold text-white max-lg:hidden">
           {navItems.map((item) => {
             const isActive = item.key === active;
+            const isServicesMenu = item.key === "services";
+            const menuItems = item.key === "services" ? services.map((service) => ({ label: service.title, href: service.href })) : item.key === "about" ? aboutMenu : [];
             return (
-            <Link
-              key={item.label}
-              href={item.href}
-              prefetch={false}
-              style={isActive ? { color: "#0074ca" } : undefined}
-              className={`whitespace-nowrap rounded-full px-5 py-3 transition ${
-                isActive ? "bg-white" : "text-white hover:bg-white/12"
-              }`}
-            >
-              {item.label}
-              {item.hasMenu ? <span className="ml-3 text-sm">▼</span> : null}
-            </Link>
-          );
+              <div key={item.label} className="group relative">
+                <Link
+                  href={item.href}
+                  prefetch={false}
+                  style={isActive ? { color: "#0074ca" } : undefined}
+                  className={`block whitespace-nowrap rounded-full px-5 py-3 transition ${
+                    isActive ? "bg-white" : "text-white hover:bg-white/12"
+                  }`}
+                >
+                  {item.label}
+                  {item.hasMenu ? <span className="ml-3 text-sm">▼</span> : null}
+                </Link>
+
+                {menuItems.length ? (
+                  <div className="invisible absolute left-1/2 top-full z-50 w-[280px] -translate-x-1/2 pt-2 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100">
+                    <div className="rounded-[22px] bg-white px-3 py-3 text-center text-[15px] font-medium leading-tight text-[#0074ca] shadow-[0_16px_38px_rgb(15_23_42_/_10%)]">
+                      {menuItems.map((menuItem) => (
+                        <Link
+                          key={menuItem.href}
+                          href={menuItem.href}
+                          prefetch={false}
+                          className={`block rounded-[14px] px-3 transition hover:bg-[#eef6ff] ${isServicesMenu ? "py-[8px]" : "py-[13px]"}`}
+                        >
+                          {menuItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            );
           })}
         </nav>
 
