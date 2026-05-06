@@ -1,26 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f4f4;
+  --foreground: #111827;
+  --brand-blue: #0074ca;
+  --brand-blue-dark: #0069b8;
+  --brand-yellow: #ffec14;
+  --muted: #68758a;
+  --card: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-yellow: var(--brand-yellow);
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.section-title {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: clamp(1.75rem, 2.25vw, 2rem);
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  color: #000;
+}
+
+.section-kicker {
+  font-family: var(--font-montserrat), sans-serif;
+  color: var(--brand-blue);
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.container-shell {
+  width: min(1180px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.blue-band {
+  background: var(--brand-blue);
+}
+
+.floating-action {
+  position: fixed;
+  right: 28px;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  color: white;
+  box-shadow: 0 14px 30px rgb(15 72 129 / 28%);
+}
+
+.floating-whatsapp {
+  bottom: 112px;
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  background: #38c95a;
+  font-weight: 900;
+  font-size: 28px;
+}
+
+.floating-chat {
+  bottom: 36px;
+  width: 68px;
+  height: 68px;
+  border-radius: 999px;
+  background: #4287f5;
+  font-weight: 900;
+  font-size: 24px;
+}
+
+@media (max-width: 720px) {
+  .container-shell {
+    width: min(100% - 30px, 620px);
+  }
+
+  .floating-action {
+    right: 18px;
+  }
+
+  .floating-whatsapp {
+    bottom: 92px;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .floating-chat {
+    bottom: 26px;
+    width: 58px;
+    height: 58px;
+  }
 }
