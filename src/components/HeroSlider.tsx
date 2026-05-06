@@ -18,7 +18,7 @@ export function HeroSlider() {
 
   return (
     <section className="blue-band">
-      <div className="container-shell relative grid min-h-[640px] grid-cols-[0.9fr_1.1fr] items-center gap-12 py-16 max-lg:min-h-[560px] max-lg:grid-cols-1 max-lg:gap-8 max-lg:py-8 max-sm:min-h-0">
+      <div className="container-shell relative grid min-h-[620px] grid-cols-[0.9fr_1.1fr] items-center gap-12 py-14 max-lg:min-h-[540px] max-lg:grid-cols-1 max-lg:gap-8 max-lg:py-8 max-sm:min-h-0">
         <button
           aria-label="Previous slide"
           className="absolute left-[-70px] top-1/2 text-6xl font-light text-black/80 max-xl:hidden"
@@ -27,10 +27,10 @@ export function HeroSlider() {
           ‹
         </button>
         <div className="order-2 max-lg:order-2 max-lg:text-center">
-          <p className="max-w-[560px] text-[34px] font-extrabold leading-tight tracking-normal text-white max-lg:mx-auto max-md:text-2xl">
+          <p className="max-w-[560px] text-[30px] font-extrabold leading-[1.28] tracking-normal text-white max-lg:mx-auto max-md:text-[22px]">
             {slide.eyebrow}
           </p>
-          <h1 className="mt-4 text-[72px] font-black leading-none tracking-normal text-white max-lg:text-[58px] max-md:text-[44px]">
+          <h1 className="mt-4 text-[64px] font-black leading-none tracking-normal text-white max-lg:text-[52px] max-md:text-[40px]">
             {slide.title}
           </h1>
         </div>

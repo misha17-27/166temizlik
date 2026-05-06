@@ -29,7 +29,7 @@ export function BeforeAfterGallery() {
   }
 
   return (
-    <section data-section="before-after" className="bg-white py-16 max-md:py-10">
+    <section id="gallery" data-section="before-after" className="bg-white py-16 max-md:py-10">
       <div className="container-shell max-w-[980px] rounded-[14px] bg-[#e4f1ff] px-12 pb-12 pt-8 max-lg:max-w-[860px] max-md:px-4 max-md:pb-8">
         <div className="mb-8 text-center [font-family:var(--font-montserrat)] text-[13px] font-bold uppercase tracking-normal text-black max-md:mb-5">
           GÖRDÜYÜMÜZ <span className="ml-2 font-normal text-brand-blue">İŞLƏR</span>
