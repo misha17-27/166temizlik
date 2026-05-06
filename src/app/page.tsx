@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BeforeAfterGallery } from "@/components/BeforeAfterGallery";
 import { HeroSlider } from "@/components/HeroSlider";
 import {
-  beforeAfter,
   gallery,
   hourlyPrices,
   navItems,
@@ -18,8 +18,8 @@ import {
 function Header() {
   return (
     <header className="sticky top-0 z-50 blue-band">
-      <div className="mx-auto flex h-[90px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-6 max-md:h-[110px] max-md:w-[min(100%-30px,620px)] max-md:gap-3">
-        <Link href="/" aria-label="166 Təmizlik ana səhifə" className="relative h-[78px] w-[150px] shrink-0 max-md:h-[76px] max-md:w-[120px]">
+      <div className="mx-auto flex h-[90px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-6 max-md:h-[88px] max-md:w-[calc(100%-20px)] max-md:gap-2">
+        <Link href="/" aria-label="166 Təmizlik ana səhifə" className="relative h-[78px] w-[150px] shrink-0 max-md:h-[62px] max-md:w-[92px]">
           <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="170px" className="object-contain brightness-0 invert" />
         </Link>
 
@@ -37,20 +37,20 @@ function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4 max-md:gap-2">
+        <div className="flex items-center gap-4 max-md:gap-1">
           <Link
             href={site.orderHref}
-            className="whitespace-nowrap rounded-full bg-brand-yellow px-8 py-4 [font-family:var(--font-montserrat)] text-[20px] font-bold text-[#171717] transition hover:bg-white max-md:px-6 max-md:py-3 max-md:text-lg"
+            className="whitespace-nowrap rounded-full bg-brand-yellow px-8 py-4 [font-family:var(--font-montserrat)] text-[20px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-3 max-md:text-[15px]"
           >
             Sifariş et
           </Link>
-          <button aria-label="Open menu" className="hidden h-12 w-12 rounded-lg border-2 border-white text-3xl font-black leading-none text-white max-lg:block">
+          <button aria-label="Open menu" className="hidden h-12 w-12 rounded-lg border-2 border-white text-3xl font-black leading-none text-white max-lg:block max-md:h-10 max-md:w-10 max-md:text-2xl">
             ≡
           </button>
-          <Link href="/ru/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-11 max-md:w-11">
+          <Link href="/ru/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
             Ru
           </Link>
-          <Link href="/tr/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-11 max-md:w-11">
+          <Link href="/tr/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
             Tr
           </Link>
         </div>
@@ -240,31 +240,7 @@ function AboutSection() {
 }
 
 function BeforeAfterSection() {
-  return (
-    <section className="bg-white py-16">
-      <div className="container-shell">
-        <p className="section-kicker text-center">GÖRDÜYÜMÜZ</p>
-        <h2 className="section-title mb-12">İŞLƏR</h2>
-        <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
-          {beforeAfter.map((item) => (
-            <article key={item.title} className="overflow-hidden rounded-[18px] bg-[#f5f8fb] shadow-[0_16px_38px_rgb(15_23_42_/_9%)]">
-              <div className="grid grid-cols-2">
-                <div className="relative h-[300px]">
-                  <Image src={item.before} alt={`${item.title} əvvəl`} fill sizes="300px" className="object-cover" />
-                  <span className="absolute left-4 top-4 rounded-full bg-black/70 px-4 py-2 text-sm font-bold text-white">Əvvəl</span>
-                </div>
-                <div className="relative h-[300px]">
-                  <Image src={item.after} alt={`${item.title} sonra`} fill sizes="300px" className="object-cover" />
-                  <span className="absolute right-4 top-4 rounded-full bg-brand-blue px-4 py-2 text-sm font-bold text-white">Sonra</span>
-                </div>
-              </div>
-              <h3 className="p-5 text-center text-xl font-black">{item.title}</h3>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <BeforeAfterGallery />;
 }
 
 function GallerySection() {
@@ -288,7 +264,7 @@ function PartnersSection() {
   const loop = [...partners, ...partners];
 
   return (
-    <section className="bg-white py-16">
+    <section className="overflow-hidden bg-white py-16">
       <div className="container-shell rounded-b-[28px] bg-[#e4f1ff] px-[110px] pb-14 pt-9 max-lg:px-8">
         <h2 className="[font-family:var(--font-montserrat)] text-[24px] font-bold uppercase text-black">PARTNYORLAR</h2>
         <div className="mt-8 overflow-hidden">

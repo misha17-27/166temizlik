@@ -140,7 +140,17 @@ export const beforeAfter = [
   {
     before: "https://166temizlik.az/wp-content/uploads/2024/01/as12.webp",
     after: "https://166temizlik.az/wp-content/uploads/2024/01/as11.webp",
+    title: "Divan təmizliyi",
+  },
+  {
+    before: "https://166temizlik.az/wp-content/uploads/2024/01/b11.webp",
+    after: "https://166temizlik.az/wp-content/uploads/2024/01/b22.webp",
     title: "Yumşaq mebel",
+  },
+  {
+    before: "https://166temizlik.az/wp-content/uploads/2024/01/q11.webp",
+    after: "https://166temizlik.az/wp-content/uploads/2024/01/q22.webp",
+    title: "Kreslo təmizliyi",
   },
 ];
 
