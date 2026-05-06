@@ -9,6 +9,9 @@ export const site = {
   whatsappHref: "https://api.whatsapp.com/send?phone=994502854477&text=Salam",
   logo: "https://166temizlik.az/wp-content/uploads/2023/01/ALL_LddOGOS-03.png",
   footerLogo: "https://166temizlik.az/wp-content/uploads/2022/12/logo-w.png",
+  noteImage: "https://166temizlik.az/wp-content/uploads/2024/12/u1.webp",
+  aboutImage: "https://166temizlik.az/wp-content/uploads/2024/12/u33.webp",
+  mapImage: "https://166temizlik.az/wp-content/uploads/2023/02/azerbaijan5-1-1.svg",
 };
 
 export const navItems = [
@@ -94,6 +97,11 @@ export const packageFeatures = {
     "Pəncərələrin silinməsi",
     "Eyvanın silinməsi",
   ],
+};
+
+export const priceCircleImages = {
+  four: "https://166temizlik.az/wp-content/uploads/2022/12/Group-3.png",
+  eight: "https://166temizlik.az/wp-content/uploads/2022/12/Group-4.png",
 };
 
 export const weeklyPrices = [

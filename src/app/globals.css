@@ -61,6 +61,24 @@ a {
   background: var(--brand-blue);
 }
 
+.partners-track {
+  animation: partners-scroll 30s linear infinite;
+}
+
+.partners-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes partners-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 .floating-action {
   position: fixed;
   right: 28px;

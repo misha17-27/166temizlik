@@ -45,6 +45,7 @@ export function HeroSlider() {
                 src={src}
                 alt="166 Təmizlik xidməti"
                 fill
+                loading={index === 0 ? "eager" : "lazy"}
                 sizes="(max-width: 768px) 32vw, 280px"
                 className="object-cover"
               />

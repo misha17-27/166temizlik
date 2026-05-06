@@ -6,9 +6,9 @@ import {
   gallery,
   hourlyPrices,
   navItems,
-  notes,
   packageFeatures,
   partners,
+  priceCircleImages,
   services,
   site,
   testimonials,
@@ -83,63 +83,119 @@ function ServicesSection() {
   );
 }
 
-function PackageCard({ title, items, priceKey }: { title: string; items: string[]; priceKey: "four" | "eight" }) {
+function PackageCard({
+  title,
+  items,
+  priceKey,
+  tone,
+}: {
+  title: string;
+  items: string[];
+  priceKey: "four" | "eight";
+  tone: "blue" | "yellow";
+}) {
+  const visibleItems = priceKey === "eight" ? items.slice(0, 5) : items;
+  const circleImage = priceKey === "four" ? priceCircleImages.four : priceCircleImages.eight;
+
   return (
-    <article className="overflow-hidden rounded-[18px] bg-white shadow-[0_16px_42px_rgb(15_23_42_/_10%)]">
-      <div className="blue-band px-8 py-5 text-center text-3xl font-black">{title}</div>
-      <div className="p-8">
-        <ul className="space-y-3 text-[17px] font-semibold text-[#243145]">
-          {items.map((item) => (
-            <li key={item} className="flex gap-3">
-              <span className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-blue text-xs text-white">✓</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-8 grid grid-cols-3 gap-3">
-          {weeklyPrices.map((price) => (
-            <div key={price.label} className="rounded-xl border border-[#dbe5f0] p-4 text-center">
-              <p className="text-sm font-bold text-[#65748a]">{price.label}</p>
-              <p className="mt-2 text-3xl font-black text-brand-blue">{price[priceKey]}</p>
+    <article className="relative rounded-[18px] bg-white px-10 pb-9 pt-20 shadow-[0_8px_24px_rgb(0_116_202_/_8%)] max-md:px-6">
+      <div
+        className={`absolute -top-3 left-8 flex h-[44px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 [font-family:var(--font-montserrat)] text-[18px] font-semibold text-white ${
+          tone === "blue" ? "bg-[#1097ed]" : "bg-[#ffd000]"
+        }`}
+      >
+        <span className="grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-white text-[12px]">◷</span>
+        {title}
+      </div>
+
+      <ol className="min-h-[180px] space-y-2 [font-family:var(--font-montserrat)] text-[19px] font-normal leading-[1.36] text-black max-md:text-[16px]">
+        {visibleItems.map((item, index) => (
+          <li key={item} className={priceKey === "eight" && index > 2 ? "text-black/35" : ""}>
+            {index + 1}. {item}
+          </li>
+        ))}
+      </ol>
+
+      {priceKey === "eight" ? (
+        <Link href="#services" className="mt-3 inline-block [font-family:var(--font-montserrat)] text-[18px] text-[#006ed3] underline underline-offset-2">
+          Daha çox
+        </Link>
+      ) : null}
+
+      <div className="mt-7 grid grid-cols-3 gap-4">
+        {weeklyPrices.map((price) => (
+          <div key={price.label} className="text-center [font-family:var(--font-montserrat)]">
+            <p className="mb-2 text-[17px] font-semibold text-black max-md:text-[14px]">{price.label}</p>
+            <div className="relative mx-auto grid h-[100px] w-[100px] place-items-center max-md:h-[78px] max-md:w-[78px]">
+              <Image src={circleImage} alt="" fill sizes="100px" className="object-contain" />
+              <span className="relative text-[28px] font-semibold text-white max-md:text-[21px]">{price[priceKey]}</span>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </article>
   );
 }
 
+function HourlyPriceStrip() {
+  return (
+    <div className="relative mt-10">
+      <div className="absolute inset-x-[-80px] bottom-0 h-[120px] rounded-t-[26px] bg-[#e4f1ff] max-md:hidden" />
+      <div className="relative grid grid-cols-5 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-1">
+        {hourlyPrices.map((price) => (
+          <article key={price.time} className="rounded-[16px] bg-white px-5 py-7 text-center shadow-[0_6px_20px_rgb(0_116_202_/_8%)]">
+            <div className="mx-auto mb-5 grid h-[60px] w-[60px] place-items-center rounded-full bg-[#95df22] text-3xl text-white">
+              ◷
+            </div>
+            <h3 className="[font-family:var(--font-montserrat)] text-[20px] font-bold text-black">{price.time}</h3>
+            <p className="mt-3 [font-family:var(--font-montserrat)] text-[16px] leading-[1.45] text-black">
+              {price.city}
+              <br />
+              {price.village}
+              <br />
+              (1 nəfər xanım kömək məqsədi ilə gəlir)
+            </p>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function PricesSection() {
+  return (
+    <section className="bg-white pb-10 pt-16 max-md:pt-10">
+      <div className="container-shell">
+        <h2 className="section-title mb-20">Ev təmizlik paketləri</h2>
+        <div className="grid grid-cols-2 gap-10 max-lg:grid-cols-1">
+          <PackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" />
+          <PackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" />
+        </div>
+        <HourlyPriceStrip />
+      </div>
+    </section>
+  );
+}
+
+function NotesSection() {
   return (
     <section className="bg-white py-16 max-md:py-10">
       <div className="container-shell">
-        <h2 className="section-title mb-12">Ev təmizlik paketləri</h2>
-        <div className="grid grid-cols-2 gap-8 max-lg:grid-cols-1">
-          <PackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" />
-          <PackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" />
-        </div>
-
-        <div className="mt-10 grid grid-cols-5 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-1">
-          {hourlyPrices.map((price) => (
-            <article key={price.time} className="rounded-[16px] bg-[#f5f8fb] p-6 text-center shadow-[0_10px_28px_rgb(15_23_42_/_6%)]">
-              <h3 className="text-3xl font-black text-brand-blue">{price.time}</h3>
-              <p className="mt-4 text-lg font-bold">{price.city}</p>
-              <p className="mt-1 text-lg font-bold">{price.village}</p>
-              <p className="mt-4 text-sm font-semibold text-[#65748a]">(1 nəfər xanım kömək məqsədi ilə gəlir)</p>
-            </article>
-          ))}
-        </div>
-
-        <div className="mt-10 rounded-[16px] border-l-[8px] border-brand-yellow bg-[#f8fbff] p-8">
-          <h3 className="mb-4 text-3xl font-black text-black">QEYD</h3>
-          <ul className="grid gap-3 text-lg font-semibold text-[#263445]">
-            {notes.map((note) => (
-              <li key={note} className="flex gap-3">
-                <span className="text-brand-blue">●</span>
-                <span>{note}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="grid min-h-[400px] grid-cols-[0.75fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-lg:grid-cols-1">
+          <div className="relative min-h-[400px] overflow-hidden max-lg:min-h-[260px]">
+            <Image src={site.noteImage} alt="166 Təmizlik qeydlər" fill sizes="520px" className="object-cover" />
+            <div className="absolute -right-16 top-[-20%] h-[140%] w-[160px] rounded-[50%] border-r-[22px] border-[#ffd200] bg-brand-blue max-lg:hidden" />
+          </div>
+          <div className="px-16 py-8 max-lg:px-8 max-md:px-6">
+            <h3 className="[font-family:var(--font-montserrat)] text-[32px] font-bold">QEYD</h3>
+            <ul className="mt-8 list-disc space-y-2 pl-5 [font-family:var(--font-montserrat)] text-[21px] font-normal leading-[1.35] max-md:text-[17px]">
+              <li>Təmizlik zamanı bütün vasitə və təmizləyici maddələr <strong>qiymətə daxildir.</strong></li>
+              <li>Təmizlik zamanı <strong>hər əlavə saata görə 10 AZN</strong> hesablanacaqdır.</li>
+              <li>Təhlükəli yerdə olan pəncərələrin silinməsi <strong>qiymətə daxil deyil.</strong></li>
+              <li>Yumşaq mebellərin kimyəvi təmizlənməsi <strong>qiymətə daxil deyil.</strong></li>
+              <li>Öncədən ödəniş edildiyi halda qiymətlərə <strong>endirim</strong> tətbiq edilir</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -148,26 +204,34 @@ function PricesSection() {
 
 function AboutSection() {
   return (
-    <section id="about" className="blue-band py-16">
-      <div className="container-shell grid grid-cols-[0.9fr_1.1fr] items-center gap-12 max-lg:grid-cols-1">
-        <div>
-          <p className="text-2xl font-black text-brand-yellow">ŞİRKƏT</p>
-          <h2 className="mt-1 text-[56px] font-black leading-none text-white max-md:text-4xl">HAQQINDA</h2>
-          <p className="mt-8 text-xl font-semibold leading-8 text-white/95">
-            2015-ci ildə fəaliyyətinə bir neçə işçi ilə başlayan “166 Təmizlik Xidməti” müasir avadanlıq və təmizlik vasitələri ilə istənilən təmizlik problemini həll edir. Təmizlik şirkəti axtarırsınızsa, doğru ünvandasınız.
-          </p>
-          <p className="mt-5 text-xl font-semibold leading-8 text-white/95">
-            Daim müştərilərimizin xidmətində olmaq və operativ xidmət göstərmək məqsədilə 166 qaynar xəttimiz 7/24 ölkənin istənilən nöqtəsindən zəngləri qəbul edir.
-          </p>
+    <section id="about" className="bg-white">
+      <div className="bg-[#eef6ff] py-14">
+        <div className="container-shell grid grid-cols-2 items-center gap-16 max-lg:grid-cols-1">
+          <div className="max-w-[500px]">
+            <h2 className="[font-family:var(--font-montserrat)] text-[24px] font-bold uppercase tracking-normal text-black">
+              ŞİRKƏT <span className="font-normal text-brand-blue">HAQQINDA</span>
+            </h2>
+            <p className="mt-5 [font-family:var(--font-montserrat)] text-[16px] leading-[1.55] text-black">
+              2015-ci ildə fəaliyyətinə bir neçə işçi ilə başlayan “166 Təmizlik Xidməti” müasir avadanlıq və təmizlik vasitələri ilə istənilən təmizlik problemini həll edir. Təmizlik şirkəti axtarırsınızsa, doğru ünvandasınız.
+            </p>
+            <p className="mt-4 [font-family:var(--font-montserrat)] text-[16px] leading-[1.55] text-black">
+              Daim müştərilərimizin xidmətində olmaq və operativ xidmət göstərmək məqsədilə 166 qaynar xəttimiz 7/24 ölkənin istənilən nöqtəsindən zəngləri qəbul edir.
+            </p>
+          </div>
+          <div className="relative mx-auto h-[280px] w-full max-w-[430px]">
+            <Image src={site.aboutImage} alt="Şirkət haqqında" fill sizes="430px" className="object-contain" />
+          </div>
         </div>
-        <div className="relative min-h-[360px] overflow-hidden rounded-[24px] bg-white/10">
-          <Image
-            src="https://166temizlik.az/wp-content/uploads/2023/02/azerbaijan5-1-1.svg"
-            alt="Bütün Azərbaycana xidmət göstəririk"
-            fill
-            sizes="600px"
-            className="object-contain p-8"
-          />
+      </div>
+
+      <div className="py-14">
+        <div className="container-shell text-center">
+          <h2 className="[font-family:var(--font-montserrat)] text-[24px] font-bold uppercase text-black max-md:text-[20px]">
+            BÜTÜN AZƏRBAYCANA XİDMƏT GÖSTƏRİRİK
+          </h2>
+          <div className="relative mx-auto mt-8 h-[400px] w-full max-w-[610px] max-md:h-[270px]">
+            <Image src={site.mapImage} alt="Bütün Azərbaycana xidmət göstəririk" fill sizes="610px" className="object-contain" />
+          </div>
         </div>
       </div>
     </section>
@@ -220,16 +284,20 @@ function GallerySection() {
 }
 
 function PartnersSection() {
+  const loop = [...partners, ...partners];
+
   return (
     <section className="bg-white py-16">
-      <div className="container-shell">
-        <h2 className="section-title mb-10">PARTNYORLAR</h2>
-        <div className="grid grid-cols-5 gap-4 max-lg:grid-cols-3 max-sm:grid-cols-2">
-          {partners.map((src, index) => (
-            <div key={`${src}-${index}`} className="relative h-[112px] rounded-[12px] border border-[#e8edf3] bg-white p-4 shadow-[0_10px_22px_rgb(15_23_42_/_5%)]">
-              <Image src={src} alt={`Partnyor ${index + 1}`} fill sizes="220px" className="object-contain p-3" />
-            </div>
-          ))}
+      <div className="container-shell rounded-b-[28px] bg-[#e4f1ff] px-[110px] pb-14 pt-9 max-lg:px-8">
+        <h2 className="[font-family:var(--font-montserrat)] text-[24px] font-bold uppercase text-black">PARTNYORLAR</h2>
+        <div className="mt-8 overflow-hidden">
+          <div className="partners-track flex w-max gap-7">
+            {loop.map((src, index) => (
+              <div key={`${src}-${index}`} className="relative h-[92px] w-[150px] shrink-0 rounded-[14px] border border-[#d5dbe3] bg-white shadow-[0_8px_18px_rgb(15_23_42_/_4%)]">
+                <Image src={src} alt={`Partnyor ${index + 1}`} fill sizes="150px" className="object-contain p-5" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -264,58 +332,53 @@ function CtaFooter() {
     <>
       <section id="order" className="blue-band py-14">
         <div className="container-shell flex items-center justify-between gap-8 max-lg:flex-col max-lg:text-center">
-          <div>
-            <h2 className="text-4xl font-black leading-tight text-white max-md:text-3xl">Özünüzə və sevdiklərinizə zaman ayırın</h2>
-            <p className="mt-3 max-w-3xl text-lg font-semibold text-white/90">
-              Pesekar temizlik sirketi, serfeli ve keyfiyyetli xidmetler - 166temizlik.
-            </p>
-          </div>
-          <div className="flex gap-4 max-sm:flex-col">
-            <Link href="#contact" className="rounded-full bg-white px-8 py-4 text-lg font-black text-brand-blue">BİZİMLƏ ƏLAQƏ</Link>
-            <Link href={site.whatsappHref} className="rounded-full bg-brand-yellow px-8 py-4 text-lg font-black text-black">SİFARİŞ ET</Link>
+          <h2 className="[font-family:var(--font-montserrat)] text-[24px] font-bold leading-tight text-white max-md:text-[22px]">Özünüzə və sevdiklərinizə zaman ayırın</h2>
+          <div className="flex gap-9 max-sm:flex-col">
+            <Link href="#contact" className="rounded-full bg-brand-yellow px-12 py-3 [font-family:var(--font-montserrat)] text-[12px] font-bold text-black">BİZİMLƏ ƏLAQƏ</Link>
+            <Link href={site.whatsappHref} className="rounded-full bg-white px-12 py-3 [font-family:var(--font-montserrat)] text-[12px] font-bold text-black">SİFARİŞ ET</Link>
           </div>
         </div>
       </section>
-      <footer id="contact" className="bg-[#07111f] py-14 text-white">
-        <div className="container-shell grid grid-cols-[1.2fr_1fr_1fr_1.2fr] gap-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          <div>
-            <div className="relative h-[112px] w-[148px]">
-              <Image src={site.footerLogo} alt="166 Təmizlik" fill sizes="150px" className="object-contain" />
+      <footer id="contact" className="blue-band text-white">
+        <div className="container-shell grid grid-cols-[1.1fr_1fr_1fr_1.35fr] gap-16 py-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
+          <div className="text-center max-sm:text-left">
+            <div className="relative mx-auto h-[132px] w-[170px] max-sm:mx-0">
+              <Image src={site.footerLogo} alt="166 Təmizlik" fill sizes="170px" className="object-contain" />
             </div>
-            <p className="mt-4 text-xl font-black">QÜSURSUZ VƏ ETİBARLI</p>
+            <p className="mt-3 [font-family:var(--font-montserrat)] text-[12px] font-normal">QÜSURSUZ VƏ ETİBARLI</p>
           </div>
           <div>
-            <h3 className="mb-5 text-2xl font-black">Yararlı linklər</h3>
-            <ul className="space-y-3 text-lg font-semibold text-white/78">
+            <h3 className="mb-4 [font-family:var(--font-montserrat)] text-[17px] font-bold">Yararlı linklər</h3>
+            <ul className="space-y-4 [font-family:var(--font-montserrat)] text-[15px] font-normal">
               {["Ana səhifə", "Şirkət haqqında", "Xidmətlər", "Bloq", "Vakansiya"].map((item) => (
                 <li key={item}><Link href="#">{item}</Link></li>
               ))}
             </ul>
           </div>
           <div>
-            <h3 className="mb-5 text-2xl font-black">Xidmətlər</h3>
-            <ul className="space-y-3 text-lg font-semibold text-white/78">
+            <h3 className="mb-4 [font-family:var(--font-montserrat)] text-[17px] font-bold">Xidmətlər</h3>
+            <ul className="space-y-4 [font-family:var(--font-montserrat)] text-[15px] font-normal">
               {services.slice(0, 3).map((item) => (
                 <li key={item.title}><Link href={item.href}>{item.title}</Link></li>
               ))}
             </ul>
           </div>
           <div>
-            <h3 className="mb-5 text-2xl font-black">Əlaqə</h3>
-            <ul className="space-y-3 text-lg font-semibold text-white/78">
-              <li><Link href={site.phoneHref}>{site.phoneLabel}</Link></li>
-              <li><Link href={site.mobileHref}>{site.mobileLabel}</Link></li>
-              <li>{site.address}</li>
-              <li><Link href={`mailto:${site.email}`}>{site.email}</Link></li>
+            <h3 className="mb-3 [font-family:var(--font-montserrat)] text-[17px] font-bold">Əlaqə</h3>
+            <ul className="space-y-2 [font-family:var(--font-montserrat)] text-[15px] font-normal leading-[1.45]">
+              <li>☎ <Link href={site.phoneHref}>{site.phoneLabel}</Link></li>
+              <li>▯ <Link href={site.mobileHref}>{site.mobileLabel}</Link></li>
+              <li>⌖ {site.address}</li>
+              <li>✉ <Link href={`mailto:${site.email}`}>{site.email}</Link></li>
             </ul>
-            <div className="mt-6 flex gap-3">
-              {["f", "ig", "wa", "yt"].map((item) => (
-                <span key={item} className="grid h-10 w-10 place-items-center rounded-full bg-white text-sm font-black text-brand-blue">{item}</span>
+            <div className="mt-4 flex gap-2">
+              {["f", "◎", "☏", "▶"].map((item) => (
+                <span key={item} className="grid h-8 w-8 place-items-center rounded-full border border-white [font-family:var(--font-montserrat)] text-sm font-bold text-white">{item}</span>
               ))}
             </div>
           </div>
         </div>
-        <div className="container-shell mt-10 border-t border-white/12 pt-6 text-sm font-semibold text-white/55">
+        <div className="border-t border-white/55 py-4 text-center [font-family:var(--font-montserrat)] text-[12px] font-normal text-white">
           © 166temizlik.az. Site by Webline
         </div>
       </footer>
@@ -330,6 +393,7 @@ export default function Home() {
       <HeroSlider />
       <ServicesSection />
       <PricesSection />
+      <NotesSection />
       <AboutSection />
       <BeforeAfterSection />
       <GallerySection />
