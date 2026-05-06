@@ -68,20 +68,20 @@ export function Header({ active = "home" }: { active?: HeaderActive }) {
           })}
         </nav>
 
-        <div className="flex items-center gap-4 max-md:gap-1">
+        <div className="flex items-center gap-3 max-md:gap-1">
           <Link
             href={site.orderHref}
-            className="whitespace-nowrap rounded-full bg-brand-yellow px-8 py-4 text-[18px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-3 max-md:text-[15px]"
+            className="whitespace-nowrap rounded-full bg-brand-yellow px-7 py-4 text-[17px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-3 max-md:text-[15px]"
           >
             Sifariş et
           </Link>
           <button aria-label="Open menu" className="hidden h-12 w-12 rounded-lg border-2 border-white text-3xl font-black leading-none text-white max-lg:block max-md:h-10 max-md:w-10 max-md:text-2xl">
             ≡
           </button>
-          <Link href="/ru/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
+          <Link href="/ru/" prefetch={false} className="grid h-[52px] w-[52px] place-items-center rounded-full bg-white text-lg font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
             Ru
           </Link>
-          <Link href="/tr/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
+          <Link href="/tr/" prefetch={false} className="grid h-[52px] w-[52px] place-items-center rounded-full bg-white text-lg font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
             Tr
           </Link>
         </div>
