@@ -47,10 +47,10 @@ function Header() {
           <button aria-label="Open menu" className="hidden h-12 w-12 rounded-lg border-2 border-white text-3xl font-black leading-none text-white max-lg:block">
             ≡
           </button>
-          <Link href="/ru/" className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-11 max-md:w-11">
+          <Link href="/ru/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-11 max-md:w-11">
             Ru
           </Link>
-          <Link href="/tr/" className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-11 max-md:w-11">
+          <Link href="/tr/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-11 max-md:w-11">
             Tr
           </Link>
         </div>
@@ -69,6 +69,7 @@ function ServicesSection() {
             <Link
               key={service.title}
               href={service.href}
+              prefetch={false}
               className="group flex min-h-[190px] flex-col items-center justify-center rounded-[14px] bg-white p-6 text-center shadow-[0_14px_34px_rgb(15_23_42_/_8%)] transition hover:-translate-y-1 hover:shadow-[0_18px_42px_rgb(0_116_202_/_16%)] max-sm:min-h-[200px]"
             >
               <div className="relative mb-5 h-20 w-28">
@@ -359,7 +360,7 @@ function CtaFooter() {
             <h3 className="mb-4 [font-family:var(--font-montserrat)] text-[17px] font-bold">Xidmətlər</h3>
             <ul className="space-y-4 [font-family:var(--font-montserrat)] text-[15px] font-normal">
               {services.slice(0, 3).map((item) => (
-                <li key={item.title}><Link href={item.href}>{item.title}</Link></li>
+                <li key={item.title}><Link href={item.href} prefetch={false}>{item.title}</Link></li>
               ))}
             </ul>
           </div>
