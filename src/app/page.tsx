@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { BeforeAfterGallery } from "@/components/BeforeAfterGallery";
 import { HeroSlider } from "@/components/HeroSlider";
+import { CtaFooter, FloatingButtons, Header } from "@/components/SiteChrome";
 import {
   hourlyPrices,
-  navItems,
   packageFeatures,
   partners,
   priceCircleImages,
@@ -13,50 +13,6 @@ import {
   testimonials,
   weeklyPrices,
 } from "@/lib/site-data";
-
-function Header() {
-  return (
-    <header className="sticky top-0 z-50 blue-band">
-      <div className="mx-auto flex h-[90px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-6 max-md:h-[88px] max-md:w-[calc(100%-20px)] max-md:gap-2">
-        <Link href="/" aria-label="166 Təmizlik ana səhifə" className="relative h-[78px] w-[150px] shrink-0 max-md:h-[62px] max-md:w-[92px]">
-          <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="170px" className="object-contain brightness-0 invert" />
-        </Link>
-
-        <nav className="flex flex-1 items-center justify-end gap-3 text-[15px] font-semibold text-white max-lg:hidden">
-          {navItems.map((item, index) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              style={index === 0 ? { color: "#0074ca" } : undefined}
-              className={`whitespace-nowrap rounded-full px-5 py-3 transition ${index === 0 ? "bg-white" : "hover:bg-white/12"}`}
-            >
-              {item.label}
-              {item.hasMenu ? <span className="ml-3 text-sm">▼</span> : null}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-4 max-md:gap-1">
-          <Link
-            href={site.orderHref}
-            className="whitespace-nowrap rounded-full bg-brand-yellow px-8 py-4 text-[18px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-3 max-md:text-[15px]"
-          >
-            Sifariş et
-          </Link>
-          <button aria-label="Open menu" className="hidden h-12 w-12 rounded-lg border-2 border-white text-3xl font-black leading-none text-white max-lg:block max-md:h-10 max-md:w-10 max-md:text-2xl">
-            ≡
-          </button>
-          <Link href="/ru/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
-            Ru
-          </Link>
-          <Link href="/tr/" prefetch={false} className="grid h-[58px] w-[58px] place-items-center rounded-full bg-white text-xl font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
-            Tr
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 function ServicesSection() {
   return (
@@ -286,65 +242,6 @@ function TestimonialsSection() {
   );
 }
 
-function CtaFooter() {
-  return (
-    <>
-      <section id="order" className="blue-band py-14">
-        <div className="container-shell flex items-center justify-between gap-8 max-lg:flex-col max-lg:text-center">
-          <h2 className="text-[23px] font-bold leading-tight text-white max-md:text-[20px]">Özünüzə və sevdiklərinizə zaman ayırın</h2>
-          <div className="flex gap-9 max-sm:flex-col">
-            <Link href="#contact" className="rounded-full bg-brand-yellow px-12 py-3 text-[12px] font-bold text-black">BİZİMLƏ ƏLAQƏ</Link>
-            <Link href={site.whatsappHref} className="rounded-full bg-white px-12 py-3 text-[12px] font-bold text-black">SİFARİŞ ET</Link>
-          </div>
-        </div>
-      </section>
-      <footer id="contact" className="blue-band text-white">
-        <div className="container-shell grid grid-cols-[1.1fr_1fr_1fr_1.35fr] gap-16 py-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          <div className="text-center max-sm:text-left">
-            <div className="relative mx-auto h-[132px] w-[170px] max-sm:mx-0">
-              <Image src={site.footerLogo} alt="166 Təmizlik" fill sizes="170px" className="object-contain" />
-            </div>
-            <p className="mt-3 text-[12px] font-normal">QÜSURSUZ VƏ ETİBARLI</p>
-          </div>
-          <div>
-            <h3 className="mb-4 text-[16px] font-bold">Yararlı linklər</h3>
-            <ul className="space-y-4 text-[14px] font-normal">
-              {["Ana səhifə", "Şirkət haqqında", "Xidmətlər", "Bloq", "Vakansiya"].map((item) => (
-                <li key={item}><Link href="#">{item}</Link></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-4 text-[16px] font-bold">Xidmətlər</h3>
-            <ul className="space-y-4 text-[14px] font-normal">
-              {services.slice(0, 3).map((item) => (
-                <li key={item.title}><Link href={item.href} prefetch={false}>{item.title}</Link></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-3 text-[16px] font-bold">Əlaqə</h3>
-            <ul className="space-y-2 text-[14px] font-normal leading-[1.45]">
-              <li>☎ <Link href={site.phoneHref}>{site.phoneLabel}</Link></li>
-              <li>▯ <Link href={site.mobileHref}>{site.mobileLabel}</Link></li>
-              <li>⌖ {site.address}</li>
-              <li>✉ <Link href={`mailto:${site.email}`}>{site.email}</Link></li>
-            </ul>
-            <div className="mt-4 flex gap-2">
-              {["f", "◎", "☏", "▶"].map((item) => (
-                <span key={item} className="grid h-8 w-8 place-items-center rounded-full border border-white text-sm font-bold text-white">{item}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-white/55 py-4 text-center text-[12px] font-normal text-white">
-          © 166temizlik.az. Site by Webline
-        </div>
-      </footer>
-    </>
-  );
-}
-
 export default function Home() {
   return (
     <main>
@@ -358,8 +255,7 @@ export default function Home() {
       <PartnersSection />
       <TestimonialsSection />
       <CtaFooter />
-      <Link href={site.whatsappHref} aria-label="Whatsapp" className="floating-action floating-whatsapp">☎</Link>
-      <Link href="#order" aria-label="Chat" className="floating-action floating-chat">▰</Link>
+      <FloatingButtons />
     </main>
   );
 }
