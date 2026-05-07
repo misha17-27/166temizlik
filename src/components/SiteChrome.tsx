@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { chromeCopy, getLanguageOptions, getLocalizedServices, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site-data";
 
@@ -79,6 +79,22 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
     setMobileSubmenu(null);
   }
 
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      return;
+    }
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <header className="sticky top-0 z-50 blue-band">
       <div className="mx-auto flex h-[78px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-5 max-md:h-[72px] max-md:w-[calc(100%-20px)] max-md:gap-2">
@@ -144,7 +160,9 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
             onClick={() => setMobileMenuOpen(true)}
             className="hidden h-10 w-10 rounded-lg border-2 border-white text-2xl font-black leading-none text-white max-lg:block max-md:h-9 max-md:w-9 max-md:text-xl"
           >
-            ≡
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="mx-auto h-6 w-6" fill="none">
+              <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
           </button>
           {languageOptions.map((item) => (
             <Link key={item.label} href={item.href} prefetch={false} className="grid h-[44px] w-[44px] place-items-center rounded-full bg-white text-base font-bold text-black max-md:h-9 max-md:w-9 max-md:text-sm">
@@ -155,71 +173,77 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
       </div>
 
       {mobileMenuOpen ? (
-        <div className="fixed inset-0 z-[80] bg-brand-blue text-white lg:hidden">
-          <button
-            type="button"
-            aria-label="Close menu"
-            onClick={closeMobileMenu}
-            className="absolute right-8 top-7 grid h-12 w-12 place-items-center text-brand-yellow"
-          >
-            <svg aria-hidden="true" viewBox="0 0 32 32" className="h-9 w-9" fill="none">
-              <path d="M7 7 25 25M25 7 7 25" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-            </svg>
-          </button>
+        <div className="fixed inset-0 z-[80] overflow-y-auto bg-white text-[#050505] lg:hidden">
+          <div className="relative mx-auto min-h-full w-full max-w-[520px] px-4 pb-16 pt-10">
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={closeMobileMenu}
+              className="absolute right-5 top-10 grid h-[19px] w-[19px] place-items-center rounded-full border border-[#050505] text-[#050505]"
+            >
+              <svg aria-hidden="true" viewBox="0 0 18 18" className="h-3 w-3" fill="none">
+                <path d="M5 5 13 13M13 5 5 13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+              </svg>
+            </button>
 
-          {mobileSubmenu ? (
-            <nav className="mx-auto flex min-h-full w-full max-w-[430px] flex-col px-7 pb-12 pt-[88px]">
-              <div className="flex items-center justify-between gap-5">
-                <h2 className="text-[32px] font-bold leading-tight text-white">{activeMobileSubmenu?.label}</h2>
-                <button
-                  type="button"
-                  aria-label="Back to menu"
-                  onClick={() => setMobileSubmenu(null)}
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-[10px] border border-white/70 text-brand-yellow"
-                >
-                  <svg aria-hidden="true" viewBox="0 0 28 28" className="h-6 w-6" fill="none">
-                    <path d="M17.5 7 10.5 14l7 7" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </div>
-              <div className="mt-4 h-px w-full bg-brand-yellow" />
-              <ul className="mt-8 space-y-5 text-[20px] font-semibold leading-tight text-white">
-                {activeMobileSubmenuItems.map((menuItem) => (
-                  <li key={menuItem.href}>
-                    <Link href={menuItem.href} prefetch={false} onClick={closeMobileMenu} className="block py-1">
-                      {menuItem.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ) : (
-            <nav className="flex min-h-full items-center justify-center px-6 py-24 text-center">
-              <ul className="w-full max-w-[360px] space-y-6 text-[24px] font-bold leading-tight">
-                {navItems.map((item) => (
-                  <li key={item.key}>
-                    {item.hasMenu ? (
-                      <button
-                        type="button"
-                        className="mx-auto flex items-center justify-center gap-3 text-white"
-                        aria-expanded={false}
-                        onClick={() => setMobileSubmenu(item.key as "services" | "about")}
-                      >
-                        {item.label}
-                        <svg aria-hidden="true" viewBox="0 0 20 20" className="h-[13px] w-[13px] translate-y-[2px]" fill="none">
-                          <path d="M4.5 7.25 10 12.75l5.5-5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                    ) : (
-                      <Link href={item.href} prefetch={false} onClick={closeMobileMenu}>
-                        {item.label}
+            <div className="mt-[33px] h-[2px] w-full bg-brand-yellow" />
+
+            {mobileSubmenu ? (
+              <nav className="pt-8">
+                <div className="flex items-center justify-between gap-5">
+                  <h2 className="text-[28px] font-medium leading-tight text-[#050505]">{activeMobileSubmenu?.label}</h2>
+                  <button
+                    type="button"
+                    aria-label="Back to menu"
+                    onClick={() => setMobileSubmenu(null)}
+                    className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-[#050505] text-[#050505]"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none">
+                      <path d="M12.5 5 7.5 10l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+
+                <ul className="mt-8 space-y-6 text-[21px] font-normal leading-tight text-[#050505]">
+                  {activeMobileSubmenuItems.map((menuItem) => (
+                    <li key={menuItem.href}>
+                      <Link href={menuItem.href} prefetch={false} onClick={closeMobileMenu} className="block py-1">
+                        {menuItem.label}
                       </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ) : (
+              <nav className="pt-8">
+                <ul className="space-y-8 text-[22px] font-normal leading-tight text-[#050505]">
+                  {navItems.map((item) => (
+                    <li key={item.key}>
+                      {item.hasMenu ? (
+                        <button
+                          type="button"
+                          className="flex w-full items-center justify-between gap-4 py-1 text-left text-[#050505]"
+                          aria-expanded={mobileSubmenu === item.key}
+                          onClick={() => setMobileSubmenu(item.key as "services" | "about")}
+                        >
+                          <span>{item.label}</span>
+                          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-[#050505] text-[#050505]">
+                            <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none">
+                              <path d="M7.5 5 12.5 10l-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </span>
+                        </button>
+                      ) : (
+                        <Link href={item.href} prefetch={false} onClick={closeMobileMenu} className="block py-1">
+                          {item.label}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+          </div>
         </div>
       ) : null}
     </header>
