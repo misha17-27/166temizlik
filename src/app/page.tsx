@@ -1,17 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BeforeAfterGallery } from "@/components/BeforeAfterGallery";
+import { CleaningPackageCard } from "@/components/CleaningPackageCard";
+import { ClockIcon } from "@/components/ClockIcon";
 import { HeroSlider } from "@/components/HeroSlider";
 import { CtaFooter, FloatingButtons, Header } from "@/components/SiteChrome";
 import {
   hourlyPrices,
   packageFeatures,
   partners,
-  priceCircleImages,
   services,
   site,
   testimonials,
-  weeklyPrices,
 } from "@/lib/site-data";
 
 function ServicesSection() {
@@ -39,60 +39,6 @@ function ServicesSection() {
   );
 }
 
-function PackageCard({
-  title,
-  items,
-  priceKey,
-  tone,
-}: {
-  title: string;
-  items: string[];
-  priceKey: "four" | "eight";
-  tone: "blue" | "yellow";
-}) {
-  const visibleItems = priceKey === "eight" ? items.slice(0, 5) : items;
-  const circleImage = priceKey === "four" ? priceCircleImages.four : priceCircleImages.eight;
-
-  return (
-    <article className="relative rounded-[18px] bg-white px-10 pb-9 pt-20 shadow-[0_8px_24px_rgb(0_116_202_/_8%)] max-md:px-6">
-      <div
-        className={`absolute -top-3 left-8 flex h-[44px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 text-[17px] font-semibold text-white ${
-          tone === "blue" ? "bg-[#1097ed]" : "bg-[#ffd000]"
-        }`}
-      >
-        <span className="grid h-[18px] w-[18px] place-items-center rounded-full border-2 border-white text-[12px]">◷</span>
-        {title}
-      </div>
-
-      <ol className="min-h-[180px] space-y-2 text-[18px] font-normal leading-[1.38] text-black max-md:text-[15px]">
-        {visibleItems.map((item, index) => (
-          <li key={item} className={priceKey === "eight" && index > 2 ? "text-black/35" : ""}>
-            {index + 1}. {item}
-          </li>
-        ))}
-      </ol>
-
-      {priceKey === "eight" ? (
-        <Link href="#services" className="mt-3 inline-block text-[17px] text-[#006ed3] underline underline-offset-2">
-          Daha çox
-        </Link>
-      ) : null}
-
-      <div className="mt-7 grid grid-cols-3 gap-4">
-        {weeklyPrices.map((price) => (
-          <div key={price.label} className="text-center">
-            <p className="mb-2 text-[16px] font-semibold text-black max-md:text-[13px]">{price.label}</p>
-            <div className="relative mx-auto grid h-[100px] w-[100px] place-items-center max-md:h-[78px] max-md:w-[78px]">
-              <Image src={circleImage} alt="" fill sizes="100px" className="object-contain" />
-              <span className="relative text-[26px] font-semibold text-white max-md:text-[20px]">{price[priceKey]}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </article>
-  );
-}
-
 function HourlyPriceStrip() {
   return (
     <div className="relative mt-10">
@@ -100,8 +46,8 @@ function HourlyPriceStrip() {
       <div className="relative grid grid-cols-5 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-1">
         {hourlyPrices.map((price) => (
           <article key={price.time} className="rounded-[16px] bg-white px-5 py-7 text-center shadow-[0_6px_20px_rgb(0_116_202_/_8%)]">
-            <div className="mx-auto mb-5 grid h-[60px] w-[60px] place-items-center rounded-full bg-[#95df22] text-3xl text-white">
-              ◷
+            <div className="mx-auto mb-5 grid h-[60px] w-[60px] place-items-center rounded-full bg-[#95df22] text-white">
+              <ClockIcon className="h-[30px] w-[30px]" strokeWidth={2.1} />
             </div>
             <h3 className="text-[19px] font-bold text-black">{price.time}</h3>
             <p className="mt-3 text-[15px] leading-[1.45] text-black">
@@ -124,8 +70,8 @@ function PricesSection() {
       <div className="container-shell">
         <h2 className="section-title mb-20">Ev təmizlik paketləri</h2>
         <div className="grid grid-cols-2 gap-10 max-lg:grid-cols-1">
-          <PackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" />
-          <PackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" />
+          <CleaningPackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" />
+          <CleaningPackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" />
         </div>
         <HourlyPriceStrip />
       </div>

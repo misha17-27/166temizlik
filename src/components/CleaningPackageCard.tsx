@@ -1,0 +1,90 @@
+"use client";
+
+import Image from "next/image";
+import { useState } from "react";
+import { priceCircleImages, weeklyPrices } from "@/lib/site-data";
+import { ClockIcon } from "@/components/ClockIcon";
+
+type PackageVariant = "home" | "detail";
+
+const styles = {
+  home: {
+    article: "relative rounded-[18px] bg-white px-10 pb-9 pt-20 shadow-[0_8px_24px_rgb(0_116_202_/_8%)] max-md:px-6",
+    badge: "absolute -top-3 left-8 flex h-[44px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 text-[17px] font-semibold text-white",
+    icon: "h-[18px] w-[18px]",
+    list: "min-h-[180px] space-y-2 text-[18px] font-normal leading-[1.38] text-black max-md:text-[15px]",
+    toggle: "mt-3 inline-block text-[17px] text-[#006ed3] underline underline-offset-2",
+    grid: "mt-7 grid grid-cols-3 gap-4",
+    label: "mb-2 text-[16px] font-semibold text-black max-md:text-[13px]",
+    circle: "relative mx-auto grid h-[100px] w-[100px] place-items-center max-md:h-[78px] max-md:w-[78px]",
+    price: "relative text-[26px] font-semibold text-white max-md:text-[20px]",
+    imageSize: "100px",
+  },
+  detail: {
+    article: "relative rounded-[20px] bg-white px-8 pb-10 pt-[72px] shadow-[0_0_10px_rgb(228_239_255_/_50%)] max-md:px-5",
+    badge: "absolute left-8 top-5 flex h-[42px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 text-[15px] font-semibold text-white",
+    icon: "h-[17px] w-[17px]",
+    list: "min-h-[210px] space-y-1 text-[13px] font-normal leading-[1.45] text-black",
+    toggle: "mt-3 inline-block text-[13px] text-[#006ed3] underline underline-offset-2",
+    grid: "mt-6 grid grid-cols-3 gap-3",
+    label: "mb-2 text-[12px] font-semibold text-black",
+    circle: "relative mx-auto grid h-[82px] w-[82px] place-items-center",
+    price: "relative text-[20px] font-semibold text-white",
+    imageSize: "82px",
+  },
+} satisfies Record<PackageVariant, Record<string, string>>;
+
+export function CleaningPackageCard({
+  title,
+  items,
+  priceKey,
+  tone,
+  variant = "home",
+}: {
+  title: string;
+  items: string[];
+  priceKey: "four" | "eight";
+  tone: "blue" | "yellow";
+  variant?: PackageVariant;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const style = styles[variant];
+  const isExpandable = priceKey === "eight" && items.length > 5;
+  const visibleItems = isExpandable && !expanded ? items.slice(0, 5) : items;
+  const circleImage = priceKey === "four" ? priceCircleImages.four : priceCircleImages.eight;
+
+  return (
+    <article className={style.article}>
+      <div className={`${style.badge} ${tone === "blue" ? "bg-[#1097ed]" : "bg-[#ffd000]"}`}>
+        <ClockIcon className={style.icon} strokeWidth={2.15} />
+        {title}
+      </div>
+
+      <ol className={style.list}>
+        {visibleItems.map((item, index) => (
+          <li key={item} className={isExpandable && !expanded && index > 2 ? "text-black/35" : ""}>
+            {index + 1}. {item}
+          </li>
+        ))}
+      </ol>
+
+      {isExpandable ? (
+        <button type="button" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)} className={style.toggle}>
+          {expanded ? "Daha az" : "Daha çox"}
+        </button>
+      ) : null}
+
+      <div className={style.grid}>
+        {weeklyPrices.map((price) => (
+          <div key={price.label} className="text-center">
+            <p className={style.label}>{price.label}</p>
+            <div className={style.circle}>
+              <Image src={circleImage} alt="" fill sizes={style.imageSize} className="object-contain" />
+              <span className={style.price}>{price[priceKey]}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}

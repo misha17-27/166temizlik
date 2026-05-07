@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { CleaningPackageCard } from "@/components/CleaningPackageCard";
+import { ClockIcon } from "@/components/ClockIcon";
 import { SitePage } from "@/components/SiteChrome";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { hourlyPrices, packageFeatures, priceCircleImages, site, weeklyPrices } from "@/lib/site-data";
+import { hourlyPrices, packageFeatures, site } from "@/lib/site-data";
 
 const detailImageSets: Record<string, string[]> = {
   "ev-temizliyi-xidmeti": [
@@ -240,57 +242,14 @@ function IncludedSection({ service, images }: { service: (typeof servicePages)[n
   );
 }
 
-function PackageCard({
-  title,
-  items,
-  priceKey,
-  tone,
-}: {
-  title: string;
-  items: string[];
-  priceKey: "four" | "eight";
-  tone: "blue" | "yellow";
-}) {
-  const circleImage = priceKey === "four" ? priceCircleImages.four : priceCircleImages.eight;
-
-  return (
-    <article className="relative rounded-[20px] bg-white px-8 pb-10 pt-[72px] shadow-[0_0_10px_rgb(228_239_255_/_50%)] max-md:px-5">
-      <div
-        className={`absolute left-8 top-5 flex h-[42px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 text-[15px] font-semibold text-white ${
-          tone === "blue" ? "bg-[#0394fc]" : "bg-[#ffd600]"
-        }`}
-      >
-        <span className="grid h-[17px] w-[17px] place-items-center rounded-full border-2 border-white text-[10px]">◷</span>
-        {title}
-      </div>
-      <ol className="min-h-[210px] space-y-1 text-[13px] font-normal leading-[1.45] text-black">
-        {items.map((item, index) => (
-          <li key={item}>
-            {index + 1}. {item}
-          </li>
-        ))}
-      </ol>
-      <div className="mt-6 grid grid-cols-3 gap-3">
-        {weeklyPrices.map((price) => (
-          <div key={price.label} className="text-center">
-            <p className="mb-2 text-[12px] font-semibold text-black">{price.label}</p>
-            <div className="relative mx-auto grid h-[82px] w-[82px] place-items-center">
-              <Image src={circleImage} alt="" fill sizes="82px" className="object-contain" />
-              <span className="relative text-[20px] font-semibold text-white">{price[priceKey]}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </article>
-  );
-}
-
 function HourlyCards() {
   return (
     <div className="grid grid-cols-5 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-1">
       {hourlyPrices.map((price) => (
         <article key={price.time} className="rounded-[12px] bg-white px-4 py-5 text-center shadow-[0_6px_20px_rgb(0_116_202_/_7%)]">
-          <div className="mx-auto mb-3 grid h-[42px] w-[42px] place-items-center rounded-full bg-[#95df22] text-2xl text-white">◷</div>
+          <div className="mx-auto mb-3 grid h-[42px] w-[42px] place-items-center rounded-full bg-[#95df22] text-white">
+            <ClockIcon className="h-[23px] w-[23px]" strokeWidth={2.1} />
+          </div>
           <h3 className="text-[15px] font-bold text-black">{price.time}</h3>
           <p className="mt-2 text-[11px] leading-[1.5] text-black">
             {price.city}
@@ -329,8 +288,8 @@ function PackagesAndNote() {
     <section className="bg-[#f7f7f7] pb-20">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <div className="grid grid-cols-2 gap-10 max-lg:grid-cols-1">
-          <PackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" />
-          <PackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" />
+          <CleaningPackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" />
+          <CleaningPackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" />
         </div>
         <div className="relative z-10 mt-16">
           <HourlyCards />
