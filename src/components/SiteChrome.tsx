@@ -55,6 +55,38 @@ const socialIcons = [
   },
 ];
 
+const contactIcons = {
+  phone: (
+    <path
+      d="M7.1 4.7c.4-.4.9-.5 1.4-.2l1.9 1.1c.5.3.8.9.6 1.5l-.6 1.9c-.1.4-.5.7-.9.8l-1.1.2c.9 2.1 2.5 3.7 4.6 4.6l.2-1.1c.1-.4.4-.8.8-.9l1.9-.6c.6-.2 1.2.1 1.5.6l1.1 1.9c.3.5.2 1-.2 1.4l-1.2 1.3c-.8.8-2 1.2-3.2.9-4.8-1.1-8.6-4.9-9.7-9.7-.3-1.2.1-2.4.9-3.2l1.3-1.2Z"
+      fill="currentColor"
+    />
+  ),
+  mobile: (
+    <>
+      <rect x="7.4" y="3.2" width="9.2" height="17.6" rx="1.7" stroke="currentColor" strokeWidth="1.9" />
+      <path d="M10.4 5.7h3.2M11.3 18h1.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </>
+  ),
+  pin: (
+    <>
+      <path
+        d="M12 21s6.1-5.2 6.1-11a6.1 6.1 0 1 0-12.2 0C5.9 15.8 12 21 12 21Z"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="10" r="2.2" stroke="currentColor" strokeWidth="1.9" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="4" y="6.5" width="16" height="11" rx="1.8" stroke="currentColor" strokeWidth="1.9" />
+      <path d="m5.1 7.8 6.9 5.1 6.9-5.1" stroke="currentColor" strokeWidth="1.9" strokeLinejoin="round" />
+    </>
+  ),
+};
+
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
 export function Header({ active = "home", locale = "az" }: { active?: HeaderActive; locale?: Locale }) {
@@ -306,10 +338,38 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
           <div>
             <h3 className="mb-3 text-[16px] font-bold">{copy.footer.contact}</h3>
             <ul className="space-y-2 text-[14px] font-normal leading-[1.45]">
-              <li>☎ <Link href={site.phoneHref}>{copy.footer.phone}</Link></li>
-              <li>▯ <Link href={site.mobileHref}>{site.mobileLabel}</Link></li>
-              <li>⌖ {copy.footer.address}</li>
-              <li>✉ <Link href={`mailto:${site.email}`}>{site.email}</Link></li>
+              <li className="flex items-start gap-2">
+                <span className="mt-[3px] grid h-[15px] w-[15px] shrink-0 place-items-center text-white">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]">
+                    {contactIcons.phone}
+                  </svg>
+                </span>
+                <Link href={site.phoneHref}>{copy.footer.phone}</Link>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-[2px] grid h-[15px] w-[15px] shrink-0 place-items-center text-white">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
+                    {contactIcons.mobile}
+                  </svg>
+                </span>
+                <Link href={site.mobileHref}>{site.mobileLabel}</Link>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-[3px] grid h-[15px] w-[15px] shrink-0 place-items-center text-white">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
+                    {contactIcons.pin}
+                  </svg>
+                </span>
+                <span>{copy.footer.address}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-[3px] grid h-[15px] w-[15px] shrink-0 place-items-center text-white">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
+                    {contactIcons.mail}
+                  </svg>
+                </span>
+                <Link href={`mailto:${site.email}`}>{site.email}</Link>
+              </li>
             </ul>
             <div className="mt-4 flex gap-2">
               {socialIcons.map((item) => (
