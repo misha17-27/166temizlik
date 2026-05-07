@@ -164,7 +164,7 @@ function AboutSection({ copy }: { copy: HomeCopy }) {
 }
 
 function BeforeAfterSection({ copy }: { copy: HomeCopy }) {
-  return <BeforeAfterGallery partnerLogos={partners} partnerTitle={copy.beforeAfterPartnerTitle} />;
+  return <BeforeAfterGallery partnerLogos={partners} partnerTitle={copy.beforeAfterPartnerTitle} copy={copy.beforeAfter} />;
 }
 
 function TestimonialsSection({ copy }: { copy: HomeCopy }) {

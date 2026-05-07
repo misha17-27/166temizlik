@@ -4,11 +4,33 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { beforeAfter } from "@/lib/site-data";
 
+type BeforeAfterCopy = {
+  title: string;
+  accent: string;
+  beforeLabel: string;
+  afterLabel: string;
+};
+
+const defaultCopy: BeforeAfterCopy = {
+  title: "GÖRDÜYÜMÜZ",
+  accent: "İŞLƏR",
+  beforeLabel: "Əvvəl",
+  afterLabel: "Sonra",
+};
+
 function clamp(value: number) {
   return Math.min(92, Math.max(8, value));
 }
 
-export function BeforeAfterGallery({ partnerLogos = [], partnerTitle = "PARTNYORLAR" }: { partnerLogos?: string[]; partnerTitle?: string }) {
+export function BeforeAfterGallery({
+  partnerLogos = [],
+  partnerTitle = "PARTNYORLAR",
+  copy = defaultCopy,
+}: {
+  partnerLogos?: string[];
+  partnerTitle?: string;
+  copy?: BeforeAfterCopy;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [divider, setDivider] = useState(60);
   const [dragging, setDragging] = useState(false);
@@ -31,8 +53,8 @@ export function BeforeAfterGallery({ partnerLogos = [], partnerTitle = "PARTNYOR
   return (
     <section id="gallery" data-section="before-after" className="bg-white py-16 max-md:py-10">
       <div className="mx-auto w-[min(1200px,calc(100%-40px))] rounded-[14px] bg-[#e4f1ff] px-[70px] pb-14 pt-8 max-lg:px-10 max-md:w-[calc(100%-30px)] max-md:px-4 max-md:pb-8">
-        <div className="mb-8 text-center [font-family:var(--font-montserrat)] text-[13px] font-bold uppercase tracking-normal text-black max-md:mb-5">
-          GÖRDÜYÜMÜZ <span className="ml-2 font-normal text-brand-blue">İŞLƏR</span>
+        <div className="mb-8 text-center [font-family:var(--font-montserrat)] text-[23px] font-bold uppercase leading-tight tracking-normal text-black max-md:mb-5 max-md:text-[18px]">
+          {copy.title} <span className="ml-2 font-normal text-brand-blue">{copy.accent}</span>
         </div>
 
         <div
@@ -52,10 +74,10 @@ export function BeforeAfterGallery({ partnerLogos = [], partnerTitle = "PARTNYOR
           onPointerUp={() => setDragging(false)}
           onPointerCancel={() => setDragging(false)}
         >
-          <Image src={active.after} alt={`${active.title} sonra`} fill sizes="640px" className="object-cover" priority />
+          <Image src={active.after} alt={`${active.title} ${copy.afterLabel}`} fill sizes="640px" className="object-cover" priority />
           <Image
             src={active.before}
-            alt={`${active.title} əvvəl`}
+            alt={`${active.title} ${copy.beforeLabel}`}
             fill
             sizes="640px"
             className="object-cover"
@@ -64,10 +86,10 @@ export function BeforeAfterGallery({ partnerLogos = [], partnerTitle = "PARTNYOR
           />
 
           <span className="absolute left-2 top-2 bg-brand-yellow px-2 py-1 [font-family:var(--font-montserrat)] text-[10px] font-semibold text-black">
-            əvvəl
+            {copy.beforeLabel}
           </span>
           <span className="absolute right-2 top-2 bg-brand-yellow px-2 py-1 [font-family:var(--font-montserrat)] text-[10px] font-semibold text-black">
-            sonra
+            {copy.afterLabel}
           </span>
 
           <div className="absolute inset-y-0 z-10 w-[2px] bg-white shadow-[0_0_0_1px_rgb(0_78_160_/_35%)]" style={{ left: `${divider}%` }} />
@@ -109,7 +131,7 @@ export function BeforeAfterGallery({ partnerLogos = [], partnerTitle = "PARTNYOR
           ))}
         </div>
 
-        <div className="mx-auto mt-8 grid max-w-[790px] grid-cols-4 gap-2 max-md:grid-cols-2">
+        <div className="mx-auto mt-8 grid max-w-[970px] grid-cols-4 gap-2 max-md:grid-cols-2">
           {beforeAfter.map((item, index) => (
             <button
               type="button"
