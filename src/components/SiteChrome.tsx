@@ -39,12 +39,16 @@ export function Header({ active = "home" }: { active?: HeaderActive }) {
                   href={item.href}
                   prefetch={false}
                   style={isActive ? { color: "#0074ca" } : undefined}
-                  className={`block whitespace-nowrap rounded-full px-4 py-2.5 transition ${
+                  className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 transition ${
                     isActive ? "bg-white" : "text-white hover:bg-white/12"
                   }`}
                 >
                   {item.label}
-                  {item.hasMenu ? <span className="ml-2 text-xs">▼</span> : null}
+                  {item.hasMenu ? (
+                    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-[12px] w-[12px] translate-y-[1px]" fill="none">
+                      <path d="M4.5 7.25 10 12.75l5.5-5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : null}
                 </Link>
 
                 {menuItems.length ? (
