@@ -70,6 +70,9 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
     { key: "contact", label: copy.nav.contact, href: "/166-temizlik-elaqe/" },
   ];
   const languageOptions = getLanguageOptions(locale);
+  const activeMobileSubmenu = mobileSubmenu ? navItems.find((item) => item.key === mobileSubmenu) : null;
+  const activeMobileSubmenuItems =
+    mobileSubmenu === "services" ? localizedServices.map((service) => ({ label: service.title, href: service.href })) : mobileSubmenu === "about" ? copy.aboutMenu : [];
 
   function closeMobileMenu() {
     setMobileMenuOpen(false);
@@ -164,55 +167,59 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
             </svg>
           </button>
 
-          <nav className="flex min-h-full items-center justify-center px-6 py-24 text-center">
-            <ul className="w-full max-w-[360px] space-y-6 text-[24px] font-bold leading-tight">
-              {navItems.map((item) => {
-                const submenuItems =
-                  item.key === "services" ? localizedServices.map((service) => ({ label: service.title, href: service.href })) : item.key === "about" ? copy.aboutMenu : [];
-                const isMenuOpen = mobileSubmenu === item.key;
-
-                return (
+          {mobileSubmenu ? (
+            <nav className="mx-auto flex min-h-full w-full max-w-[430px] flex-col px-7 pb-12 pt-[88px]">
+              <div className="flex items-center justify-between gap-5">
+                <h2 className="text-[32px] font-bold leading-tight text-white">{activeMobileSubmenu?.label}</h2>
+                <button
+                  type="button"
+                  aria-label="Back to menu"
+                  onClick={() => setMobileSubmenu(null)}
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-[10px] border border-white/70 text-brand-yellow"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 28 28" className="h-6 w-6" fill="none">
+                    <path d="M17.5 7 10.5 14l7 7" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
+              <div className="mt-4 h-px w-full bg-brand-yellow" />
+              <ul className="mt-8 space-y-5 text-[20px] font-semibold leading-tight text-white">
+                {activeMobileSubmenuItems.map((menuItem) => (
+                  <li key={menuItem.href}>
+                    <Link href={menuItem.href} prefetch={false} onClick={closeMobileMenu} className="block py-1">
+                      {menuItem.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : (
+            <nav className="flex min-h-full items-center justify-center px-6 py-24 text-center">
+              <ul className="w-full max-w-[360px] space-y-6 text-[24px] font-bold leading-tight">
+                {navItems.map((item) => (
                   <li key={item.key}>
                     {item.hasMenu ? (
-                      <>
-                        <button
-                          type="button"
-                          className="mx-auto flex items-center justify-center gap-3 text-white"
-                          aria-expanded={isMenuOpen}
-                          onClick={() => setMobileSubmenu(isMenuOpen ? null : (item.key as "services" | "about"))}
-                        >
-                          {item.label}
-                          <svg
-                            aria-hidden="true"
-                            viewBox="0 0 20 20"
-                            className={`h-[13px] w-[13px] translate-y-[2px] transition ${isMenuOpen ? "rotate-180" : ""}`}
-                            fill="none"
-                          >
-                            <path d="M4.5 7.25 10 12.75l5.5-5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </button>
-                        {isMenuOpen ? (
-                          <ul className="mt-4 space-y-3 text-[16px] font-semibold text-white/95">
-                            {submenuItems.map((menuItem) => (
-                              <li key={menuItem.href}>
-                                <Link href={menuItem.href} prefetch={false} onClick={closeMobileMenu}>
-                                  {menuItem.label}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : null}
-                      </>
+                      <button
+                        type="button"
+                        className="mx-auto flex items-center justify-center gap-3 text-white"
+                        aria-expanded={false}
+                        onClick={() => setMobileSubmenu(item.key as "services" | "about")}
+                      >
+                        {item.label}
+                        <svg aria-hidden="true" viewBox="0 0 20 20" className="h-[13px] w-[13px] translate-y-[2px]" fill="none">
+                          <path d="M4.5 7.25 10 12.75l5.5-5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
                     ) : (
                       <Link href={item.href} prefetch={false} onClick={closeMobileMenu}>
                         {item.label}
                       </Link>
                     )}
                   </li>
-                );
-              })}
-            </ul>
-          </nav>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
       ) : null}
     </header>
