@@ -74,7 +74,7 @@ export function BeforeAfterGallery() {
           <button
             type="button"
             aria-label="Şəkil müqayisə ştorunu sürüşdür"
-            className="absolute top-1/2 z-20 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#0058b8] text-[14px] font-black text-white shadow-[0_4px_12px_rgb(0_0_0_/_25%)]"
+            className="absolute top-1/2 z-20 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#00419d] text-[#ffd600] shadow-[0_4px_12px_rgb(0_0_0_/_25%)]"
             style={{ left: `${divider}%` }}
             onKeyDown={(event) => {
               if (event.key === "ArrowLeft") {
@@ -86,7 +86,10 @@ export function BeforeAfterGallery() {
               }
             }}
           >
-            ›
+            <svg aria-hidden="true" viewBox="0 0 26 18" className="h-[14px] w-[20px]" fill="none">
+              <path d="M10.3 4.1 6 9l4.3 4.9" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M15.7 4.1 20 9l-4.3 4.9" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
         </div>
 
