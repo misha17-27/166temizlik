@@ -266,18 +266,16 @@ function HourlyCards() {
 
 function NotePanel() {
   return (
-    <div className="mt-8 rounded-[30px] bg-[#e4efff] px-[90px] pb-[58px] pt-[120px] max-lg:px-8 max-md:px-4 max-md:pt-8">
-      <div className="mx-auto grid max-w-[850px] grid-cols-[0.85fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-md:grid-cols-1">
-        <div className="relative min-h-[265px] overflow-hidden max-md:min-h-[220px]">
-          <Image src={site.noteImage} alt="Qeyd" fill sizes="360px" className="object-cover" />
-          <div className="absolute -right-10 top-[-20%] h-[140%] w-[90px] rounded-[50%] border-r-[18px] border-[#ffd600] bg-brand-blue max-md:hidden" />
-        </div>
-        <div className="px-10 py-9 max-md:px-6">
-          <h3 className="text-[22px] font-bold">QEYD</h3>
-          <p className="mt-5 text-[13px] font-semibold leading-[1.6] text-white">
-            Təmizlik xidməti sizin seçiminiz əsasında olur. Belə ki, daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək.
-          </p>
-        </div>
+    <div className="mx-auto grid max-w-[850px] grid-cols-[0.85fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-md:grid-cols-1">
+      <div className="relative min-h-[265px] overflow-hidden max-md:min-h-[220px]">
+        <Image src={site.noteImage} alt="Qeyd" fill sizes="360px" className="object-cover" />
+        <div className="absolute -right-10 top-[-20%] h-[140%] w-[90px] rounded-[50%] border-r-[18px] border-[#ffd600] bg-brand-blue max-md:hidden" />
+      </div>
+      <div className="px-10 py-9 max-md:px-6">
+        <h3 className="text-[22px] font-bold">QEYD</h3>
+        <p className="mt-5 text-[13px] font-semibold leading-[1.6] text-white">
+          Təmizlik xidməti sizin seçiminiz əsasında olur. Belə ki, daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək.
+        </p>
       </div>
     </div>
   );
@@ -291,10 +289,14 @@ function PackagesAndNote() {
           <CleaningPackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" />
           <CleaningPackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" />
         </div>
-        <div className="relative z-10 mt-16">
-          <HourlyCards />
+        <div className="mt-[92px] rounded-[30px] bg-[#e4efff] px-[42px] pb-[70px] pt-0 max-lg:px-8 max-md:mt-10 max-md:px-4 max-md:py-8">
+          <div className="relative z-10 -translate-y-[54px] max-md:translate-y-0">
+            <HourlyCards />
+          </div>
+          <div className="pt-[72px] max-md:pt-8">
+            <NotePanel />
+          </div>
         </div>
-        <NotePanel />
       </div>
     </section>
   );

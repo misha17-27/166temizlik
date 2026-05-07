@@ -41,8 +41,7 @@ function ServicesSection() {
 
 function HourlyPriceStrip() {
   return (
-    <div className="relative mt-10">
-      <div className="absolute inset-x-[-80px] bottom-0 h-[120px] rounded-t-[26px] bg-[#e4f1ff] max-md:hidden" />
+    <div className="relative">
       <div className="relative grid grid-cols-5 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-1">
         {hourlyPrices.map((price) => (
           <article key={price.time} className="rounded-[16px] bg-white px-5 py-7 text-center shadow-[0_6px_20px_rgb(0_116_202_/_8%)]">
@@ -73,34 +72,37 @@ function PricesSection() {
           <CleaningPackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" />
           <CleaningPackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" />
         </div>
-        <HourlyPriceStrip />
+        <div className="mt-[95px] rounded-[30px] bg-[#e4efff] px-[48px] pb-[66px] pt-0 max-lg:px-7 max-md:mt-12 max-md:px-4 max-md:py-8">
+          <div className="-translate-y-[58px] max-md:translate-y-0">
+            <HourlyPriceStrip />
+          </div>
+          <div className="pt-[88px] max-md:pt-8">
+            <NotePanel />
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-function NotesSection() {
+function NotePanel() {
   return (
-    <section className="bg-white py-16 max-md:py-10">
-      <div className="container-shell">
-        <div className="grid min-h-[400px] grid-cols-[0.75fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-lg:grid-cols-1">
-          <div className="relative min-h-[400px] overflow-hidden max-lg:min-h-[260px]">
-            <Image src={site.noteImage} alt="166 Təmizlik qeydlər" fill sizes="520px" className="object-cover" />
-            <div className="absolute -right-16 top-[-20%] h-[140%] w-[160px] rounded-[50%] border-r-[22px] border-[#ffd200] bg-brand-blue max-lg:hidden" />
-          </div>
-          <div className="px-16 py-8 max-lg:px-8 max-md:px-6">
-            <h3 className="text-[30px] font-bold">QEYD</h3>
-            <ul className="mt-8 list-disc space-y-2 pl-5 text-[20px] font-normal leading-[1.35] max-md:text-[16px]">
-              <li>Təmizlik zamanı bütün vasitə və təmizləyici maddələr <strong>qiymətə daxildir.</strong></li>
-              <li>Təmizlik zamanı <strong>hər əlavə saata görə 10 AZN</strong> hesablanacaqdır.</li>
-              <li>Təhlükəli yerdə olan pəncərələrin silinməsi <strong>qiymətə daxil deyil.</strong></li>
-              <li>Yumşaq mebellərin kimyəvi təmizlənməsi <strong>qiymətə daxil deyil.</strong></li>
-              <li>Öncədən ödəniş edildiyi halda qiymətlərə <strong>endirim</strong> tətbiq edilir</li>
-            </ul>
-          </div>
-        </div>
+    <div className="mx-auto grid min-h-[320px] w-full max-w-[900px] grid-cols-[0.75fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-lg:grid-cols-1">
+      <div className="relative min-h-[320px] overflow-hidden max-lg:min-h-[260px]">
+        <Image src={site.noteImage} alt="166 Təmizlik qeydlər" fill sizes="520px" className="object-cover" />
+        <div className="absolute -right-16 top-[-20%] h-[140%] w-[160px] rounded-[50%] border-r-[22px] border-[#ffd200] bg-brand-blue max-lg:hidden" />
       </div>
-    </section>
+      <div className="px-12 py-8 max-lg:px-8 max-md:px-6">
+        <h3 className="text-[30px] font-bold">QEYD</h3>
+        <ul className="mt-8 list-disc space-y-2 pl-5 text-[18px] font-normal leading-[1.35] max-md:text-[16px]">
+          <li>Təmizlik zamanı bütün vasitə və təmizləyici maddələr <strong>qiymətə daxildir.</strong></li>
+          <li>Təmizlik zamanı <strong>hər əlavə saata görə 10 AZN</strong> hesablanacaqdır.</li>
+          <li>Təhlükəli yerdə olan pəncərələrin silinməsi <strong>qiymətə daxil deyil.</strong></li>
+          <li>Yumşaq mebellərin kimyəvi təmizlənməsi <strong>qiymətə daxil deyil.</strong></li>
+          <li>Öncədən ödəniş edildiyi halda qiymətlərə <strong>endirim</strong> tətbiq edilir</li>
+        </ul>
+      </div>
+    </div>
   );
 }
 
@@ -195,7 +197,6 @@ export default function Home() {
       <HeroSlider />
       <ServicesSection />
       <PricesSection />
-      <NotesSection />
       <AboutSection />
       <BeforeAfterSection />
       <PartnersSection />
