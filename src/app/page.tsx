@@ -143,28 +143,7 @@ function AboutSection() {
 }
 
 function BeforeAfterSection() {
-  return <BeforeAfterGallery />;
-}
-
-function PartnersSection() {
-  const loop = [...partners, ...partners];
-
-  return (
-    <section className="overflow-hidden bg-white py-16">
-      <div className="container-shell rounded-b-[28px] bg-[#e4f1ff] px-[110px] pb-14 pt-9 max-lg:px-8">
-        <h2 className="text-[23px] font-bold uppercase text-black">PARTNYORLAR</h2>
-        <div className="mt-8 overflow-hidden">
-          <div className="partners-track flex w-max gap-7">
-            {loop.map((src, index) => (
-              <div key={`${src}-${index}`} className="relative h-[92px] w-[150px] shrink-0 rounded-[14px] border border-[#d5dbe3] bg-white shadow-[0_8px_18px_rgb(15_23_42_/_4%)]">
-                <Image src={src} alt={`Partnyor ${index + 1}`} fill sizes="150px" className="object-contain p-5" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return <BeforeAfterGallery partnerLogos={partners} />;
 }
 
 function TestimonialsSection() {
@@ -199,7 +178,6 @@ export default function Home() {
       <PricesSection />
       <AboutSection />
       <BeforeAfterSection />
-      <PartnersSection />
       <TestimonialsSection />
       <CtaFooter />
       <FloatingButtons />

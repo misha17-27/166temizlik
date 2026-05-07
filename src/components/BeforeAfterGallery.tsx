@@ -8,7 +8,7 @@ function clamp(value: number) {
   return Math.min(92, Math.max(8, value));
 }
 
-export function BeforeAfterGallery() {
+export function BeforeAfterGallery({ partnerLogos = [] }: { partnerLogos?: string[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [divider, setDivider] = useState(60);
   const [dragging, setDragging] = useState(false);
@@ -130,6 +130,24 @@ export function BeforeAfterGallery() {
             </button>
           ))}
         </div>
+
+        {partnerLogos.length ? (
+          <div className="mx-auto mt-8 max-w-[790px]">
+            <h2 className="[font-family:var(--font-montserrat)] text-[17px] font-bold uppercase text-black">PARTNYORLAR</h2>
+            <div className="mt-5 overflow-hidden">
+              <div className="partners-track flex w-max gap-5">
+                {[...partnerLogos, ...partnerLogos].map((src, index) => (
+                  <div
+                    key={`${src}-${index}`}
+                    className="relative h-[58px] w-[112px] shrink-0 rounded-[8px] border border-[#d5dbe3] bg-white shadow-[0_6px_16px_rgb(15_23_42_/_4%)]"
+                  >
+                    <Image src={src} alt={`Partnyor ${index + 1}`} fill sizes="112px" className="object-contain p-3" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );
