@@ -395,22 +395,12 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   );
 }
 
-export function FloatingButtons() {
-  return (
-    <>
-      <Link href={site.whatsappHref} aria-label="Whatsapp" className="floating-action floating-whatsapp">☎</Link>
-      <Link href="/166-temizlik-elaqe/" aria-label="Chat" className="floating-action floating-chat">▰</Link>
-    </>
-  );
-}
-
 export function SitePage({ children, active, locale = "az" }: { children: React.ReactNode; active?: HeaderActive; locale?: Locale }) {
   return (
     <main>
       <Header active={active} locale={locale} />
       {children}
       <CtaFooter locale={locale} />
-      <FloatingButtons />
     </main>
   );
 }

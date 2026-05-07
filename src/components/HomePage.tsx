@@ -4,7 +4,7 @@ import { BeforeAfterGallery } from "@/components/BeforeAfterGallery";
 import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
 import { HeroSlider } from "@/components/HeroSlider";
-import { CtaFooter, FloatingButtons, Header } from "@/components/SiteChrome";
+import { CtaFooter, Header } from "@/components/SiteChrome";
 import { getLocalizedServices, homeCopy, type Locale } from "@/lib/i18n";
 import { partners, site } from "@/lib/site-data";
 
@@ -203,7 +203,6 @@ export function HomePage({ locale = "az" }: { locale?: Locale }) {
       <BeforeAfterSection copy={copy} />
       <TestimonialsSection copy={copy} />
       <CtaFooter locale={locale} />
-      <FloatingButtons />
     </main>
   );
 }

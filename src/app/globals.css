@@ -80,55 +80,8 @@ a {
   }
 }
 
-.floating-action {
-  position: fixed;
-  right: 28px;
-  z-index: 40;
-  display: grid;
-  place-items: center;
-  color: white;
-  box-shadow: 0 14px 30px rgb(15 72 129 / 28%);
-}
-
-.floating-whatsapp {
-  bottom: 112px;
-  width: 58px;
-  height: 58px;
-  border-radius: 999px;
-  background: #38c95a;
-  font-weight: 900;
-  font-size: 28px;
-}
-
-.floating-chat {
-  bottom: 36px;
-  width: 68px;
-  height: 68px;
-  border-radius: 999px;
-  background: #4287f5;
-  font-weight: 900;
-  font-size: 24px;
-}
-
 @media (max-width: 720px) {
   .container-shell {
     width: min(100% - 30px, 620px);
-  }
-
-  .floating-action {
-    right: 18px;
-  }
-
-  .floating-whatsapp {
-    bottom: 92px;
-    width: 48px;
-    height: 48px;
-    font-size: 22px;
-  }
-
-  .floating-chat {
-    bottom: 26px;
-    width: 58px;
-    height: 58px;
   }
 }
