@@ -18,6 +18,55 @@ const aboutMenu = [
   { label: "Vakansiya", href: "/vakansiya/" },
 ];
 
+const socialIcons = [
+  {
+    label: "Facebook",
+    icon: (
+      <path
+        d="M13.2 7.6h1.8V4.7a22 22 0 0 0-2.7-.1c-2.7 0-4.5 1.6-4.5 4.6v2.6h-3v3.2h3v8h3.5v-8h2.9l.4-3.2h-3.3V9.5c0-1 .3-1.9 1.9-1.9Z"
+        fill="currentColor"
+      />
+    ),
+  },
+  {
+    label: "Instagram",
+    icon: (
+      <>
+        <rect x="5.4" y="5.4" width="13.2" height="13.2" rx="3.4" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="12" cy="12" r="3.1" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="16.2" cy="7.8" r="1" fill="currentColor" />
+      </>
+    ),
+  },
+  {
+    label: "WhatsApp",
+    icon: (
+      <>
+        <path
+          d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z"
+          fill="none"
+          stroke="currentColor"
+          strokeLinejoin="round"
+          strokeWidth="1.8"
+        />
+        <path
+          d="M9.3 8.6c.2-.4.4-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.6v.6c0 .3-.1.5-.4.7-.5.4-1.2.5-1.8.3-3-.8-5.4-3.2-6.2-6.1-.2-.7 0-1.3.3-1.8Z"
+          fill="currentColor"
+        />
+      </>
+    ),
+  },
+  {
+    label: "YouTube",
+    icon: (
+      <>
+        <rect x="4" y="7" width="16" height="10" rx="3" stroke="currentColor" strokeWidth="1.8" />
+        <path d="m10.6 9.7 4.4 2.3-4.4 2.3V9.7Z" fill="currentColor" />
+      </>
+    ),
+  },
+];
+
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
 export function Header({ active = "home" }: { active?: HeaderActive }) {
@@ -153,8 +202,17 @@ export function CtaFooter() {
               <li>✉ <Link href={`mailto:${site.email}`}>{site.email}</Link></li>
             </ul>
             <div className="mt-4 flex gap-2">
-              {["f", "◎", "☏", "▶"].map((item) => (
-                <span key={item} className="grid h-8 w-8 place-items-center rounded-full border border-white text-sm font-bold text-white">{item}</span>
+              {socialIcons.map((item) => (
+                <span
+                  key={item.label}
+                  role="img"
+                  aria-label={item.label}
+                  className="grid h-[27px] w-[27px] place-items-center rounded-full border-2 border-white text-white"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
+                    {item.icon}
+                  </svg>
+                </span>
               ))}
             </div>
           </div>
