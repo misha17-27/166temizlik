@@ -23,12 +23,12 @@ export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact"
 export function Header({ active = "home" }: { active?: HeaderActive }) {
   return (
     <header className="sticky top-0 z-50 blue-band">
-      <div className="mx-auto flex h-[90px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-6 max-md:h-[88px] max-md:w-[calc(100%-20px)] max-md:gap-2">
-        <Link href="/" aria-label="166 Təmizlik ana səhifə" className="relative h-[78px] w-[150px] shrink-0 max-md:h-[62px] max-md:w-[92px]">
-          <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="170px" className="object-contain brightness-0 invert" />
+      <div className="mx-auto flex h-[78px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-5 max-md:h-[72px] max-md:w-[calc(100%-20px)] max-md:gap-2">
+        <Link href="/" aria-label="166 Təmizlik ana səhifə" className="relative h-[58px] w-[112px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
+          <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="120px" className="object-contain brightness-0 invert" />
         </Link>
 
-        <nav className="flex flex-1 items-center justify-end gap-3 text-[15px] font-semibold text-white max-lg:hidden">
+        <nav className="flex flex-1 items-center justify-end gap-2 text-[14px] font-semibold text-white max-lg:hidden">
           {navItems.map((item) => {
             const isActive = item.key === active;
             const isServicesMenu = item.key === "services";
@@ -39,12 +39,12 @@ export function Header({ active = "home" }: { active?: HeaderActive }) {
                   href={item.href}
                   prefetch={false}
                   style={isActive ? { color: "#0074ca" } : undefined}
-                  className={`block whitespace-nowrap rounded-full px-5 py-3 transition ${
+                  className={`block whitespace-nowrap rounded-full px-4 py-2.5 transition ${
                     isActive ? "bg-white" : "text-white hover:bg-white/12"
                   }`}
                 >
                   {item.label}
-                  {item.hasMenu ? <span className="ml-3 text-sm">▼</span> : null}
+                  {item.hasMenu ? <span className="ml-2 text-xs">▼</span> : null}
                 </Link>
 
                 {menuItems.length ? (
@@ -71,17 +71,17 @@ export function Header({ active = "home" }: { active?: HeaderActive }) {
         <div className="flex items-center gap-3 max-md:gap-1">
           <Link
             href={site.orderHref}
-            className="whitespace-nowrap rounded-full bg-brand-yellow px-7 py-4 text-[17px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-3 max-md:text-[15px]"
+            className="whitespace-nowrap rounded-full bg-brand-yellow px-6 py-3 text-[15px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-2.5 max-md:text-[14px]"
           >
             Sifariş et
           </Link>
-          <button aria-label="Open menu" className="hidden h-12 w-12 rounded-lg border-2 border-white text-3xl font-black leading-none text-white max-lg:block max-md:h-10 max-md:w-10 max-md:text-2xl">
+          <button aria-label="Open menu" className="hidden h-10 w-10 rounded-lg border-2 border-white text-2xl font-black leading-none text-white max-lg:block max-md:h-9 max-md:w-9 max-md:text-xl">
             ≡
           </button>
-          <Link href="/ru/" prefetch={false} className="grid h-[52px] w-[52px] place-items-center rounded-full bg-white text-lg font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
+          <Link href="/ru/" prefetch={false} className="grid h-[44px] w-[44px] place-items-center rounded-full bg-white text-base font-bold text-black max-md:h-9 max-md:w-9 max-md:text-sm">
             Ru
           </Link>
-          <Link href="/tr/" prefetch={false} className="grid h-[52px] w-[52px] place-items-center rounded-full bg-white text-lg font-bold text-black max-md:h-10 max-md:w-10 max-md:text-base">
+          <Link href="/tr/" prefetch={false} className="grid h-[44px] w-[44px] place-items-center rounded-full bg-white text-base font-bold text-black max-md:h-9 max-md:w-9 max-md:text-sm">
             Tr
           </Link>
         </div>
