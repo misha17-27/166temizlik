@@ -4,17 +4,19 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { heroSlides } from "@/lib/site-data";
 
-export function HeroSlider() {
+type Slide = (typeof heroSlides)[number];
+
+export function HeroSlider({ slides = heroSlides }: { slides?: Slide[] }) {
   const [active, setActive] = useState(0);
-  const slide = heroSlides[active];
+  const slide = slides[active];
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setActive((current) => (current + 1) % heroSlides.length);
+      setActive((current) => (current + 1) % slides.length);
     }, 5200);
 
     return () => window.clearInterval(id);
-  }, []);
+  }, [slides.length]);
 
   return (
     <section className="blue-band">
@@ -22,7 +24,7 @@ export function HeroSlider() {
         <button
           aria-label="Previous slide"
           className="absolute left-[-70px] top-1/2 text-6xl font-light text-black/80 max-xl:hidden"
-          onClick={() => setActive((active - 1 + heroSlides.length) % heroSlides.length)}
+          onClick={() => setActive((active - 1 + slides.length) % slides.length)}
         >
           ‹
         </button>
@@ -56,13 +58,13 @@ export function HeroSlider() {
         <button
           aria-label="Next slide"
           className="absolute right-[-70px] top-1/2 text-6xl font-light text-black/80 max-xl:hidden"
-          onClick={() => setActive((active + 1) % heroSlides.length)}
+          onClick={() => setActive((active + 1) % slides.length)}
         >
           ›
         </button>
 
         <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-3 max-lg:bottom-5">
-          {heroSlides.map((item, index) => (
+          {slides.map((item, index) => (
             <button
               key={item.title}
               aria-label={`Go to slide ${index + 1}`}

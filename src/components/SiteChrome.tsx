@@ -1,22 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { services, site } from "@/lib/site-data";
-
-const navItems = [
-  { key: "home", label: "Ana səhifə", href: "/" },
-  { key: "services", label: "Xidmətlər", href: "/temizlik-xidmetleri/", hasMenu: true },
-  { key: "about", label: "Şirkət haqqında", href: "/sirket-haqqinda/", hasMenu: true },
-  { key: "gallery", label: "Qalereya", href: "/qalereya/" },
-  { key: "contact", label: "Əlaqə", href: "/166-temizlik-elaqe/" },
-];
-
-const aboutMenu = [
-  { label: "Bloq", href: "/bloq/" },
-  { label: "Avadanlıq və maddələr", href: "/temizlik-xidmeti/" },
-  { label: "Partnyorlar", href: "/partnyorlar/" },
-  { label: "Əməkdaşlarımız", href: "/emekdaslarimiz/" },
-  { label: "Vakansiya", href: "/vakansiya/" },
-];
+import { useState } from "react";
+import { chromeCopy, getLanguageOptions, getLocalizedServices, type Locale } from "@/lib/i18n";
+import { site } from "@/lib/site-data";
 
 const socialIcons = [
   {
@@ -69,11 +57,29 @@ const socialIcons = [
 
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
-export function Header({ active = "home" }: { active?: HeaderActive }) {
+export function Header({ active = "home", locale = "az" }: { active?: HeaderActive; locale?: Locale }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
+  const copy = chromeCopy[locale];
+  const localizedServices = getLocalizedServices(locale);
+  const navItems = [
+    { key: "home", label: copy.nav.home, href: locale === "az" ? "/" : `/${locale}/` },
+    { key: "services", label: copy.nav.services, href: "/temizlik-xidmetleri/", hasMenu: true },
+    { key: "about", label: copy.nav.about, href: "/sirket-haqqinda/", hasMenu: true },
+    { key: "gallery", label: copy.nav.gallery, href: "/qalereya/" },
+    { key: "contact", label: copy.nav.contact, href: "/166-temizlik-elaqe/" },
+  ];
+  const languageOptions = getLanguageOptions(locale);
+
+  function closeMobileMenu() {
+    setMobileMenuOpen(false);
+    setMobileSubmenu(null);
+  }
+
   return (
     <header className="sticky top-0 z-50 blue-band">
       <div className="mx-auto flex h-[78px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-5 max-md:h-[72px] max-md:w-[calc(100%-20px)] max-md:gap-2">
-        <Link href="/" aria-label="166 Təmizlik ana səhifə" className="relative h-[58px] w-[112px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
+        <Link href={locale === "az" ? "/" : `/${locale}/`} aria-label={copy.logoLabel} className="relative h-[58px] w-[112px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
           <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="120px" className="object-contain brightness-0 invert" />
         </Link>
 
@@ -81,7 +87,7 @@ export function Header({ active = "home" }: { active?: HeaderActive }) {
           {navItems.map((item) => {
             const isActive = item.key === active;
             const isServicesMenu = item.key === "services";
-            const menuItems = item.key === "services" ? services.map((service) => ({ label: service.title, href: service.href })) : item.key === "about" ? aboutMenu : [];
+            const menuItems = item.key === "services" ? localizedServices.map((service) => ({ label: service.title, href: service.href })) : item.key === "about" ? copy.aboutMenu : [];
             return (
               <div key={item.label} className="group relative">
                 <Link
@@ -126,35 +132,108 @@ export function Header({ active = "home" }: { active?: HeaderActive }) {
             href={site.orderHref}
             className="whitespace-nowrap rounded-full bg-brand-yellow px-6 py-3 text-[15px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-2.5 max-md:text-[14px]"
           >
-            Sifariş et
+            {copy.nav.order}
           </Link>
-          <button aria-label="Open menu" className="hidden h-10 w-10 rounded-lg border-2 border-white text-2xl font-black leading-none text-white max-lg:block max-md:h-9 max-md:w-9 max-md:text-xl">
+          <button
+            type="button"
+            aria-label="Open menu"
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen(true)}
+            className="hidden h-10 w-10 rounded-lg border-2 border-white text-2xl font-black leading-none text-white max-lg:block max-md:h-9 max-md:w-9 max-md:text-xl"
+          >
             ≡
           </button>
-          <Link href="/ru/" prefetch={false} className="grid h-[44px] w-[44px] place-items-center rounded-full bg-white text-base font-bold text-black max-md:h-9 max-md:w-9 max-md:text-sm">
-            Ru
-          </Link>
-          <Link href="/tr/" prefetch={false} className="grid h-[44px] w-[44px] place-items-center rounded-full bg-white text-base font-bold text-black max-md:h-9 max-md:w-9 max-md:text-sm">
-            Tr
-          </Link>
+          {languageOptions.map((item) => (
+            <Link key={item.label} href={item.href} prefetch={false} className="grid h-[44px] w-[44px] place-items-center rounded-full bg-white text-base font-bold text-black max-md:h-9 max-md:w-9 max-md:text-sm">
+              {item.label}
+            </Link>
+          ))}
         </div>
       </div>
+
+      {mobileMenuOpen ? (
+        <div className="fixed inset-0 z-[80] bg-brand-blue text-white lg:hidden">
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={closeMobileMenu}
+            className="absolute right-8 top-7 grid h-12 w-12 place-items-center text-brand-yellow"
+          >
+            <svg aria-hidden="true" viewBox="0 0 32 32" className="h-9 w-9" fill="none">
+              <path d="M7 7 25 25M25 7 7 25" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+          </button>
+
+          <nav className="flex min-h-full items-center justify-center px-6 py-24 text-center">
+            <ul className="w-full max-w-[360px] space-y-6 text-[24px] font-bold leading-tight">
+              {navItems.map((item) => {
+                const submenuItems =
+                  item.key === "services" ? localizedServices.map((service) => ({ label: service.title, href: service.href })) : item.key === "about" ? copy.aboutMenu : [];
+                const isMenuOpen = mobileSubmenu === item.key;
+
+                return (
+                  <li key={item.key}>
+                    {item.hasMenu ? (
+                      <>
+                        <button
+                          type="button"
+                          className="mx-auto flex items-center justify-center gap-3 text-white"
+                          aria-expanded={isMenuOpen}
+                          onClick={() => setMobileSubmenu(isMenuOpen ? null : (item.key as "services" | "about"))}
+                        >
+                          {item.label}
+                          <svg
+                            aria-hidden="true"
+                            viewBox="0 0 20 20"
+                            className={`h-[13px] w-[13px] translate-y-[2px] transition ${isMenuOpen ? "rotate-180" : ""}`}
+                            fill="none"
+                          >
+                            <path d="M4.5 7.25 10 12.75l5.5-5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                        {isMenuOpen ? (
+                          <ul className="mt-4 space-y-3 text-[16px] font-semibold text-white/95">
+                            {submenuItems.map((menuItem) => (
+                              <li key={menuItem.href}>
+                                <Link href={menuItem.href} prefetch={false} onClick={closeMobileMenu}>
+                                  {menuItem.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </>
+                    ) : (
+                      <Link href={item.href} prefetch={false} onClick={closeMobileMenu}>
+                        {item.label}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </div>
+      ) : null}
     </header>
   );
 }
 
-export function CtaFooter() {
+export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
+  const copy = chromeCopy[locale];
+  const localizedServices = getLocalizedServices(locale);
+
   return (
     <>
       <section id="order" className="blue-band py-14">
         <div className="container-shell flex items-center justify-between gap-8 max-lg:flex-col max-lg:text-center">
-          <h2 className="text-[23px] font-bold leading-tight text-white max-md:text-[20px]">Özünüzə və sevdiklərinizə zaman ayırın</h2>
+          <h2 className="text-[23px] font-bold leading-tight text-white max-md:text-[20px]">{copy.cta.title}</h2>
           <div className="flex gap-9 max-sm:flex-col">
             <Link href="/166-temizlik-elaqe/" className="rounded-full bg-brand-yellow px-12 py-3 text-[12px] font-bold text-black">
-              BİZİMLƏ ƏLAQƏ
+              {copy.cta.contact}
             </Link>
             <Link href={site.whatsappHref} className="rounded-full bg-white px-12 py-3 text-[12px] font-bold text-black">
-              SİFARİŞ ET
+              {copy.cta.order}
             </Link>
           </div>
         </div>
@@ -165,17 +244,17 @@ export function CtaFooter() {
             <div className="relative mx-auto h-[132px] w-[170px] max-sm:mx-0">
               <Image src={site.footerLogo} alt="166 Təmizlik" fill sizes="170px" className="object-contain" />
             </div>
-            <p className="mt-3 text-[12px] font-normal">QÜSURSUZ VƏ ETİBARLI</p>
+            <p className="mt-3 text-[12px] font-normal">{copy.footer.motto}</p>
           </div>
           <div>
-            <h3 className="mb-4 text-[16px] font-bold">Yararlı linklər</h3>
+            <h3 className="mb-4 text-[16px] font-bold">{copy.footer.useful}</h3>
             <ul className="space-y-4 text-[14px] font-normal">
               {[
-                ["Ana səhifə", "/"],
-                ["Şirkət haqqında", "/sirket-haqqinda/"],
-                ["Xidmətlər", "/temizlik-xidmetleri/"],
-                ["Bloq", "/bloq/"],
-                ["Vakansiya", "/vakansiya/"],
+                [copy.footer.links.home, locale === "az" ? "/" : `/${locale}/`],
+                [copy.footer.links.about, "/sirket-haqqinda/"],
+                [copy.footer.links.services, "/temizlik-xidmetleri/"],
+                [copy.footer.links.blog, "/bloq/"],
+                [copy.footer.links.vacancy, "/vakansiya/"],
               ].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} prefetch={false}>{label}</Link>
@@ -184,9 +263,9 @@ export function CtaFooter() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-4 text-[16px] font-bold">Xidmətlər</h3>
+            <h3 className="mb-4 text-[16px] font-bold">{copy.footer.services}</h3>
             <ul className="space-y-4 text-[14px] font-normal">
-              {services.slice(0, 3).map((item) => (
+              {localizedServices.slice(0, 3).map((item) => (
                 <li key={item.title}>
                   <Link href={item.href} prefetch={false}>{item.title}</Link>
                 </li>
@@ -194,11 +273,11 @@ export function CtaFooter() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-3 text-[16px] font-bold">Əlaqə</h3>
+            <h3 className="mb-3 text-[16px] font-bold">{copy.footer.contact}</h3>
             <ul className="space-y-2 text-[14px] font-normal leading-[1.45]">
-              <li>☎ <Link href={site.phoneHref}>{site.phoneLabel}</Link></li>
+              <li>☎ <Link href={site.phoneHref}>{copy.footer.phone}</Link></li>
               <li>▯ <Link href={site.mobileHref}>{site.mobileLabel}</Link></li>
-              <li>⌖ {site.address}</li>
+              <li>⌖ {copy.footer.address}</li>
               <li>✉ <Link href={`mailto:${site.email}`}>{site.email}</Link></li>
             </ul>
             <div className="mt-4 flex gap-2">
@@ -234,12 +313,12 @@ export function FloatingButtons() {
   );
 }
 
-export function SitePage({ children, active }: { children: React.ReactNode; active?: HeaderActive }) {
+export function SitePage({ children, active, locale = "az" }: { children: React.ReactNode; active?: HeaderActive; locale?: Locale }) {
   return (
     <main>
-      <Header active={active} />
+      <Header active={active} locale={locale} />
       {children}
-      <CtaFooter />
+      <CtaFooter locale={locale} />
       <FloatingButtons />
     </main>
   );

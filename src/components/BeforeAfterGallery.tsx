@@ -8,7 +8,7 @@ function clamp(value: number) {
   return Math.min(92, Math.max(8, value));
 }
 
-export function BeforeAfterGallery({ partnerLogos = [] }: { partnerLogos?: string[] }) {
+export function BeforeAfterGallery({ partnerLogos = [], partnerTitle = "PARTNYORLAR" }: { partnerLogos?: string[]; partnerTitle?: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [divider, setDivider] = useState(60);
   const [dragging, setDragging] = useState(false);
@@ -30,7 +30,7 @@ export function BeforeAfterGallery({ partnerLogos = [] }: { partnerLogos?: strin
 
   return (
     <section id="gallery" data-section="before-after" className="bg-white py-16 max-md:py-10">
-      <div className="container-shell max-w-[980px] rounded-[14px] bg-[#e4f1ff] px-12 pb-12 pt-8 max-lg:max-w-[860px] max-md:px-4 max-md:pb-8">
+      <div className="mx-auto w-[min(1200px,calc(100%-40px))] rounded-[14px] bg-[#e4f1ff] px-[70px] pb-14 pt-8 max-lg:px-10 max-md:w-[calc(100%-30px)] max-md:px-4 max-md:pb-8">
         <div className="mb-8 text-center [font-family:var(--font-montserrat)] text-[13px] font-bold uppercase tracking-normal text-black max-md:mb-5">
           GÖRDÜYÜMÜZ <span className="ml-2 font-normal text-brand-blue">İŞLƏR</span>
         </div>
@@ -132,16 +132,16 @@ export function BeforeAfterGallery({ partnerLogos = [] }: { partnerLogos?: strin
         </div>
 
         {partnerLogos.length ? (
-          <div className="mx-auto mt-8 max-w-[790px]">
-            <h2 className="[font-family:var(--font-montserrat)] text-[17px] font-bold uppercase text-black">PARTNYORLAR</h2>
+          <div className="mx-auto mt-10 max-w-[970px]">
+            <h2 className="[font-family:var(--font-montserrat)] text-[24px] font-bold uppercase text-black max-md:text-[18px]">{partnerTitle}</h2>
             <div className="mt-5 overflow-hidden">
-              <div className="partners-track flex w-max gap-5">
+              <div className="partners-track flex w-max gap-7 max-md:gap-4">
                 {[...partnerLogos, ...partnerLogos].map((src, index) => (
                   <div
                     key={`${src}-${index}`}
-                    className="relative h-[58px] w-[112px] shrink-0 rounded-[8px] border border-[#d5dbe3] bg-white shadow-[0_6px_16px_rgb(15_23_42_/_4%)]"
+                    className="relative h-[90px] w-[160px] shrink-0 rounded-[14px] border border-[#d5dbe3] bg-white shadow-[0_6px_16px_rgb(15_23_42_/_4%)] max-md:h-[70px] max-md:w-[130px]"
                   >
-                    <Image src={src} alt={`Partnyor ${index + 1}`} fill sizes="112px" className="object-contain p-3" />
+                    <Image src={src} alt={`Partnyor ${index + 1}`} fill sizes="160px" className="object-contain p-5 max-md:p-4" />
                   </div>
                 ))}
               </div>

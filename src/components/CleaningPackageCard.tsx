@@ -40,12 +40,16 @@ export function CleaningPackageCard({
   priceKey,
   tone,
   variant = "home",
+  weeklyItems = weeklyPrices,
+  toggleLabels = { more: "Daha çox", less: "Daha az" },
 }: {
   title: string;
   items: string[];
   priceKey: "four" | "eight";
   tone: "blue" | "yellow";
   variant?: PackageVariant;
+  weeklyItems?: typeof weeklyPrices;
+  toggleLabels?: { more: string; less: string };
 }) {
   const [expanded, setExpanded] = useState(false);
   const style = styles[variant];
@@ -70,12 +74,12 @@ export function CleaningPackageCard({
 
       {isExpandable ? (
         <button type="button" aria-expanded={expanded} onClick={() => setExpanded((value) => !value)} className={style.toggle}>
-          {expanded ? "Daha az" : "Daha çox"}
+          {expanded ? toggleLabels.less : toggleLabels.more}
         </button>
       ) : null}
 
       <div className={style.grid}>
-        {weeklyPrices.map((price) => (
+        {weeklyItems.map((price) => (
           <div key={price.label} className="text-center">
             <p className={style.label}>{price.label}</p>
             <div className={style.circle}>
