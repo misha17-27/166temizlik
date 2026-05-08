@@ -1,19 +1,24 @@
 import Image from "next/image";
 import { SitePage } from "@/components/SiteChrome";
-import { employees, pageHeroAssets } from "@/lib/pages-data";
+import { getLocalizedEmployees, pageHeroAssets } from "@/lib/pages-data";
+import { staticPageCopy } from "@/lib/static-page-copy";
+import type { Locale } from "@/lib/routes";
 
 export const metadata = {
   title: "Əməkdaşlarımız - 166 Təmizlik",
 };
 
-export default function EmployeesPage() {
+export function EmployeesPageContent({ locale = "az" }: { locale?: Locale }) {
+  const copy = staticPageCopy[locale].employees;
+  const employees = getLocalizedEmployees(locale);
+
   return (
-    <SitePage active="about">
+    <SitePage active="about" locale={locale} currentSlug="employees">
       <section className="relative h-[410px] bg-white max-md:h-[240px]">
-        <Image src={pageHeroAssets.employees} alt="Əməkdaşlarımız" fill priority sizes="100vw" className="object-cover opacity-70" />
+        <Image src={pageHeroAssets.employees} alt={copy.title} fill priority sizes="100vw" className="object-cover opacity-70" />
         <div className="absolute inset-0 bg-white/35" />
         <div className="container-shell relative flex h-full items-center">
-          <h1 className="text-[30px] font-medium text-[#202b90] max-md:text-[24px]">Əməkdaşlarımız</h1>
+          <h1 className="text-[30px] font-medium text-[#202b90] max-md:text-[24px]">{copy.title}</h1>
         </div>
       </section>
 
@@ -36,4 +41,8 @@ export default function EmployeesPage() {
       </section>
     </SitePage>
   );
+}
+
+export default function EmployeesPage() {
+  return <EmployeesPageContent />;
 }

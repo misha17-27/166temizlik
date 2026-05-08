@@ -1,19 +1,25 @@
 import { SitePage } from "@/components/SiteChrome";
-import { pageHeroAssets, vacancies } from "@/lib/pages-data";
+import { getLocalizedVacancies, pageHeroAssets } from "@/lib/pages-data";
+import { staticPageCopy } from "@/lib/static-page-copy";
+import type { Locale } from "@/lib/routes";
 
 export const metadata = {
   title: "Vakansiya - 166 Təmizlik",
 };
 
-export default function VacancyPage() {
+export function VacancyPageContent({ locale = "az" }: { locale?: Locale }) {
+  const copy = staticPageCopy[locale].vacancy;
+  const sharedCopy = staticPageCopy[locale];
+  const vacancies = getLocalizedVacancies(locale);
+
   return (
-    <SitePage active="about">
+    <SitePage active="about" locale={locale} currentSlug="vacancy">
       <section className="bg-[#f5f5f5]">
         <div
           className="container-shell grid h-[520px] place-items-center bg-cover bg-center max-md:h-[280px]"
           style={{ backgroundImage: `linear-gradient(rgb(0 0 0 / 28%), rgb(0 0 0 / 28%)), url(${pageHeroAssets.partners})` }}
         >
-          <h1 className="text-[34px] font-bold text-white max-md:text-[28px]">Vakansiya</h1>
+          <h1 className="text-[34px] font-bold text-white max-md:text-[28px]">{copy.title}</h1>
         </div>
       </section>
 
@@ -24,9 +30,9 @@ export default function VacancyPage() {
               <article key={vacancy.title} className="bg-[#f7f7fb] px-8 py-7">
                 <h2 className="text-[25px] font-medium leading-[1.2] text-black max-md:text-[21px]">{vacancy.summary}</h2>
                 <p className="mt-8 text-[15px] font-normal text-black">
-                  Öhdəliklər – {vacancy.items[0]}; – {vacancy.items[1]}
+                  {copy.duties} – {vacancy.items[0]}; – {vacancy.items[1]}
                 </p>
-                <button className="mt-8 text-[16px] font-medium text-black">Daha ətraflı »</button>
+                <button className="mt-8 text-[16px] font-medium text-black">{sharedCopy.readMore}</button>
               </article>
             ))}
           </div>
@@ -34,4 +40,8 @@ export default function VacancyPage() {
       </section>
     </SitePage>
   );
+}
+
+export default function VacancyPage() {
+  return <VacancyPageContent />;
 }

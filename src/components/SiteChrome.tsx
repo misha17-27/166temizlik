@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { chromeCopy, getLanguageOptions, getLocalizedServices, type Locale } from "@/lib/i18n";
+import { chromeCopy, getLanguageSwitcherOptions, getLocalizedHref, getLocalizedServices, type Locale } from "@/lib/i18n";
+import type { RouteKind } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 
 const socialIcons = [
@@ -89,22 +90,97 @@ const contactIcons = {
 
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
-export function Header({ active = "home", locale = "az" }: { active?: HeaderActive; locale?: Locale }) {
+function GlobeIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="none">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M3.5 12h17M12 3c2.3 2.4 3.5 5.4 3.5 9s-1.2 6.6-3.5 9M12 3c-2.3 2.4-3.5 5.4-3.5 9s1.2 6.6 3.5 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LanguageSwitcher({
+  locale,
+  currentSlug,
+  routeKind,
+}: {
+  locale: Locale;
+  currentSlug: string;
+  routeKind: RouteKind;
+}) {
+  const options = getLanguageSwitcherOptions(locale, currentSlug, routeKind);
+  const current = options.find((item) => item.active) ?? options[0];
+
+  return (
+    <div className="group relative">
+      <button
+        type="button"
+        aria-label={`Select language, current ${current.label}`}
+        aria-haspopup="menu"
+        className="flex h-[46px] items-center gap-2.5 rounded-full bg-white/12 px-4 text-[16px] font-bold text-white transition hover:bg-white/18 max-md:h-10 max-md:px-3 max-md:text-[14px]"
+      >
+        <GlobeIcon className="h-[20px] w-[20px] text-white max-md:h-[18px] max-md:w-[18px]" />
+        <span>{current.label}</span>
+        <svg aria-hidden="true" viewBox="0 0 20 20" className="h-[12px] w-[12px] transition group-focus-within:rotate-180 group-hover:rotate-180" fill="none">
+          <path d="M5 7.5 10 12.5l5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      <div className="invisible absolute right-0 top-full z-[70] w-[205px] pt-3 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 max-md:right-[-6px] max-md:w-[190px]">
+        <div
+          role="menu"
+          className="translate-y-[-4px] rounded-[18px] bg-white p-2 text-[#0074ca] shadow-[0_16px_38px_rgb(15_23_42_/_14%)] transition group-focus-within:translate-y-0 group-hover:translate-y-0"
+        >
+          {options.map((item) => (
+            <Link
+              key={item.locale}
+              href={item.href}
+              prefetch={false}
+              role="menuitem"
+              aria-current={item.active ? "page" : undefined}
+              className={`flex items-center justify-between rounded-[14px] px-4 py-2.5 text-[16px] font-semibold transition max-md:px-3 max-md:text-[15px] ${
+                item.active ? "bg-[#eef6ff] text-[#0074ca]" : "text-[#0074ca] hover:bg-[#eef6ff]"
+              }`}
+            >
+              <span>{item.name}</span>
+              <span className={item.active ? "text-[#0074ca]" : "text-[#9db5c8]"}>{item.label}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Header({
+  active = "home",
+  locale = "az",
+  currentSlug = "home",
+  routeKind = "static",
+}: {
+  active?: HeaderActive;
+  locale?: Locale;
+  currentSlug?: string;
+  routeKind?: RouteKind;
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
   const copy = chromeCopy[locale];
   const localizedServices = getLocalizedServices(locale);
   const navItems = [
-    { key: "home", label: copy.nav.home, href: locale === "az" ? "/" : `/${locale}/` },
-    { key: "services", label: copy.nav.services, href: "/temizlik-xidmetleri/", hasMenu: true },
-    { key: "about", label: copy.nav.about, href: "/sirket-haqqinda/", hasMenu: true },
-    { key: "gallery", label: copy.nav.gallery, href: "/qalereya/" },
-    { key: "contact", label: copy.nav.contact, href: "/166-temizlik-elaqe/" },
+    { key: "home", label: copy.nav.home, href: getLocalizedHref(locale, "/") },
+    { key: "services", label: copy.nav.services, href: getLocalizedHref(locale, "/temizlik-xidmetleri/"), hasMenu: true },
+    { key: "about", label: copy.nav.about, href: getLocalizedHref(locale, "/sirket-haqqinda/"), hasMenu: true },
+    { key: "gallery", label: copy.nav.gallery, href: getLocalizedHref(locale, "/qalereya/") },
+    { key: "contact", label: copy.nav.contact, href: getLocalizedHref(locale, "/166-temizlik-elaqe/") },
   ];
-  const languageOptions = getLanguageOptions(locale);
   const activeMobileSubmenu = mobileSubmenu ? navItems.find((item) => item.key === mobileSubmenu) : null;
   const activeMobileSubmenuItems =
-    mobileSubmenu === "services" ? localizedServices.map((service) => ({ label: service.title, href: service.href })) : mobileSubmenu === "about" ? copy.aboutMenu : [];
+    mobileSubmenu === "services"
+      ? localizedServices.map((service) => ({ label: service.title, href: service.href }))
+      : mobileSubmenu === "about"
+        ? copy.aboutMenu.map((item) => ({ ...item, href: getLocalizedHref(locale, item.href) }))
+        : [];
 
   function closeMobileMenu() {
     setMobileMenuOpen(false);
@@ -130,7 +206,7 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
   return (
     <header className="sticky top-0 z-50 blue-band">
       <div className="mx-auto flex h-[78px] w-[min(1280px,calc(100%-40px))] items-center justify-between gap-5 max-md:h-[72px] max-md:w-[calc(100%-20px)] max-md:gap-2">
-        <Link href={locale === "az" ? "/" : `/${locale}/`} aria-label={copy.logoLabel} className="relative h-[58px] w-[112px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
+        <Link href={getLocalizedHref(locale, "/")} aria-label={copy.logoLabel} className="relative h-[58px] w-[112px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
           <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="120px" className="object-contain brightness-0 invert" />
         </Link>
 
@@ -138,7 +214,12 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
           {navItems.map((item) => {
             const isActive = item.key === active;
             const isServicesMenu = item.key === "services";
-            const menuItems = item.key === "services" ? localizedServices.map((service) => ({ label: service.title, href: service.href })) : item.key === "about" ? copy.aboutMenu : [];
+            const menuItems =
+              item.key === "services"
+                ? localizedServices.map((service) => ({ label: service.title, href: service.href }))
+                : item.key === "about"
+                  ? copy.aboutMenu.map((menuItem) => ({ ...menuItem, href: getLocalizedHref(locale, menuItem.href) }))
+                  : [];
             return (
               <div key={item.label} className="group relative">
                 <Link
@@ -196,11 +277,7 @@ export function Header({ active = "home", locale = "az" }: { active?: HeaderActi
               <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
             </svg>
           </button>
-          {languageOptions.map((item) => (
-            <Link key={item.label} href={item.href} prefetch={false} className="grid h-[44px] w-[44px] place-items-center rounded-full bg-white text-base font-bold text-black max-md:h-9 max-md:w-9 max-md:text-sm">
-              {item.label}
-            </Link>
-          ))}
+          <LanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
         </div>
       </div>
 
@@ -292,7 +369,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
         <div className="container-shell flex items-center justify-between gap-8 max-lg:flex-col max-lg:text-center">
           <h2 className="text-[23px] font-bold leading-tight text-white max-md:text-[20px]">{copy.cta.title}</h2>
           <div className="flex gap-9 max-sm:flex-col">
-            <Link href="/166-temizlik-elaqe/" className="rounded-full bg-brand-yellow px-12 py-3 text-[12px] font-bold text-black">
+            <Link href={getLocalizedHref(locale, "/166-temizlik-elaqe/")} className="rounded-full bg-brand-yellow px-12 py-3 text-[12px] font-bold text-black">
               {copy.cta.contact}
             </Link>
             <Link href={site.whatsappHref} className="rounded-full bg-white px-12 py-3 text-[12px] font-bold text-black">
@@ -313,11 +390,11 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
             <h3 className="mb-4 text-[16px] font-bold">{copy.footer.useful}</h3>
             <ul className="space-y-4 text-[14px] font-normal">
               {[
-                [copy.footer.links.home, locale === "az" ? "/" : `/${locale}/`],
-                [copy.footer.links.about, "/sirket-haqqinda/"],
-                [copy.footer.links.services, "/temizlik-xidmetleri/"],
-                [copy.footer.links.blog, "/bloq/"],
-                [copy.footer.links.vacancy, "/vakansiya/"],
+                [copy.footer.links.home, getLocalizedHref(locale, "/")],
+                [copy.footer.links.about, getLocalizedHref(locale, "/sirket-haqqinda/")],
+                [copy.footer.links.services, getLocalizedHref(locale, "/temizlik-xidmetleri/")],
+                [copy.footer.links.blog, getLocalizedHref(locale, "/bloq/")],
+                [copy.footer.links.vacancy, getLocalizedHref(locale, "/vakansiya/")],
               ].map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} prefetch={false}>{label}</Link>
@@ -395,10 +472,22 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   );
 }
 
-export function SitePage({ children, active, locale = "az" }: { children: React.ReactNode; active?: HeaderActive; locale?: Locale }) {
+export function SitePage({
+  children,
+  active,
+  locale = "az",
+  currentSlug = "home",
+  routeKind = "static",
+}: {
+  children: React.ReactNode;
+  active?: HeaderActive;
+  locale?: Locale;
+  currentSlug?: string;
+  routeKind?: RouteKind;
+}) {
   return (
     <main>
-      <Header active={active} locale={locale} />
+      <Header active={active} locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
       {children}
       <CtaFooter locale={locale} />
     </main>

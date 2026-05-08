@@ -1,24 +1,30 @@
 import Image from "next/image";
 import { SitePage } from "@/components/SiteChrome";
-import { equipment, materialCards, pageHeroAssets } from "@/lib/pages-data";
+import { getLocalizedEquipment, getLocalizedMaterialCards, pageHeroAssets } from "@/lib/pages-data";
+import { staticPageCopy } from "@/lib/static-page-copy";
+import type { Locale } from "@/lib/routes";
 
 export const metadata = {
   title: "Avadanlıq və maddələr - 166 Təmizlik",
 };
 
-export default function EquipmentPage() {
+export function EquipmentPageContent({ locale = "az" }: { locale?: Locale }) {
+  const copy = staticPageCopy[locale].equipment;
+  const equipment = getLocalizedEquipment(locale);
+  const materialCards = getLocalizedMaterialCards(locale);
+
   return (
-    <SitePage active="about">
+    <SitePage active="about" locale={locale} currentSlug="equipment">
       <section className="relative h-[260px] bg-white max-md:h-[190px]">
-        <Image src={pageHeroAssets.equipment} alt="Avadanlıq və maddələr" fill priority sizes="100vw" className="object-cover opacity-35" />
+        <Image src={pageHeroAssets.equipment} alt={copy.title} fill priority sizes="100vw" className="object-cover opacity-35" />
         <div className="container-shell relative flex h-full items-center">
-          <h1 className="text-[24px] font-semibold text-[#253b8d] max-md:text-[20px]">Avadanlıq və maddələr</h1>
+          <h1 className="text-[24px] font-semibold text-[#253b8d] max-md:text-[20px]">{copy.title}</h1>
         </div>
       </section>
 
       <section className="bg-white py-10 pb-20">
         <div className="container-shell">
-          <h2 className="mb-14 text-center text-[28px] font-bold text-black">Avadanlıqlar</h2>
+          <h2 className="mb-14 text-center text-[28px] font-bold text-black">{copy.equipmentTitle}</h2>
           <div className="space-y-20">
             {equipment.map((item, index) => {
               const reverse = index % 2 === 1;
@@ -39,7 +45,7 @@ export default function EquipmentPage() {
             })}
           </div>
 
-          <h2 className="mb-8 mt-24 text-center text-[28px] font-bold text-black">Maddələr</h2>
+          <h2 className="mb-8 mt-24 text-center text-[28px] font-bold text-black">{copy.materialsTitle}</h2>
           <div className="grid grid-cols-2 gap-5 max-md:grid-cols-1">
             {materialCards.map((item) => (
               <article key={item.title} className="rounded-[10px] bg-white p-5 shadow-[0_3px_16px_rgb(15_23_42_/_10%)]">
@@ -52,4 +58,8 @@ export default function EquipmentPage() {
       </section>
     </SitePage>
   );
+}
+
+export default function EquipmentPage() {
+  return <EquipmentPageContent />;
 }

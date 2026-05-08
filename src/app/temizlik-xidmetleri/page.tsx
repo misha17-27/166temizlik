@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
+import { getLocalizedServicePages, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
 
 export const metadata = {
@@ -49,7 +50,9 @@ const serviceOrder = [
   "korporativ-temizlik-xidmeti",
 ];
 
-function ServicesHero() {
+function ServicesHero({ locale }: { locale: Locale }) {
+  const copy = pageCopy[locale];
+
   return (
     <section className="bg-[#f7f7f7] pb-8">
       <div className="mx-auto w-[min(980px,calc(100%-40px))] max-sm:w-full">
@@ -57,8 +60,8 @@ function ServicesHero() {
           <Image src={pageHeroAssets.blog} alt="" fill priority sizes="980px" className="object-cover" />
           <div className="absolute inset-0 bg-black/38" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center text-white">
-            <h1 className="text-[29px] font-bold leading-tight max-md:text-[25px]">Xidmətlər</h1>
-            <p className="mt-3 text-[17px] font-semibold max-md:text-[14px]">Sevdiklərinizə və özünüzə zaman ayırın!</p>
+            <h1 className="text-[29px] font-bold leading-tight max-md:text-[25px]">{copy.servicesTitle}</h1>
+            <p className="mt-3 text-[17px] font-semibold max-md:text-[14px]">{copy.subtitle}</p>
           </div>
         </div>
       </div>
@@ -69,10 +72,14 @@ function ServicesHero() {
 function ServiceListCard({
   service,
   reverse,
+  locale,
 }: {
   service: (typeof servicePages)[number];
   reverse: boolean;
+  locale: Locale;
 }) {
+  const copy = pageCopy[locale];
+
   return (
     <article className="grid min-h-[178px] grid-cols-[300px_1fr] overflow-hidden rounded-[16px] bg-white shadow-[0_10px_28px_rgb(15_23_42_/_6%)] max-md:grid-cols-1">
       <div className={`relative min-h-[178px] max-md:min-h-[220px] ${reverse ? "md:order-2" : ""}`}>
@@ -92,29 +99,34 @@ function ServiceListCard({
           prefetch={false}
           className="mt-5 inline-flex w-fit rounded-full bg-brand-yellow px-5 py-2 text-[10px] font-bold text-black transition hover:bg-[#ffd900]"
         >
-          Daha ətraflı
+          {copy.readMore}
         </Link>
       </div>
     </article>
   );
 }
 
-export default function ServicesPage() {
+export function ServicesPageContent({ locale = "az" }: { locale?: Locale }) {
+  const localizedServicePages = getLocalizedServicePages(servicePages, locale);
   const orderedServices = serviceOrder
-    .map((slug) => servicePages.find((service) => service.slug === slug))
+    .map((slug) => localizedServicePages.find((service) => service.slug === slug))
     .filter((service): service is (typeof servicePages)[number] => Boolean(service));
 
   return (
-    <SitePage active="services">
-      <ServicesHero />
+    <SitePage active="services" locale={locale} currentSlug="services">
+      <ServicesHero locale={locale} />
       <section className="relative overflow-hidden bg-[#f7f7f7] pb-20 pt-7 max-md:pb-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_7%_38%,rgba(255,236,20,0.22),transparent_34%),radial-gradient(circle_at_94%_48%,rgba(0,116,202,0.16),transparent_36%)]" />
         <div className="relative mx-auto flex w-[min(980px,calc(100%-40px))] flex-col gap-6">
           {orderedServices.map((service, index) => (
-            <ServiceListCard key={service.slug} service={service} reverse={index % 2 === 1} />
+            <ServiceListCard key={service.slug} service={service} reverse={index % 2 === 1} locale={locale} />
           ))}
         </div>
       </section>
     </SitePage>
   );
+}
+
+export default function ServicesPage() {
+  return <ServicesPageContent />;
 }

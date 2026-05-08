@@ -1,4 +1,5 @@
 import { services } from "@/lib/site-data";
+import type { Locale } from "@/lib/routes";
 
 export const galleryImages = [
   "https://166temizlik.az/wp-content/uploads/2023/02/perde333-1.jpg",
@@ -28,6 +29,33 @@ export const galleryCategories = [
   "Ətirləndirmə xidməti",
   "Restoran və otel təmizliyi",
 ];
+
+const galleryCategoryTranslations: Partial<Record<Locale, string[]>> = {
+  ru: [
+    "Уборка дома и офиса",
+    "Уборка дачных домов",
+    "Уборка территории",
+    "Чистка фасада",
+    "Стирка штор и жалюзи",
+    "Химчистка мягкой мебели",
+    "Ароматизация",
+    "Уборка ресторанов и отелей",
+  ],
+  tr: [
+    "Ev ve ofis temizliği",
+    "Bağ evlerinin temizliği",
+    "Alan temizliği",
+    "Cephe temizliği",
+    "Perde ve jaluzi yıkama",
+    "Yumuşak mobilyaların kimyasal temizliği",
+    "Koku uygulama hizmeti",
+    "Restoran ve otel temizliği",
+  ],
+};
+
+export function getLocalizedGalleryCategories(locale: Locale) {
+  return galleryCategoryTranslations[locale] ?? galleryCategories;
+}
 
 export const pageHeroAssets = {
   blog: "https://166temizlik.az/wp-content/uploads/2023/02/5282459.webp",
@@ -104,6 +132,114 @@ export const blogPosts = [
   },
 ];
 
+const blogPostTranslations: Partial<Record<Locale, Array<{ title: string; excerpt: string }>>> = {
+  ru: [
+    {
+      title: "Чистка дымохода и ее значение",
+      excerpt: "Регулярная чистка дымохода важна для безопасности дома и эффективной работы отопительной системы.",
+    },
+    {
+      title: "Оживите дом весенней уборкой!",
+      excerpt: "Весна подходит для глубокой уборки, сортировки лишних вещей и обновления пространства.",
+    },
+    {
+      title: "Советы по удалению пыли дома",
+      excerpt: "Правильные инструменты и методы помогают поддерживать дом здоровым, чистым и без пыли.",
+    },
+    {
+      title: "Как избавиться от запаха сырости дома",
+      excerpt: "Влажная среда вызывает неприятные запахи. Простые и эффективные методы помогают уменьшить проблему.",
+    },
+    {
+      title: "Не откладывайте мойку окон",
+      excerpt: "Регулярная мойка окон сохраняет вид, освещенность помещения и срок службы стекол.",
+    },
+    {
+      title: "Как поддерживать дом в чистоте",
+      excerpt: "Чистота важна не только для внешнего вида, но и для здоровья, комфорта и спокойствия.",
+    },
+    {
+      title: "Чистка люстр",
+      excerpt: "Профессиональные рекомендации помогут вернуть люстре блеск и убрать пыль с деталей.",
+    },
+    {
+      title: "Убивают ли чистящие средства бактерии?",
+      excerpt: "Не каждое средство дезинфицирует поверхность. Важно знать, как поддерживать гигиену правильно.",
+    },
+    {
+      title: "Как можно дезинфицировать дом?",
+      excerpt: "Правильная обработка часто используемых поверхностей помогает сократить распространение микробов.",
+    },
+    {
+      title: "Способы удаления плесени",
+      excerpt: "Простые методы помогают убрать плесень в ванной, кухне и других влажных помещениях.",
+    },
+    {
+      title: "Как правильно убирать ванную комнату",
+      excerpt: "Разделение уборки на этапы и правильные инструменты делают процесс легче и эффективнее.",
+    },
+    {
+      title: "Почему диван и кресла нужно чистить профессионально?",
+      excerpt: "Глубокая чистка мягкой мебели создает более здоровую и аккуратную среду дома.",
+    },
+  ],
+  tr: [
+    {
+      title: "Baca temizliği ve önemi",
+      excerpt: "Bacanın düzenli temizlenmesi ev güvenliği ve ısıtma sisteminin verimli çalışması için önemlidir.",
+    },
+    {
+      title: "Bahar temizliğiyle evinizi canlandırın!",
+      excerpt: "Bahar, derin temizlik yapmak, gereksiz eşyaları ayırmak ve alanı yenilemek için uygun zamandır.",
+    },
+    {
+      title: "Evdeki tozları azaltmak için ipuçları",
+      excerpt: "Doğru araçlar ve yöntemlerle evinizi sağlıklı, parlak ve tozsuz tutabilirsiniz.",
+    },
+    {
+      title: "Evdeki nem kokusundan nasıl kurtulursunuz",
+      excerpt: "Nemli ortam kötü kokulara yol açar. Basit yöntemlerle bu sorunu azaltmak mümkündür.",
+    },
+    {
+      title: "Pencere temizliğini ertelemeyin",
+      excerpt: "Düzenli pencere temizliği hem görünümü hem de camların kullanım ömrünü korur.",
+    },
+    {
+      title: "Evinizi temiz tutmak için ipuçları",
+      excerpt: "Temizlik sadece görünüm için değil, sağlık ve konfor için de gereklidir.",
+    },
+    {
+      title: "Avize temizliği",
+      excerpt: "Avizenizin tozdan arınması ve yeniden parlaması için profesyonel öneriler.",
+    },
+    {
+      title: "Temizlik ürünleri bakterileri öldürür mü?",
+      excerpt: "Her temizlik ürünü dezenfekte etmez. Yüzey hijyeni için doğru kullanım önemlidir.",
+    },
+    {
+      title: "Evinizi nasıl dezenfekte edebilirsiniz?",
+      excerpt: "Sık kullanılan yüzeyleri doğru dezenfekte etmek mikropların yayılmasını azaltır.",
+    },
+    {
+      title: "Küf temizleme yöntemleri",
+      excerpt: "Banyo, mutfak ve diğer odalarda oluşan küfü gidermek için pratik yöntemler.",
+    },
+    {
+      title: "Banyo temizliği nasıl yapılmalı",
+      excerpt: "Banyo temizliğini adımlara bölmek ve doğru araçları kullanmak işi kolaylaştırır.",
+    },
+    {
+      title: "Koltuk ve sandalye temizliği neden profesyonel yapılmalı?",
+      excerpt: "Yumuşak mobilyaların derin temizliği daha sağlıklı ve düzenli bir ev ortamı oluşturur.",
+    },
+  ],
+};
+
+export function getLocalizedBlogPosts(locale: Locale) {
+  const translations = blogPostTranslations[locale];
+  return blogPosts.map((post, index) => ({ ...post, ...(translations?.[index] ?? {}) }));
+}
+
 export const employees = [
   ["Kazımova Sevər", "Ofis meneceri", "https://166temizlik.az/wp-content/uploads/2023/07/Kazimova-Sev-r.jpeg"],
   ["İsayev Habil", "Təmizlik Xidməti bölümünün müdir müavini", "https://166temizlik.az/wp-content/uploads/2023/07/Isayev-Habil.jpeg"],
@@ -118,6 +254,40 @@ export const employees = [
   ["Bayramov Zübeyir", "Təchizat işlərinə baxan şəxs", "https://166temizlik.az/wp-content/uploads/2023/07/Bayramov-Zubeyir.jpeg"],
 ].map(([name, role, image]) => ({ name, role, image }));
 
+const employeeRoleTranslations: Partial<Record<Locale, string[]>> = {
+  ru: [
+    "Офис-менеджер",
+    "Заместитель руководителя отдела клининговых услуг",
+    "Сотрудник отдела проблем",
+    "Главный менеджер",
+    "Менеджер по продажам",
+    "Менеджер по продажам",
+    "Водитель",
+    "Водитель",
+    "Ответственный за контроль водителей",
+    "Руководитель группы услуги стирки штор",
+    "Ответственный за снабжение",
+  ],
+  tr: [
+    "Ofis yöneticisi",
+    "Temizlik Hizmeti bölüm müdür yardımcısı",
+    "Sorunlar bölümünün çalışanı",
+    "Baş yönetici",
+    "Satış yöneticisi",
+    "Satış yöneticisi",
+    "Sürücü",
+    "Sürücü",
+    "Sürücüleri denetleyen kişi",
+    "Perde yıkama hizmeti grup lideri",
+    "Tedarik işlerinden sorumlu kişi",
+  ],
+};
+
+export function getLocalizedEmployees(locale: Locale) {
+  const roles = employeeRoleTranslations[locale];
+  return employees.map((person, index) => ({ ...person, role: roles?.[index] ?? person.role }));
+}
+
 export const vacancies = [
   {
     title: "Təmizlikçi",
@@ -130,6 +300,37 @@ export const vacancies = [
     items: ["Ali təhsil", "Sahə üzrə 3 il təcrübə", "Müştəri ilə düzgün ünsiyyət bacarığı"],
   },
 ];
+
+const vacancyTranslations: Partial<Record<Locale, typeof vacancies>> = {
+  ru: [
+    {
+      title: "Уборщик",
+      summary: "166 Təmizlik приглашает подать заявку на вакансию уборщика.",
+      items: ["Профессиональное образование желательно", "Опыт в сфере будет преимуществом", "Умение работать в команде"],
+    },
+    {
+      title: "Менеджер",
+      summary: "166 Təmizlik приглашает подать заявку на вакансию менеджера.",
+      items: ["Высшее образование", "3 года опыта в сфере", "Навыки корректного общения с клиентами"],
+    },
+  ],
+  tr: [
+    {
+      title: "Temizlikçi",
+      summary: "166 Temizlik Hizmeti temizlikçi pozisyonu için başvuruya davet eder.",
+      items: ["Mesleki eğitim tercih edilir", "Alan deneyimi avantajdır", "Takım çalışması becerisi"],
+    },
+    {
+      title: "Yönetici",
+      summary: "166 Temizlik Hizmeti yönetici pozisyonu için başvuruya davet eder.",
+      items: ["Yüksek öğrenim", "Alanında 3 yıl deneyim", "Müşteriyle doğru iletişim becerisi"],
+    },
+  ],
+};
+
+export function getLocalizedVacancies(locale: Locale) {
+  return vacancyTranslations[locale] ?? vacancies;
+}
 
 export const equipment = [
   {
@@ -164,6 +365,66 @@ export const equipment = [
   },
 ];
 
+const equipmentTranslations: Partial<Record<Locale, Array<{ title: string; text: string }>>> = {
+  ru: [
+    {
+      title: "Пылесос",
+      text: "Пылесосы Karcher дают надежный результат при сухой и влажной уборке, а также при удалении мусора и пыли после ремонта.",
+    },
+    {
+      title: "Паровая машина для пола",
+      text: "Паровая уборка помогает гигиенично очищать поверхности и размягчать сложные пятна.",
+    },
+    {
+      title: "Моющий пылесос",
+      text: "Используется для химчистки мягкой мебели, ковров и напольных покрытий.",
+    },
+    {
+      title: "Паровой аппарат",
+      text: "Паровые очистители Kärcher обеспечивают гигиеничную уборку поверхностей без необходимости в агрессивной химии.",
+    },
+    {
+      title: "Аппарат для кристаллизации",
+      text: "Профессиональное оборудование для полировки, обновления и защиты каменных и мраморных поверхностей.",
+    },
+    {
+      title: "Аппарат для чистки лестниц",
+      text: "Влажная уборка, шампунирование, полировка и кристаллизация помогают эффективно очищать лестницы и твердые покрытия.",
+    },
+  ],
+  tr: [
+    {
+      title: "Elektrikli süpürge",
+      text: "Karcher süpürgeler kuru ve ıslak temizlikte, tadilat sonrası çöp ve toz toplamada güvenilir sonuç verir.",
+    },
+    {
+      title: "Buharlı zemin temizleyici",
+      text: "Buharlı temizlik yüzeyleri hijyenik şekilde temizlemeye ve zor lekeleri yumuşatmaya yardımcı olur.",
+    },
+    {
+      title: "Yıkamalı süpürge",
+      text: "Yumuşak mobilya, halı ve zemin kaplamalarının kimyasal temizliğinde kullanılır.",
+    },
+    {
+      title: "Buhar cihazı",
+      text: "Kärcher buhar temizleyicileri kimyasal maddeye gerek kalmadan yüzeylerde hijyenik temizlik sağlar.",
+    },
+    {
+      title: "Kristalleştirme cihazı",
+      text: "Taş ve mermer yüzeylerin parlatılması, yenilenmesi ve korunması için profesyonel ekipmandır.",
+    },
+    {
+      title: "Merdiven temizliği cihazı",
+      text: "Islak temizlik, şampuanlama, cilalama ve kristalleştirme özellikleri merdiven ve sert yüzeyler için etkilidir.",
+    },
+  ],
+};
+
+export function getLocalizedEquipment(locale: Locale) {
+  const translations = equipmentTranslations[locale];
+  return equipment.map((item, index) => ({ ...item, ...(translations?.[index] ?? {}) }));
+}
+
 export const materialCards = [
   ["H-04 Genel Fresh Multi Clean", "Antibakterial məhsul, kif və göbələyə qarşı bütün səthlərdə istifadə olunur. Güzgü və şüşələri tozdan qoruyur."],
   ["H-19 Asit Miracle Plus", "Hamam və sanuzel təmizliyində istifadə üçün əvəzolunmaz antibakterial məhsuldur. Ərpin qarşısını alır."],
@@ -173,6 +434,32 @@ export const materialCards = [
   ["H-17 Orgine", "Kimyəvi təmizlik zamanı istifadə olunan lokal ləkə təmizləyici mayədir. Yumşaq mebellər üçün uyğundur."],
   ["Antistiker", "Yapışqan lentlərin iz saxlamadan çıxarılmasına kömək edir. Stiker və saqqız ləkələrini qoparır."],
 ].map(([title, text]) => ({ title, text }));
+
+const materialCardTranslations: Partial<Record<Locale, Array<{ title: string; text: string }>>> = {
+  ru: [
+    { title: "H-04 Genel Fresh Multi Clean", text: "Антибактериальное средство против плесени и грибка для разных поверхностей. Защищает зеркала и стекла от пыли." },
+    { title: "H-19 Asit Miracle Plus", text: "Антибактериальное средство для ванной и санузла. Помогает предотвращать образование налета." },
+    { title: "K-11 Yağ Kir Overget", text: "Качественное обезжиривающее средство для кухни, гриля и пригоревшего жира." },
+    { title: "K-12 Scale Ripper", text: "Средство против известкового налета и загрязнений в ванной и санузле." },
+    { title: "H-23 Luxe Oxi", text: "Отбеливающее дезинфицирующее средство. Удаляет пятна и эффективно работает против бактерий." },
+    { title: "H-17 Orgine", text: "Локальный пятновыводитель для химчистки. Подходит для мягкой мебели." },
+    { title: "Antistiker", text: "Помогает удалить следы клейкой ленты, стикеры и жевательную резинку без следов." },
+  ],
+  tr: [
+    { title: "H-04 Genel Fresh Multi Clean", text: "Küf ve mantara karşı farklı yüzeylerde kullanılan antibakteriyel ürün. Ayna ve camları tozdan korur." },
+    { title: "H-19 Asit Miracle Plus", text: "Banyo ve tuvalet temizliğinde kullanılan antibakteriyel ürün. Kireç oluşumunu önlemeye yardımcı olur." },
+    { title: "K-11 Yağ Kir Overget", text: "Mutfak, ızgara ve yanmış yağlar için yüksek kaliteli yağ çözücü üründür." },
+    { title: "K-12 Scale Ripper", text: "Banyo ve tuvalette kalan kireç ve kirlerin temizliğine yardımcı olan kireç çözücü üründür." },
+    { title: "H-23 Luxe Oxi", text: "Beyazlatıcı dezenfektan ürün. Lekeleri iz bırakmadan çıkarır ve bakterilere karşı etkilidir." },
+    { title: "H-17 Orgine", text: "Kimyasal temizlikte kullanılan lokal leke çıkarıcı sıvıdır. Yumuşak mobilyalar için uygundur." },
+    { title: "Antistiker", text: "Yapışkan bant izlerini, stikerleri ve sakız lekelerini iz bırakmadan çıkarmaya yardımcı olur." },
+  ],
+};
+
+export function getLocalizedMaterialCards(locale: Locale) {
+  const translations = materialCardTranslations[locale];
+  return materialCards.map((item, index) => ({ ...item, ...(translations?.[index] ?? {}) }));
+}
 
 const serviceDetails: Record<string, { description: string; image: string; bullets: string[] }> = {
   "ev-temizliyi-xidmeti": {

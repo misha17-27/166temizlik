@@ -3,8 +3,17 @@ import { notFound } from "next/navigation";
 import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
 import { SitePage } from "@/components/SiteChrome";
+import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { hourlyPrices, packageFeatures, site } from "@/lib/site-data";
+import { site } from "@/lib/site-data";
+
+const packageTitles: Record<Locale, { four: string; eight: string }> = {
+  az: { four: "4 saat", eight: "8 saat" },
+  ru: { four: "4 часа", eight: "8 часов" },
+  tr: { four: "4 saat", eight: "8 saat" },
+};
+
+type ServicePageItem = (typeof servicePages)[number];
 
 const detailImageSets: Record<string, string[]> = {
   "ev-temizliyi-xidmeti": [
@@ -140,13 +149,44 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
+  const localizedServicePages = getLocalizedServicePages(servicePages, locale);
+  const service = localizedServicePages.find((item) => item.slug === slug);
+
+  if (!service) {
+    notFound();
+  }
+
+  const copy = pageCopy[locale];
+  const images = detailImageSets[service.slug] ?? [service.image];
+  const paragraphs =
+    locale === "az"
+      ? serviceLongCopy[service.slug] ?? [
+          service.description,
+          "166 Təmizlik Xidməti bu istiqamətdə peşəkar komanda, müasir avadanlıq və keyfiyyətli təmizləyici vasitələrlə xidmət göstərir. Sifarişin həcmi, məkanın vəziyyəti və müştərinin istəyinə uyğun olaraq xidmət planı formalaşdırılır.",
+        ]
+      : [service.description, copy.bottomText];
+  const heroImage = service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog;
+
+  return (
+    <SitePage active="services" locale={locale} currentSlug={service.slug} routeKind="service">
+      <DetailHero title={service.title} heroImage={heroImage} subtitle={copy.subtitle} />
+      <IntroBlocks service={service} images={images} paragraphs={paragraphs} />
+      <IncludedSection service={service} images={images} locale={locale} />
+      <PackagesAndNote locale={locale} />
+      <OrderFormSection serviceTitle={service.title} locale={locale} />
+      <BottomImageCta locale={locale} />
+    </SitePage>
+  );
+}
+
 function getGalleryImages(images: string[]) {
   const source = images.length > 5 ? images.slice(2) : images;
 
   return Array.from({ length: 8 }, (_, index) => source[index % source.length]);
 }
 
-function DetailHero({ title, heroImage }: { title: string; heroImage: string }) {
+function DetailHero({ title, heroImage, subtitle }: { title: string; heroImage: string; subtitle: string }) {
   return (
     <section className="bg-[#f7f7f7]">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))] max-sm:w-full">
@@ -155,7 +195,7 @@ function DetailHero({ title, heroImage }: { title: string; heroImage: string }) 
           <div className="absolute inset-0 bg-black/38" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center text-white">
             <h1 className="text-[28px] font-bold leading-tight max-md:text-[23px]">{title}</h1>
-            <p className="mt-3 text-[16px] font-semibold max-md:text-[13px]">Sevdiklərinizə və özünüzə zaman ayırın!</p>
+            <p className="mt-3 text-[16px] font-semibold max-md:text-[13px]">{subtitle}</p>
           </div>
         </div>
       </div>
@@ -183,7 +223,7 @@ function IntroTextCard({ children, reverse = false }: { children: React.ReactNod
   );
 }
 
-function IntroBlocks({ service, images, paragraphs }: { service: (typeof servicePages)[number]; images: string[]; paragraphs: string[] }) {
+function IntroBlocks({ service, images, paragraphs }: { service: ServicePageItem; images: string[]; paragraphs: string[] }) {
   return (
     <section className="bg-[#f7f7f7] pb-14 pt-[50px]">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
@@ -204,10 +244,11 @@ function IntroBlocks({ service, images, paragraphs }: { service: (typeof service
   );
 }
 
-function IncludedSection({ service, images }: { service: (typeof servicePages)[number]; images: string[] }) {
+function IncludedSection({ service, images, locale }: { service: ServicePageItem; images: string[]; locale: Locale }) {
+  const copy = pageCopy[locale];
   const gallery = getGalleryImages(images);
   const heights = ["h-[218px]", "h-[182px]", "h-[218px]", "h-[218px]", "h-[218px]", "h-[218px]", "h-[182px]", "h-[218px]"];
-  const title = service.slug === "ev-temizliyi-xidmeti" ? "Əsaslı təmizlik xidmətinə daxildir" : `${service.title} xidmətinə daxildir`;
+  const title = service.slug === "ev-temizliyi-xidmeti" ? copy.includedHome : `${service.title} ${copy.included}`;
 
   return (
     <section className="bg-[#f7f7f7] pb-12">
@@ -235,17 +276,19 @@ function IncludedSection({ service, images }: { service: (typeof servicePages)[n
           </div>
         </div>
         <p className="mt-9 text-center text-[13px] font-semibold text-black">
-          Təmizlik qayğısından azad olun, indi sevdiklərinizə zaman ayırmaq və sevdiyiniz işlə məşğul olmaq vaxtıdır!
+          {copy.serviceCare}
         </p>
       </div>
     </section>
   );
 }
 
-function HourlyCards() {
+function HourlyCards({ locale }: { locale: Locale }) {
+  const copy = homeCopy[locale];
+
   return (
     <div className="grid grid-cols-5 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-1">
-      {hourlyPrices.map((price) => (
+      {copy.hourlyPrices.map((price) => (
         <article key={price.time} className="rounded-[12px] bg-white px-4 py-5 text-center shadow-[0_6px_20px_rgb(0_116_202_/_7%)]">
           <div className="mx-auto mb-3 grid h-[42px] w-[42px] place-items-center rounded-full bg-[#95df22] text-white">
             <ClockIcon className="h-[23px] w-[23px]" strokeWidth={2.1} />
@@ -256,7 +299,7 @@ function HourlyCards() {
             <br />
             {price.village}
             <br />
-            (1 nəfər xanım kömək məqsədi ilə gəlir)
+            {copy.hourlyHelper}
           </p>
         </article>
       ))}
@@ -264,37 +307,42 @@ function HourlyCards() {
   );
 }
 
-function NotePanel() {
+function NotePanel({ locale }: { locale: Locale }) {
+  const copy = pageCopy[locale];
+
   return (
     <div className="mx-auto grid max-w-[850px] grid-cols-[0.85fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-md:grid-cols-1">
       <div className="relative min-h-[265px] overflow-hidden max-md:min-h-[220px]">
-        <Image src={site.noteImage} alt="Qeyd" fill sizes="360px" className="object-cover" />
+        <Image src={site.noteImage} alt={copy.noteTitle} fill sizes="360px" className="object-cover" />
         <div className="absolute -right-10 top-[-20%] h-[140%] w-[90px] rounded-[50%] border-r-[18px] border-[#ffd600] bg-brand-blue max-md:hidden" />
       </div>
       <div className="px-10 py-9 max-md:px-6">
-        <h3 className="text-[22px] font-bold">QEYD</h3>
+        <h3 className="text-[22px] font-bold">{copy.noteTitle}</h3>
         <p className="mt-5 text-[13px] font-semibold leading-[1.6] text-white">
-          Təmizlik xidməti sizin seçiminiz əsasında olur. Belə ki, daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək.
+          {copy.noteText}
         </p>
       </div>
     </div>
   );
 }
 
-function PackagesAndNote() {
+function PackagesAndNote({ locale }: { locale: Locale }) {
+  const copy = homeCopy[locale];
+  const titles = packageTitles[locale];
+
   return (
     <section className="bg-[#f7f7f7] pb-20">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <div className="grid grid-cols-2 gap-10 max-lg:grid-cols-1">
-          <CleaningPackageCard title="4 saat" items={packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" />
-          <CleaningPackageCard title="8 saat" items={packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" />
+          <CleaningPackageCard title={titles.four} items={copy.packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" weeklyItems={copy.weeklyPrices} toggleLabels={copy.packageLabels} />
+          <CleaningPackageCard title={titles.eight} items={copy.packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" weeklyItems={copy.weeklyPrices} toggleLabels={copy.packageLabels} />
         </div>
         <div className="mt-[92px] rounded-[30px] bg-[#e4efff] px-[42px] pb-[70px] pt-0 max-lg:px-8 max-md:mt-10 max-md:px-4 max-md:py-8">
           <div className="relative z-10 -translate-y-[54px] max-md:translate-y-0">
-            <HourlyCards />
+            <HourlyCards locale={locale} />
           </div>
           <div className="pt-[72px] max-md:pt-8">
-            <NotePanel />
+            <NotePanel locale={locale} />
           </div>
         </div>
       </div>
@@ -302,25 +350,27 @@ function PackagesAndNote() {
   );
 }
 
-function OrderFormSection({ serviceTitle }: { serviceTitle: string }) {
+function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; locale: Locale }) {
+  const copy = pageCopy[locale];
+
   return (
     <section className="relative overflow-hidden bg-[#eaf7ff] py-[95px]">
       <div className="absolute -right-16 bottom-[-90px] h-[420px] w-[520px] rotate-[-18deg] border-[42px] border-brand-blue max-md:hidden" />
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <form className="max-w-[430px]">
-          <h2 className="text-[22px] font-semibold text-black">Təmizlik paketləri</h2>
-          <p className="mt-2 text-[12px] leading-[1.5] text-black/75">166 Təmizlik xidməti sizin büdcənizə uyğun müxtəlif təmizlik paketlərini təqdim edir.</p>
+          <h2 className="text-[22px] font-semibold text-black">{copy.packagesTitle}</h2>
+          <p className="mt-2 text-[12px] leading-[1.5] text-black/75">{copy.packagesIntro}</p>
           <div className="mt-5 grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-            <input className="h-10 border-0 bg-white px-4 text-[12px] outline-none" placeholder="Ad" />
-            <input className="h-10 border-0 bg-white px-4 text-[12px] outline-none" placeholder="Əlaqə nömrəsi" />
+            <input className="h-10 border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formName} />
+            <input className="h-10 border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formPhone} />
           </div>
           <select className="mt-3 h-10 w-full border-0 bg-white px-4 text-[12px] text-black/70 outline-none" defaultValue={serviceTitle}>
             <option>{serviceTitle}</option>
           </select>
-          <input className="mt-3 h-10 w-full border-0 bg-white px-4 text-[12px] outline-none" placeholder="Təmizlik olunacaq ünvan" />
-          <textarea className="mt-3 h-[92px] w-full resize-none border-0 bg-white px-4 py-3 text-[12px] outline-none" placeholder="İsmarıc" />
+          <input className="mt-3 h-10 w-full border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formAddress} />
+          <textarea className="mt-3 h-[92px] w-full resize-none border-0 bg-white px-4 py-3 text-[12px] outline-none" placeholder={copy.formMessage} />
           <button type="button" className="mt-4 rounded-full bg-brand-yellow px-8 py-3 text-[12px] font-bold text-black">
-            Sifariş et
+            {copy.order}
           </button>
         </form>
       </div>
@@ -328,13 +378,15 @@ function OrderFormSection({ serviceTitle }: { serviceTitle: string }) {
   );
 }
 
-function BottomImageCta() {
+function BottomImageCta({ locale }: { locale: Locale }) {
+  const copy = pageCopy[locale];
+
   return (
     <section className="relative min-h-[600px] overflow-hidden bg-black text-white max-md:min-h-[430px]">
       <Image src="https://166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg" alt="" fill sizes="100vw" className="object-cover opacity-55" />
       <div className="relative mx-auto flex min-h-[600px] w-[min(1140px,calc(100%-40px))] items-center justify-end max-md:min-h-[430px] max-md:justify-center">
         <p className="max-w-[490px] text-[14px] font-semibold leading-[1.65] text-white">
-          Təmizlik xidməti sizin seçiminiz əsasında olur. Belə ki, daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək. Təmizlik firması olaraq sizə ən təmiz xidməti göstərməyə çalışırıq.
+          {copy.bottomText}
         </p>
       </div>
     </section>
@@ -343,27 +395,5 @@ function BottomImageCta() {
 
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const service = servicePages.find((item) => item.slug === slug);
-
-  if (!service) {
-    notFound();
-  }
-
-  const images = detailImageSets[service.slug] ?? [service.image];
-  const paragraphs = serviceLongCopy[service.slug] ?? [
-    service.description,
-    "166 Təmizlik Xidməti bu istiqamətdə peşəkar komanda, müasir avadanlıq və keyfiyyətli təmizləyici vasitələrlə xidmət göstərir. Sifarişin həcmi, məkanın vəziyyəti və müştərinin istəyinə uyğun olaraq xidmət planı formalaşdırılır.",
-  ];
-  const heroImage = service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog;
-
-  return (
-    <SitePage active="services">
-      <DetailHero title={service.title} heroImage={heroImage} />
-      <IntroBlocks service={service} images={images} paragraphs={paragraphs} />
-      <IncludedSection service={service} images={images} />
-      <PackagesAndNote />
-      <OrderFormSection serviceTitle={service.title} />
-      <BottomImageCta />
-    </SitePage>
-  );
+  return <ServiceDetailContent slug={slug} />;
 }
