@@ -273,7 +273,10 @@ export function AboutPageContent({ locale = "az" }: { locale?: Locale }) {
               <h2 className="max-w-[720px] text-[27px] font-medium leading-tight text-white max-md:text-[21px]">
                 {copy.cta}
               </h2>
-              <Link href={site.whatsappHref} className="inline-flex shrink-0 items-center gap-7 rounded-[5px] bg-black px-8 py-4 text-[13px] font-bold text-white">
+              <Link
+                href={site.whatsappHref}
+                className="inline-flex shrink-0 items-center gap-7 rounded-[5px] bg-black px-8 py-4 text-[13px] font-bold !text-white transition-colors hover:bg-black hover:!text-white"
+              >
                 {copy.order} <span className="text-xl">→</span>
               </Link>
             </div>
