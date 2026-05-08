@@ -5,6 +5,50 @@ import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 
+const contactSocialLinks = [
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/166temizlik",
+    icon: (
+      <path
+        d="M13.2 7.6h1.8V4.7a22 22 0 0 0-2.7-.1c-2.7 0-4.5 1.6-4.5 4.6v2.6h-3v3.2h3v8h3.5v-8h2.9l.4-3.2h-3.3V9.5c0-1 .3-1.9 1.9-1.9Z"
+        fill="currentColor"
+      />
+    ),
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/166_temizlik/",
+    icon: (
+      <>
+        <rect x="5.4" y="5.4" width="13.2" height="13.2" rx="3.4" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="12" cy="12" r="3.1" stroke="currentColor" strokeWidth="1.8" />
+        <circle cx="16.2" cy="7.8" r="1" fill="currentColor" />
+      </>
+    ),
+  },
+  {
+    label: "WhatsApp",
+    href: site.whatsappHref,
+    icon: (
+      <>
+        <path d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
+        <path d="M9.3 8.6c.2-.4.4-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.6v.6c0 .3-.1.5-.4.7-.5.4-1.2.5-1.8.3-3-.8-5.4-3.2-6.2-6.1-.2-.7 0-1.3.3-1.8Z" fill="currentColor" />
+      </>
+    ),
+  },
+  {
+    label: "YouTube",
+    href: "https://www.youtube.com/@166tmizlikxidmti9/videos",
+    icon: (
+      <>
+        <rect x="4" y="7" width="16" height="10" rx="3" stroke="currentColor" strokeWidth="1.8" />
+        <path d="m10.6 9.7 4.4 2.3-4.4 2.3V9.7Z" fill="currentColor" />
+      </>
+    ),
+  },
+];
+
 function getContactCards(locale: Locale) {
   const copy = staticPageCopy[locale].contact;
   const address =
@@ -53,8 +97,11 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
                 placeholder={copy.message}
                 className="min-h-[100px] rounded-[4px] bg-[#fafafa] px-4 py-3 text-[15px] text-[#222] outline-none placeholder:text-[#9aa0ad]"
               />
-              <button className="ml-auto inline-flex items-center gap-4 rounded-full bg-brand-yellow px-8 py-4 text-[15px] font-medium text-black">
-                {copy.submit} <span className="text-[22px] leading-none">→</span>
+              <button className="ml-auto inline-flex items-center gap-4 rounded-full bg-brand-yellow px-8 py-4 text-[15px] font-medium text-black transition-colors hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white focus-visible:outline-none">
+                {copy.submit}
+                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
+                  <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
             </div>
           </form>
@@ -81,10 +128,19 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
               ))}
             </div>
             <div className="mt-7 flex gap-2">
-              {["f", "◎", "☏", "▶"].map((item) => (
-                <span key={item} className="grid h-9 w-9 place-items-center rounded-[4px] bg-brand-yellow text-[18px] font-bold text-[#5447e8]">
-                  {item}
-                </span>
+              {contactSocialLinks.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  aria-label={item.label}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="grid h-9 w-9 place-items-center rounded-[4px] bg-brand-yellow text-[#5447e8] transition-colors hover:bg-black hover:text-white"
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none">
+                    {item.icon}
+                  </svg>
+                </Link>
               ))}
             </div>
           </div>
