@@ -52,7 +52,7 @@ export function BeforeAfterGallery({
 
   return (
     <section id="gallery" data-section="before-after" className="bg-white py-16 max-md:py-10">
-      <div className="mx-auto w-[min(1200px,calc(100%-40px))] rounded-[14px] bg-[#e4f1ff] px-[70px] pb-14 pt-8 max-lg:px-10 max-md:w-[calc(100%-30px)] max-md:px-4 max-md:pb-8">
+      <div className="mx-auto w-[min(var(--site-container),calc(100%-40px))] rounded-[14px] bg-[#e4f1ff] px-[70px] pb-14 pt-8 max-lg:px-10 max-md:w-[calc(100%-30px)] max-md:px-4 max-md:pb-8">
         <div className="mb-8 text-center [font-family:var(--font-montserrat)] text-[23px] font-bold uppercase leading-tight tracking-normal text-black max-md:mb-5 max-md:text-[18px]">
           {copy.title} <span className="ml-2 font-normal text-brand-blue">{copy.accent}</span>
         </div>

@@ -8,6 +8,8 @@
   --brand-yellow: #ffec14;
   --muted: #68758a;
   --card: #ffffff;
+  --site-container: 1140px;
+  --header-container: 1200px;
 }
 
 @theme inline {
@@ -54,7 +56,7 @@ a {
 }
 
 .container-shell {
-  width: min(1180px, calc(100% - 40px));
+  width: min(var(--site-container), calc(100% - 40px));
   margin-inline: auto;
 }
 
