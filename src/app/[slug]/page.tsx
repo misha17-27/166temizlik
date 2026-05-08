@@ -316,7 +316,7 @@ function IncludedSection({ service, images, locale }: { service: ServicePageItem
             {service.bullets.map((item, index) => (
               <div
                 key={item}
-                className={`flex h-[52px] items-center justify-center border bg-white px-4 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[16px] ${
+                className={`flex h-[52px] items-center justify-center rounded-[8px] border bg-white px-4 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[16px] ${
                   index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
                 }`}
               >
