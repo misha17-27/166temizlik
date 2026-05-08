@@ -147,21 +147,30 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0074ca] to-[#12d5df] py-24 text-white max-md:py-14">
-        <div className="absolute -top-20 left-0 h-[160px] w-full rotate-[-4deg] bg-white" />
-        <div className="container-shell relative grid min-h-[410px] grid-cols-[0.9fr_1fr] items-center gap-12 max-lg:grid-cols-1">
-          <div>
-            <h2 className="text-[44px] font-normal max-md:text-[32px]">{copy.questionsTitle}</h2>
-            <Link href={site.whatsappHref} className="mt-12 inline-flex rounded-full bg-white px-8 py-3 text-[15px] font-medium text-[#17b840]">
-              {copy.whatsapp}&nbsp; ☎
+      <section className="relative min-h-[540px] overflow-hidden bg-gradient-to-r from-[#0074ca] via-[#05a9dd] to-[#12d5df] text-white max-md:min-h-0">
+        <div className="absolute -top-[98px] left-[-20px] h-[180px] w-[110%] origin-left rotate-[-4deg] bg-white" />
+        <div className="absolute left-0 top-[78px] h-[255px] w-[90px] rounded-r-full bg-white/18 max-md:hidden" />
+        <div className="absolute bottom-[-105px] right-[-20px] h-[360px] w-[430px] rounded-full bg-white/12 max-md:hidden" />
+        <div className="container-shell relative grid min-h-[540px] grid-cols-[0.86fr_1fr] items-center gap-16 pt-[46px] max-lg:grid-cols-1 max-lg:gap-8 max-lg:py-20 max-md:min-h-0">
+          <div className="pl-2 max-lg:pl-0">
+            <h2 className="text-[42px] font-normal leading-tight text-white max-md:text-[32px]">{copy.questionsTitle}</h2>
+            <Link
+              href={site.whatsappHref}
+              className="mt-12 inline-flex h-[45px] items-center gap-2 rounded-full bg-white px-8 text-[15px] font-bold !text-[#39c75a] shadow-[0_8px_20px_rgb(0_0_0_/_8%)] transition-colors hover:bg-black hover:!text-white"
+            >
+              <span>{copy.whatsapp}</span>
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
+                <path d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
+                <path d="M9.3 8.6c.2-.4.4-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.6v.6c0 .3-.1.5-.4.7-.5.4-1.2.5-1.8.3-3-.8-5.4-3.2-6.2-6.1-.2-.7 0-1.3.3-1.8Z" fill="currentColor" />
+              </svg>
             </Link>
           </div>
-          <div className="relative ml-auto h-[540px] w-[520px] overflow-hidden rounded-[46px] max-lg:mx-auto max-md:h-[300px] max-md:w-full">
+          <div className="relative ml-auto h-[480px] w-[480px] overflow-hidden rounded-[48px] max-lg:mx-auto max-md:h-[300px] max-md:w-full max-md:rounded-[28px]">
             <Image
               src="https://166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg"
               alt="166 Təmizlik suallar"
               fill
-              sizes="(max-width: 768px) 100vw, 520px"
+              sizes="(max-width: 768px) 100vw, 480px"
               className="object-cover grayscale"
             />
           </div>
