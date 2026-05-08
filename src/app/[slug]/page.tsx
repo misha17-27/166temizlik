@@ -1,10 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
 import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
-import { pageHeroAssets, servicePages } from "@/lib/pages-data";
+import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { site } from "@/lib/site-data";
 
 const packageTitles: Record<Locale, { four: string; eight: string }> = {
@@ -137,15 +138,17 @@ const serviceLongCopy: Record<string, string[]> = {
 };
 
 export function generateStaticParams() {
-  return servicePages.map((service) => ({ slug: service.slug }));
+  return [...servicePages.map((service) => ({ slug: service.slug })), ...blogPosts.map((post) => ({ slug: post.slug }))];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const service = servicePages.find((item) => item.slug === slug);
+  const post = blogPosts.find((item) => item.slug === slug);
 
   return {
-    title: service ? `${service.title} - 166 Təmizlik` : "166 Təmizlik",
+    title: service ? `${service.title} - 166 Təmizlik` : post ? `${post.title} - 166 Təmizlik` : "166 Təmizlik",
+    description: post?.excerpt,
   };
 }
 
@@ -443,7 +446,46 @@ function BottomImageCta({ locale }: { locale: Locale }) {
   );
 }
 
+function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
+  const post = blogPosts.find((item) => item.slug === slug);
+
+  if (!post) {
+    notFound();
+  }
+
+  return (
+    <SitePage active="about" locale={locale} currentSlug="blog">
+      <section className="bg-[#f5f5f5] pb-16">
+        <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
+          <div className="relative h-[430px] overflow-hidden max-md:h-[270px]">
+            <Image src={post.image} alt={post.title} fill priority sizes="1140px" className="object-cover" />
+            <div className="absolute inset-0 bg-black/35" />
+            <div className="absolute inset-0 flex items-center justify-center px-5 text-center text-white">
+              <h1 className="max-w-[850px] text-[36px] font-bold leading-tight max-md:text-[26px]">{post.title}</h1>
+            </div>
+          </div>
+          <article className="mx-auto mt-10 max-w-[880px] rounded-[18px] bg-white px-10 py-10 shadow-[0_12px_30px_rgb(0_0_0_/_6%)] max-md:px-6 max-md:py-7">
+            <p className="text-[18px] font-medium leading-[1.7] text-[#30313a] max-md:text-[16px]">{post.excerpt}</p>
+            <div className="mt-8 space-y-5 text-[16px] font-normal leading-[1.85] text-[#3f4652]">
+              {post.content.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+            <Link href="/bloq/" className="mt-10 inline-flex rounded-full bg-brand-yellow px-7 py-3 text-[13px] font-bold text-black">
+              Bloqa qayıt
+            </Link>
+          </article>
+        </div>
+      </section>
+    </SitePage>
+  );
+}
+
 export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (blogPosts.some((post) => post.slug === slug)) {
+    return <BlogPostContent slug={slug} />;
+  }
+
   return <ServiceDetailContent slug={slug} />;
 }

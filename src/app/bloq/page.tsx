@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { BlogList } from "@/components/BlogList";
 import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedBlogPosts, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
@@ -26,26 +27,7 @@ export function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
       </section>
 
       <section className="bg-[#f5f5f5] py-8 pb-24">
-        <div className="container-shell grid grid-cols-3 gap-x-9 gap-y-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          {posts.map((post) => (
-            <article key={post.title} className="bg-white">
-              <div className="relative h-[245px] overflow-hidden">
-                <Image src={post.image} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
-              </div>
-              <div className="px-6 pb-9 pt-6">
-                <h2 className="min-h-[50px] text-[18px] font-bold leading-[1.2] text-black">{post.title}</h2>
-                <p className="mt-4 line-clamp-5 text-[13px] font-normal leading-[1.65] text-[#686868]">{post.excerpt}</p>
-                <button className="mt-7 rounded-full bg-brand-yellow px-6 py-3 text-[12px] font-bold text-black">
-                  {copy.readMore}
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-        <div className="mt-12 flex justify-center gap-4 text-[16px] font-semibold">
-          <span className="text-brand-blue">1</span>
-          <span>2</span>
-        </div>
+        <BlogList posts={posts} readMore={copy.readMore} />
       </section>
     </SitePage>
   );

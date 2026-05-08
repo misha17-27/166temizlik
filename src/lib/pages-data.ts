@@ -66,69 +66,264 @@ export const pageHeroAssets = {
 
 export const blogPosts = [
   {
+    slug: "vinil-dos-m-ni-nec-t-mizl-m-k-olar",
+    title: "Vinil Döşəməni Necə Təmizləmək Olar?",
+    image: "https://166temizlik.az/wp-content/uploads/2026/05/shutterstock_1973895842.jpg",
+    excerpt:
+      "Vinil döşəmə davamlılığı və qulluğunun asanlığı sayəsində evlərdə geniş yayılmış bir seçimdir. Düzgün qulluqla döşəməni təmiz və parlaq saxlamaq mümkündür.",
+    content: [
+      "Vinil döşəmə davamlılığı və qulluğunun asanlığı sayəsində evlərdə geniş yayılmış bir seçimdir. Lakin düzgün təmizlənməsə, zamanla cızıqlar əmələ gəlir və parlaqlıq itir.",
+      "Döşəmə bezindən istifadə etməzdən əvvəl mütləq süpürün və ya tozsoranlayın. Toz hissəcikləri döşəmə üzərində sürtünərək cızıqlara səbəb ola bilər.",
+      "Bir stəkan sirkəni 4 litr isti su ilə qarışdırın. Daha çirkli sahələr üçün qarışığa bir neçə damcı qabyuyan maye əlavə edə bilərsiniz.",
+      "Mikrofiber döşəmə bezini məhlula batırın, yaxşıca sıxın və döşəməni bir küncdən başlayaraq silin. Artıq su vinil döşəməyə zərər verə bilər.",
+      "Təmiz su ilə bir dəfə də silin ki, məhlul qalığı qalmasın. Döşəmənin tamamilə qurumasını gözləyin.",
+    ],
+  },
+  {
+    slug: "baca-t-mizliyi-v-h-miyy-ti",
     title: "Baca təmizliyi və əhəmiyyəti",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/chimney-cleaning-article-image.png",
     excerpt:
       "Bacanızın mütəmadi təmizlənməsi evinizin təhlükəsizliyi və istilik sisteminin səmərəliliyi üçün vacibdir.",
+    content: [
+      "Bacanızın mütəmadi təmizlənməsi evinizin təhlükəsizliyi və istilik sisteminin səmərəliliyi üçün çox vacibdir. Toz, qum və digər qalıqların yığılması tüstünün geri qayıtmasına və potensial yanğın riskinə səbəb ola bilər.",
+      "Bacada yığılan qalıqlar yanğın riskini artırır. Təmiz bacalar tüstünün sərbəst hərəkət etməsinə və istilik sisteminizin daha effektiv işləməsinə şərait yaradır.",
+      "Təmizləmə prosesindən əvvəl təhlükəsizlik tədbirlərini yerinə yetirmək, bacanın daxili divarlarını fırça ilə təmizləmək və qalıqları filtrli tozsoranla yığmaq vacibdir.",
+    ],
   },
   {
+    slug: "bahar-t-mizliyi-il-evinizi-yenid-n-canlandirin",
     title: "Bahar təmizliyi ilə evinizi yenidən canlandırın!",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/whats-included-in-a-professional-house-cleaning-checklist-included-343704.jpg",
     excerpt:
       "Bahar mövsümü evi dərin təmizləmək, lazımsız əşyaları ayırmaq və məkanı təravətləndirmək üçün ideal zamandır.",
+    content: [
+      "Bahar mövsümü evinizi təmizləmək və təravətləndirmək üçün ideal vaxtdır. Bu mövsümdə evinizin hər küncünü dərin təmizləmək və lazımsız əşyaları aradan qaldırmaq üçün əvvəlcədən plan hazırlayın.",
+      "İstifadə etmədiyiniz, köhnəlmiş və ya artıq lazım olmayan əşyaları ayırın. Bu, həm evinizi nizamlayır, həm də təmizliyi asanlaşdırır.",
+      "Pəncərələri, şüşə masaları və digər səthləri silin, döşəmələri və xalçaları dərin təmizləyin, mebel altlarını və arxalarını unutmayın.",
+    ],
   },
   {
+    slug: "evinizd-ki-tozlari-aradan-qaldirmaq-ucun-m-sl-h-tl-r",
     title: "Evdəki tozları aradan qaldırmaq üçün məsləhətlər",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/house-cleaning-team.jpg",
     excerpt:
       "Doğru alətlər və üsullarla evinizi sağlam, parlaq və tozsuz saxlamaq mümkündür.",
+    content: [
+      "Eviniz il boyu tozlana bilər, lakin doğru alətlər və üsullarla evinizi parlaq və təmiz saxlamaq mümkündür.",
+      "Mikrofiber parçalar tozu daha effektiv tutur və təkrar yuyula bilir. Yüksək yerlərə çatmaq üçün elastik sap istifadə etmək təhlükəsiz və rahat təmizlik imkanı yaradır.",
+      "İşə tavan, pərdə, yüksək pəncərə və işıq qurğuları kimi hündür yerlərdən başlayın. Şüşə səthlərdə iz buraxmamaq üçün xüsusi mikrofiber dəsmallardan istifadə edin.",
+    ],
   },
   {
+    slug: "evinizd-ki-rutub-t-qoxularindan-nec-qurtula-bil-rsiniz",
     title: "Evinizdəki rütubət qoxularından necə qurtula bilərsiniz",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/230405-shower-cleaning-kb-2x1-1.jpg",
     excerpt:
       "Nəmli mühit xoşagəlməz qoxulara səbəb olur. Sadə və effektiv üsullarla bu problemi azaltmaq olar.",
+    content: [
+      "Evinizdəki nəm qoxusu həm narahatedici, həm də sağlamlığınız üçün təhlükəli ola bilər. Nəmli mühit göbələklərin inkişafına şərait yaradır.",
+      "Nəm qoxusunun qarşısını almağın ən asan yollarından biri evi yaxşı havalandırmaqdır. Havanın dövran etməsi rütubətin azaldılmasına kömək edir.",
+      "Sirkə və soda nəmli mühitdə yaranan qoxuları azaltmaq üçün təsirli vasitələrdir. Vanna otağı və mətbəx kimi sahələri müntəzəm təmizləmək də vacibdir.",
+    ],
   },
   {
+    slug: "p-nc-r-l-rinizi-t-mizl-m-yi-gecikdirm-yin-t-mizlik-mut-x-ssisl-ri-s-b-bl-rini-aciqlayir",
     title: "Pəncərələrinizi təmizləməyi gecikdirməyin, təmizlik mütəxəssisləri səbəbini açıqlayır",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/hig-class-window-cleaning.jpg",
     excerpt:
       "Pəncərələrin müntəzəm təmizlənməsi həm görüntünü, həm də şüşələrin uzunömürlülüyünü qoruyur.",
+    content: [
+      "Pəncərələr məkanı işıqlandırır və sizi açıq havaya daha çox bağlı hiss etdirir, lakin çirk və ləkələr bu hissi tez poza bilər.",
+      "Pəncərələrinizi təmizləmək üçün birbaşa günəş işığına məruz qalmayan vaxtı seçmək daha doğrudur. Gün işığı təmizləyici məhlulu çox tez quruda bilər və şüşədə ləkə yarada bilər.",
+      "Peşəkar dəstək pəncərə təmizliyini daha düzgün və effektiv edir. 166 Təmizlik ev və ofis pəncərələrini diqqətlə təmizləyir.",
+    ],
   },
   {
+    slug: "evinizi-n-t-miz-halda-tutmaq-ucun-ipuclari",
     title: "Evinizi ən təmiz halda tutmaq üçün ipucları",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/HomeWorks-thuishulp.webp",
     excerpt: "Təmizlik yalnız estetik baxımdan deyil, həm də sağlamlıq və rahatlıq üçün vacibdir.",
+    content: [
+      "Təmizlik yalnız estetik baxımdan deyil, həm də sağlamlıq və rahatlıq üçün vacibdir. Doğru ipucları və səmərəli üsullarla bu iş daha asan və sürətli ola bilər.",
+      "Təmizlik məhsullarının etiketlərini oxuyun və məhsulu səthə tətbiq etdikdən sonra bir neçə dəqiqə işləməsinə icazə verin.",
+      "Təmizliyə yuxarıdan başlayın. Divarları yuyarkən və ya tozunu alarkən tavandan və yuxarı hissələrdən işə başlamaq döşəməni yenidən təmizləmək ehtiyacını azaldır.",
+    ],
   },
   {
+    slug: "cilciraq-t-mizl-nm-si",
     title: "Çilçıraq təmizlənməsi",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/IMG_5340.jpg",
     excerpt: "İşıqda parıldayan çilçırağınızın toz və hörümçək torlarından təmizlənməsi üçün peşəkar tövsiyələr.",
+    content: [
+      "Çilçırağı təmizləməyin bir yolu onun hər bir parçasını təmizləyici vasitə ilə isladılmış mikrofiber parça ilə diqqətlə silməkdir.",
+      "Çilçırağın altına ədyal qoyaraq hər hansı düşən hissənin qırılmasının qarşısını alın. Hər kristal parçanı nəm parça ilə sildikdən sonra dərhal quru parça ilə qurulayın.",
+      "Çilçıraq hündürdən asılıbsa, mürəkkəb dizayna malikdirsə və ya təmizlənməsi sizin üçün çətindirsə, peşəkar 166 Təmizlik xidmətinə müraciət edə bilərsiniz.",
+    ],
   },
   {
+    slug: "t-mizl-yici-vasit-l-r-bakteriyalari-oldururmu",
     title: "Təmizləyici vasitələr bakteriyaları öldürürmü?",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/cleaning-products-stock-today-160307-tease.webp",
     excerpt: "Hər təmizləyici vasitə dezinfeksiya etmir. Səthlərin gigiyenik qalması üçün nələrə diqqət etmək lazımdır.",
+    content: [
+      "Bazarda ekoloji cəhətdən təmiz kimi təqdim olunan çoxlu təbii vasitələr var. Lakin onların hamısı səthləri dezinfeksiya etmir və gözlənilən dərin təmizliyi təmin etmir.",
+      "Bəzi təmizləyicilər mikrobları öldürmədən sadəcə səth üzərindən çirki təmizləyir. Zərərli bakteriyaların yayılmasının qarşısını almaq üçün dezinfeksiya edən məhsul seçmək vacibdir.",
+      "Təmizləyici məhsul almazdan əvvəl onun həqiqətən dezinfeksiya etdiyinə əmin olun.",
+    ],
   },
   {
+    slug: "evinizi-nec-dezinfeksiya-ed-bil-rsiniz",
     title: "Evinizi necə dezinfeksiya edə bilərsiniz?",
     image: "https://166temizlik.az/wp-content/uploads/2025/02/disinfecting-door-handle-2.jpg",
     excerpt: "Çox istifadə edilən səthləri düzgün dezinfeksiya etməklə mikrobların yayılmasının qarşısını almaq mümkündür.",
+    content: [
+      "Əksər insanlar evlərini mütəmadi təmizləsələr də, çoxumuz evimizi mütəmadi şəkildə dezinfeksiya etmirik.",
+      "Dezinfeksiyaedici məhsulun təlimatlarını diqqətlə oxumaq vacibdir. Bir çox məhsul effektiv olması üçün səthlərin müəyyən müddət nəm qalmasını tələb edir.",
+      "Qapı tutacaqları, kranlar, masalar, dəzgahlar, telefonlar, klaviaturalar, pultlar, tualetlər və lavabolar kimi tez-tez toxunulan səthlərə xüsusi diqqət yetirin.",
+    ],
   },
   {
+    slug: "kifl-ri-t-mizl-m-yin-usullari",
     title: "Kiflərin təmizlənməsi üsulları",
     image: "https://166temizlik.az/wp-content/uploads/2025/01/Mold-Remediation.jpg",
     excerpt: "Hamam, mətbəx və digər otaqlarda yaranan kifin aradan qaldırılması üçün sadə və effektiv üsullar.",
+    content: [
+      "Hamamınızda, mətbəxinizdə və ya evinizin digər otaqlarında kifin xoşagəlməz hal olduğunu bilirik.",
+      "Ağ sirkə bir çox məişət əşyaları üçün təbii təmizləyicidir və kifin azalmasına kömək edir. Kifin qarşısını almaq üçün işıqlandırma və havalandırma da vacibdir.",
+      "Kif evinizin qaranlıq və nəm yerlərində yaranır. Nəm sahələri vaxtında qurutmaq və müntəzəm təmizləmək lazımdır.",
+    ],
   },
   {
+    slug: "hamam-otagi-temizliyi-nece-edilmeli",
     title: "Hamam otağı təmizliyi necə edilməli",
     image: "https://166temizlik.az/wp-content/uploads/2024/07/GettyImages-153187215-65d9eaf6255a42599b005211adc5faf1.jpg",
     excerpt: "Hamam təmizliyini hissələrə bölərək düzgün alətlər və texnika ilə prosesi daha rahat etmək mümkündür.",
+    content: [
+      "Heç kim çirkli hamam otağını təmizləməyi səbirsizliklə gözləməz. Hamamın təmizlənməsi vəzifəsini hissələrə bölmək prosesi daha asan edir.",
+      "Ağardıcı, kir və əhəng təmizləyicisi, səth təmizləyicisi kimi məhsullar işinizi asanlaşdıra bilər. Alternativ olaraq sirkə, soda və sabundan istifadə edə bilərsiniz.",
+      "Kranlar, güzgülər, şkaf daxili və duş kabinaları ayrıca diqqət tələb edir. Təmizlikdən sonra səthləri quru saxlamaq ləkələrin qarşısını alır.",
+    ],
   },
   {
+    slug: "niye-divan-ve-kreslo-temizliyi-pesekar-sekilde-edilmelidir",
     title: "Niyə divan və kreslo təmizliyi peşəkar şəkildə edilməlidir?",
     image: "https://166temizlik.az/wp-content/uploads/2024/07/Man-professionally-cleaning-couch.webp",
     excerpt: "Evdə ən çox istifadə olunan yumşaq mebellərin dərin təmizliyi sağlam və səliqəli mühit yaradır.",
+    content: [
+      "Evdə olarkən çoxumuzun ən çox vaxt keçirdiyi yer divan və kreslolardır. Bu səbəbdən onların çirklənməsi qaçınılmazdır.",
+      "Təmizlənməyən divan və kreslolar üzərində yığılan toz, bakteriya və ev heyvanlarının tükləri sağlamlıq üçün təhlükə yarada bilər.",
+      "Hər divan və kreslonun öz təmizlik təlimatı var. Düzgün təmizlik edilməməsi mebelinizə zərər verə bilər, buna görə peşəkar dəstək daha təhlükəsiz seçimdir.",
+    ],
+  },
+  {
+    slug: "metbex-dezgahinin-duzgun-dezinfeksiyasi",
+    title: "Mətbəx dəzgahının düzgün dezinfeksiyası",
+    image: "https://166temizlik.az/wp-content/uploads/2024/07/shutterstock_208619104.jpg",
+    excerpt: "Mətbəx dəzgahının dezinfeksiyası zamanı diqqət etməli olduğunuz vacib məqamlar.",
+    content: [
+      "Mətbəx evin qəlbidir. Ailənizin sağlamlığını qorumaq üçün yeməkdən əvvəl mətbəxi düzgün təmizləməyi və yemək bişirdikdən sonra mətbəx dəzgahınızı dezinfeksiya etməyi unutmayın.",
+      "Dezinfeksiyaedici vasitəni istifadə etməzdən əvvəl görünən yemək parçalarını nəm parça və ya kağız dəsmal ilə çıxarın.",
+      "Sirkə təbii dezinfeksiyaedici kimi istifadə oluna bilər, amma qranit və mərmər səthlər üçün uyğun deyil.",
+    ],
+  },
+  {
+    slug: "yasli-insanlar-ucun-temizlik-xidmeti",
+    title: "Yaşlı insanlar üçün təmizlik xidməti",
+    image: "https://166temizlik.az/wp-content/uploads/2024/07/cleaning-for-seniors.jpg",
+    excerpt: "Yaşlı insanlar üçün təmizlik xidməti axtarırsınızsa doğru ünvandasınız.",
+    content: [
+      "Təmizlik xidmətindən istifadə yaşlıların istədikləri müddətdə evlərində qalmasına kömək etməyin ən yaxşı yollarından biridir.",
+      "Ailə üzvlərimiz yaşlandıqca sadə təmizlik işləri onlar üçün çətinləşə bilər. 166 Təmizlik sevdiyiniz ailə üzvünün təmiz evdə yaşamasına kömək edir.",
+      "Hamam otaqları, yataq otaqları, qonaq otaqları, camaşırxana otaqları və mətbəx fərdiləşdirilə bilən planla təmizlənir.",
+    ],
+  },
+  {
+    slug: "divarlarin-ve-sert-sethlerin-temizlenmesi-ucun-meslehetler",
+    title: "Divarların və sərt səthlərin təmizlənməsi üçün məsləhətlər",
+    image: "https://166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1.jpg",
+    excerpt: "Divar təmizlənməsi ev təmizliyinin vacib hissələrindən biridir.",
+    content: [
+      "Yataq otaqlarımızı, vanna otağımızı, mətbəximizi və qonaq otaqlarımızı təmizləyirik, lakin divarlarımızı çox vaxt ikinci plana atırıq.",
+      "Divarları yumaq üçün əvvəlcə toz və zibildən təmizləmək lazımdır. Beton divarlar üçün fırça, boyalı divarlar üçün isə yumşaq süngər daha uyğundur.",
+      "Hamam divarları və duş səthləri üçün sirkə və su qarışığı istifadə oluna bilər. Beton divarlarda isə təmizləyici məhlulun səthə işləməsinə vaxt vermək vacibdir.",
+    ],
+  },
+  {
+    slug: "isti-havalarda-heseratlardan-qacinmaq-ucun-en-yaxsi-temizlik-usullari",
+    title: "İsti havalarda həşəratlardan qaçınmaq üçün ən yaxşı təmizlik üsulları",
+    image: "https://166temizlik.az/wp-content/uploads/2024/02/image-88-1.webp",
+    excerpt: "İsti havalarda həşəratlardan qorunmaq üçün təmizlik vərdişləri xüsusi əhəmiyyət daşıyır.",
+    content: [
+      "Gözəl hava özü ilə ağcaqanadlar, qarışqalar və tarakanlar kimi problemlər gətirə bilər.",
+      "Mətbəx dəzgahındakı ən kiçik qırıntılar belə zərərvericiləri cəlb edə bilər. Hər gün dəzgahlarınızı silmək və döşəmələri təmizləmək vacibdir.",
+      "Zibil qutularının qapaqları bağlı olmalı, cihazların arxası, çarpayı və divan altları mütəmadi təmizlənməlidir.",
+    ],
+  },
+  {
+    slug: "restoran-temizliyi-ve-vacibliyi",
+    title: "Restoran təmizliyi və vacibliyi",
+    image: "https://166temizlik.az/wp-content/uploads/2024/07/J1A7422.jpg",
+    excerpt: "Restoran təmizliyi yaxşı bir müəssisənin diqqət yetirdiyi vacib məqamlardan biridir.",
+    content: [
+      "Yaxşı restoran müştəri məmnuniyyətini və sağlamlığını ön planda tutaraq təmizliyə xüsusi diqqət yetirməlidir.",
+      "Restoranın gigiyenik təmizliyi daim aparılmalıdır. Şirkətimiz döşəmə, qabyuyan maşınlar, masa və stullar, servis dəstləri, lavabolar və mətbəxlərin təmizliyi üzrə xidmət göstərir.",
+    ],
+  },
+  {
+    slug: "fasad-temizliyi-ve-suse-temizlenmesi",
+    title: "Fasad təmizliyi və şüşə təmizlənməsi",
+    image: "https://166temizlik.az/wp-content/uploads/2024/05/cephe-sistemleri-ceylanlar-metal.jpg",
+    excerpt: "Fasad təmizliyi binaların estetik görünüşünü və davamlılığını qorumaq üçün vacibdir.",
+    content: [
+      "Binanın xarici görünüşü onun gözə çarpan ilk hissəsidir. Təmiz və baxımlı fasad binanın dəyərini artırır və uzunömürlülüyünü təmin edir.",
+      "Kir, toz, mamır və kif zamanla yığılaraq binanın görkəmini poza və strukturun zədələnməsinə səbəb ola bilər.",
+      "Təlim keçmiş heyətimiz bütün növ binaların fasadlarını təhlükəsiz və effektiv şəkildə təmizləyir.",
+    ],
+  },
+  {
+    slug: "temirden-sonra-temizlik",
+    title: "Təmirdən sonra təmizlik",
+    image: "https://166temizlik.az/wp-content/uploads/2024/03/Group-254.webp",
+    excerpt: "Təmirdən sonra təmizlik zamanı toz, boya ləkələri və tikinti qalıqları peşəkar şəkildə aradan qaldırılır.",
+    content: [
+      "Təmir evinizi yeniləmək üçün əla yoldur, lakin təmirin sonunda toz, kir və zibil yığınları qorxuducu ola bilər.",
+      "Təmir təmizliyi zamanı mebellər qorunur, rozetka və pəncərə kənarları bantlanır, divar və şüşələrdəki boya qalıqları təmizlənir.",
+      "Döşəmə ləkələri döşəmə növünə uyğun materiallardan istifadə edilərək təmizlənir.",
+    ],
+  },
+  {
+    slug: "ev-zamani-temizlik-sirketi",
+    title: "Ev təmizliyi zamanı təmizlik şirkətinin üstünlükləri",
+    image: "https://166temizlik.az/wp-content/uploads/2024/05/m-nzil-t-mizl-nm-si-1.jpg",
+    excerpt: "Ev təmizliyi vaxt aparır və bəzən yorucu olur. Peşəkar komanda vaxtınıza qənaət edir.",
+    content: [
+      "Peşəkar təmizlik şirkəti ev təmizliyi üçün bir sıra üstünlüklər təklif edir.",
+      "Evin təmizlənməsi gündəlik həyatın bir hissəsidir və vaxt tələb edir. Peşəkar komanda işi daha sürətli və effektiv şəkildə yerinə yetirə bilər.",
+      "Peşəkar təmizləyicilər evinizin hər küncünü təmizləyir və əlçatmaz yerlərdə daha yaxşı nəticə əldə etməyə kömək edir.",
+    ],
+  },
+  {
+    slug: "otelde-temizliyik-isleri",
+    title: "Oteldə təmizlik işləri",
+    image: "https://166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
+    excerpt: "Otel təmizliyi müştərilərin ən çox diqqət etdiyi məsələlərdən biridir.",
+    content: [
+      "Otel idarəçiliyində qonaq məmnuniyyəti hər şeydən üstündür və bu məmnunluğun əsaslarından biri təmizlikdir.",
+      "Qonaq otaqları, hamam otaqları və ümumi sahələr otelinizin keyfiyyətini göstərir. Hər detalın mükəmməl təmizlənməsi vacibdir.",
+      "Ekoloji təmizlik məhsullarından istifadə qonaqların sağlamlığını qoruyur və otelin imicinə müsbət təsir edir.",
+    ],
+  },
+  {
+    slug: "hovuz-temizliyi",
+    title: "Hovuzun təmizliyi",
+    image: "https://166temizlik.az/wp-content/uploads/2024/04/hovuz-t-mizl-nm-si.jpeg",
+    excerpt: "Hovuz təmizlənməsi zamanı suyun keyfiyyəti, filtr sistemi və kimyəvi balans diqqətdə saxlanılır.",
+    content: [
+      "Hovuzun müntəzəm təmizlənməsi suyun keyfiyyətinin qorunmasının əsasını təşkil edir.",
+      "Hovuz səthinin təmizlənməsi sudan çirk və zibilləri təmizləyir. Divarlar və dib hissəsi uyğun avadanlıqla təmizlənir.",
+      "Filtr sistemi, kimyəvi balans, pH və xlor səviyyəsi mütəmadi olaraq yoxlanılmalıdır.",
+    ],
   },
 ];
 
@@ -235,9 +430,11 @@ const blogPostTranslations: Partial<Record<Locale, Array<{ title: string; excerp
   ],
 };
 
+void blogPostTranslations;
+
 export function getLocalizedBlogPosts(locale: Locale) {
-  const translations = blogPostTranslations[locale];
-  return blogPosts.map((post, index) => ({ ...post, ...(translations?.[index] ?? {}) }));
+  void locale;
+  return blogPosts;
 }
 
 export const employees = [
