@@ -466,7 +466,14 @@ const serviceDetails: Record<string, { description: string; image: string; bulle
     description:
       "İş və ailə həyatının stresli olduğu bir vaxtda ev təmizliyinə saatlar sərf etmək böyük enerji tələb edir. 166-ya müraciət etməklə gündəlik və əsaslı təmizlik sifariş edə bilərsiniz.",
     image: "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-8-1.webp",
-    bullets: ["Otaq, dəhliz və zal təmizliyi", "Mətbəxin təmizliyi", "Mebellərin tozunun alınması", "Sanitar qovşaqlarının təmizlənməsi"],
+    bullets: [
+      "Otaq, dəhliz və zal təmizliyi",
+      "Mətbəxin təmizliyi",
+      "Tavan və divarların təmizliyi",
+      "Mebellərin tozunun alınması",
+      "Kafel və metlaxların təmizliyi",
+      "Sanitar qovşaqlarının təmizlənməsi",
+    ],
   },
   "ofis-temizliyi": {
     description:

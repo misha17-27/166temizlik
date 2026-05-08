@@ -203,19 +203,39 @@ function DetailHero({ title, heroImage, subtitle }: { title: string; heroImage: 
   );
 }
 
-function FramedImage({ src, alt, tone = "yellow" }: { src: string; alt: string; tone?: "yellow" | "blue" }) {
+function FramedImage({
+  src,
+  alt,
+  tone = "yellow",
+  heightClass = "h-[369px]",
+}: {
+  src: string;
+  alt: string;
+  tone?: "yellow" | "blue";
+  heightClass?: string;
+}) {
   return (
-    <div className={`relative min-h-[330px] p-[10px] max-md:min-h-[250px] ${tone === "yellow" ? "bg-brand-yellow" : "bg-brand-blue"}`}>
+    <div className={`relative p-[10px] max-md:h-[250px] ${heightClass} ${tone === "yellow" ? "bg-brand-yellow" : "bg-brand-blue"}`}>
       <Image src={src} alt={alt} fill sizes="(max-width: 900px) 100vw, 400px" className="object-cover p-[10px]" />
     </div>
   );
 }
 
-function IntroTextCard({ children, reverse = false }: { children: React.ReactNode; reverse?: boolean }) {
+function IntroTextCard({
+  children,
+  reverse = false,
+  heightClass = "h-[349px]",
+}: {
+  children: React.ReactNode;
+  reverse?: boolean;
+  heightClass?: string;
+}) {
   return (
     <div
-      className={`flex min-h-[286px] items-center bg-white p-[50px] text-[13px] font-semibold leading-[1.7] text-black shadow-[5px_10px_10px_rgb(0_0_0_/_11%)] max-md:min-h-0 max-md:p-6 ${
-        reverse ? "rounded-[30px_0_0_30px] max-md:rounded-[20px]" : "rounded-[0_30px_30px_0] max-md:rounded-[20px]"
+      className={`mt-5 flex items-center bg-white p-[30px] text-[16px] font-medium leading-[24px] text-black shadow-[5px_10px_10px_rgb(0_0_0_/_11%)] max-md:mt-0 max-md:h-auto max-md:p-6 ${heightClass} ${
+        reverse
+          ? "mr-[30px] rounded-[30px_0_0_30px] max-lg:mr-0 max-md:rounded-[20px]"
+          : "ml-[30px] rounded-[0_30px_30px_0] max-lg:ml-0 max-md:rounded-[20px]"
       }`}
     >
       {children}
@@ -227,46 +247,76 @@ function IntroBlocks({ service, images, paragraphs }: { service: ServicePageItem
   return (
     <section className="bg-[#f7f7f7] pb-14 pt-[50px]">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-        <div className="grid grid-cols-[396px_1fr] items-center gap-[30px] max-lg:grid-cols-1">
+        <div className="grid grid-cols-[396px_1fr] items-start gap-0 max-lg:grid-cols-1">
           <FramedImage src={images[0]} alt={service.title} />
           <IntroTextCard>
             <p>{paragraphs[0]}</p>
           </IntroTextCard>
         </div>
-        <div className="mt-[50px] grid grid-cols-[1fr_396px] items-center gap-[30px] max-lg:grid-cols-1">
-          <IntroTextCard reverse>
+        <div className="mt-[50px] grid grid-cols-[1fr_396px] items-start gap-0 max-lg:grid-cols-1">
+          <IntroTextCard reverse heightClass="h-[286px]">
             <p>{paragraphs[1] ?? service.description}</p>
           </IntroTextCard>
-          <FramedImage src={images[1] ?? images[0]} alt={service.title} tone="blue" />
+          <FramedImage src={images[1] ?? images[0]} alt={service.title} tone="blue" heightClass="h-[306px]" />
         </div>
       </div>
     </section>
   );
 }
 
+function IncludedGallery({ images, title }: { images: string[]; title: string }) {
+  const gallery = getGalleryImages(images);
+  const columns = [
+    [
+      { image: gallery[0], height: "h-[218px]" },
+      { image: gallery[5], height: "h-[218px]" },
+    ],
+    [
+      { image: gallery[1], height: "h-[182px]" },
+      { image: gallery[4], height: "h-[218px]" },
+    ],
+    [
+      { image: gallery[2], height: "h-[218px]" },
+      { image: gallery[6], height: "h-[182px]" },
+    ],
+    [
+      { image: gallery[3], height: "h-[218px]" },
+      { image: gallery[7], height: "h-[218px]" },
+    ],
+  ];
+
+  return (
+    <div className="grid w-full grid-cols-4 gap-[10px] p-[10px] max-sm:grid-cols-2">
+      {columns.map((column, columnIndex) => (
+        <div key={columnIndex} className="flex flex-col gap-[10px]">
+          {column.map((item, imageIndex) => (
+            <div key={`${item.image}-${columnIndex}-${imageIndex}`} className={`relative overflow-hidden ${item.height} max-sm:h-[165px]`}>
+              <Image src={item.image} alt={`${title} ${columnIndex * 2 + imageIndex + 1}`} fill sizes="146px" className="object-cover" />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function IncludedSection({ service, images, locale }: { service: ServicePageItem; images: string[]; locale: Locale }) {
   const copy = pageCopy[locale];
-  const gallery = getGalleryImages(images);
-  const heights = ["h-[218px]", "h-[182px]", "h-[218px]", "h-[218px]", "h-[218px]", "h-[218px]", "h-[182px]", "h-[218px]"];
   const title = service.slug === "ev-temizliyi-xidmeti" ? copy.includedHome : `${service.title} ${copy.included}`;
 
   return (
     <section className="bg-[#f7f7f7] pb-12">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <h2 className="text-center text-[20px] font-semibold text-black max-md:text-[18px]">{title}</h2>
-        <div className="mt-8 grid grid-cols-[1.2fr_0.95fr] gap-6 max-lg:grid-cols-1">
-          <div className="grid grid-cols-4 gap-[10px] max-sm:grid-cols-2">
-            {gallery.map((image, index) => (
-              <div key={`${image}-${index}`} className={`relative overflow-hidden ${heights[index]} max-sm:h-[165px]`}>
-                <Image src={image} alt={`${service.title} ${index + 1}`} fill sizes="160px" className="object-cover" />
-              </div>
-            ))}
+        <div className="mt-[30px] grid grid-cols-[632px_508px] gap-0 max-lg:grid-cols-1">
+          <div className="w-full">
+            <IncludedGallery images={images} title={service.title} />
           </div>
-          <div className="flex flex-col justify-center gap-[12px]">
+          <div className="flex flex-col gap-5 px-[30px] max-lg:mt-8 max-lg:px-0">
             {service.bullets.map((item, index) => (
               <div
                 key={item}
-                className={`min-h-[36px] border bg-white px-5 py-2 text-center text-[13px] font-semibold leading-[1.35] text-black ${
+                className={`flex h-[52px] items-center justify-center border bg-white px-4 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[16px] ${
                   index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
                 }`}
               >

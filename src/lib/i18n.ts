@@ -187,7 +187,14 @@ const serviceDescriptions: Record<Locale, Record<string, string>> = {
 const serviceBullets: Record<Locale, Record<string, string[]>> = {
   az: {},
   ru: {
-    "ev-temizliyi-xidmeti": ["Уборка комнат, коридора и зала", "Уборка кухни", "Протирание потолка и стен", "Уборка санитарных узлов"],
+    "ev-temizliyi-xidmeti": [
+      "Уборка комнат, коридора и зала",
+      "Уборка кухни",
+      "Протирание потолка и стен",
+      "Удаление пыли с мебели",
+      "Чистка кафеля и метлаха",
+      "Уборка санитарных узлов",
+    ],
     "ofis-temizliyi": ["Офисная мебель и техника", "Напольные покрытия", "Двери, окна и зеркала", "Дезинфекция санитарных зон"],
     "bag-evlerinin-temizliyi": ["Уборка дома", "Уборка двора", "Чистка бассейна", "Сбор мусора"],
     "erazi-temizliyi": ["Подметание территории", "Сбор мусора", "Мойка поверхности специальным оборудованием", "Мойка брусчатки"],
@@ -207,7 +214,14 @@ const serviceBullets: Record<Locale, Record<string, string[]>> = {
     "korporativ-temizlik-xidmeti": ["Корпоративные предложения", "Отслеживание заказов", "Звонки по удовлетворенности клиентов", "Профессиональная команда"],
   },
   tr: {
-    "ev-temizliyi-xidmeti": ["Oda, koridor ve salon temizliği", "Mutfak temizliği", "Tavan ve duvarların silinmesi", "Banyo ve tuvalet temizliği"],
+    "ev-temizliyi-xidmeti": [
+      "Oda, koridor ve salon temizliği",
+      "Mutfak temizliği",
+      "Tavan ve duvarların silinmesi",
+      "Mobilyaların tozunun alınması",
+      "Fayans ve metlakh temizliği",
+      "Banyo ve tuvalet temizliği",
+    ],
     "ofis-temizliyi": ["Ofis mobilyaları ve ekipmanları", "Zemin kaplamaları", "Kapı, pencere ve aynalar", "Hijyen alanlarının dezenfeksiyonu"],
     "bag-evlerinin-temizliyi": ["Evin temizlenmesi", "Bahçenin temizlenmesi", "Havuzun temizlenmesi", "Çöplerin toplanması"],
     "erazi-temizliyi": ["Alanın süpürülmesi", "Çöpün toplanması", "Zemin yüzeyinin özel cihazla yıkanması", "Kilit taşı yıkama hizmeti"],
