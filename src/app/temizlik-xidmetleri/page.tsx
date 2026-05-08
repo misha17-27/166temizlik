@@ -81,23 +81,27 @@ function ServiceListCard({
   const copy = pageCopy[locale];
 
   return (
-    <article className="grid min-h-[178px] grid-cols-[300px_1fr] overflow-hidden rounded-[16px] bg-white shadow-[0_10px_28px_rgb(15_23_42_/_6%)] max-md:grid-cols-1">
-      <div className={`relative min-h-[178px] max-md:min-h-[220px] ${reverse ? "md:order-2" : ""}`}>
+    <article
+      className={`grid min-h-[271px] overflow-hidden rounded-[30px] bg-transparent max-md:grid-cols-1 ${
+        reverse ? "md:grid-cols-[1fr_380px]" : "md:grid-cols-[380px_1fr]"
+      }`}
+    >
+      <div className={`relative min-h-[271px] max-md:min-h-[220px] ${reverse ? "md:order-2" : ""}`}>
         <Image
           src={serviceListImages[service.slug] ?? service.image}
           alt={service.title}
           fill
-          sizes="(max-width: 768px) 100vw, 300px"
-          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 380px"
+          className="object-cover object-top"
         />
       </div>
-      <div className="flex flex-col justify-center px-8 py-6 max-md:px-6">
-        <h2 className="text-[15px] font-bold leading-tight text-black">{service.title}</h2>
-        <p className="mt-3 max-w-[560px] text-[12px] font-normal leading-[1.55] text-black/70">{service.description}</p>
+      <div className={`flex flex-col justify-center bg-white p-[30px] max-md:rounded-b-[30px] ${reverse ? "md:rounded-l-[30px]" : "md:rounded-r-[30px]"}`}>
+        <h2 className="text-[22px] font-semibold leading-none text-black max-md:text-[20px]">{service.title}</h2>
+        <p className="mt-5 max-w-[700px] text-[16px] font-normal leading-6 text-black/75 max-md:text-[15px]">{service.description}</p>
         <Link
           href={service.href}
           prefetch={false}
-          className="mt-5 inline-flex w-fit rounded-full bg-brand-yellow px-5 py-2 text-[10px] font-bold text-black transition hover:bg-[#ffd900]"
+          className="mt-5 inline-flex w-fit rounded-full bg-brand-yellow px-6 py-3 text-[15px] font-medium leading-none text-black transition hover:bg-[#ffd900]"
         >
           {copy.readMore}
         </Link>
