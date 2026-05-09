@@ -118,6 +118,13 @@ export function GalleryTabs({ categories, moreLabel }: { categories: string[]; m
   }, [visibleItems.length]);
 
   useEffect(() => {
+    visibleItems.forEach((item) => {
+      const preload = new window.Image();
+      preload.src = item.src;
+    });
+  }, [visibleItems]);
+
+  useEffect(() => {
     if (lightboxIndex === null) {
       return;
     }
@@ -260,6 +267,7 @@ export function GalleryTabs({ categories, moreLabel }: { categories: string[]; m
               src={activeLightboxItem.src}
               alt={`166 TÉ™mizlik qalereya ${lightboxDisplayIndex + 1}`}
               fill
+              unoptimized
               sizes="(max-width: 768px) 90vw, 980px"
               className="object-contain"
               priority
