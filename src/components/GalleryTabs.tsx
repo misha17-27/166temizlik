@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type GalleryCategoryKey =
   | "home-office"
@@ -84,14 +84,71 @@ function getItems(category: GalleryCategoryKey | null) {
 export function GalleryTabs({ categories, moreLabel }: { categories: string[]; moreLabel: string }) {
   const [activeCategory, setActiveCategory] = useState<GalleryCategoryKey | null>(null);
   const [visibleCount, setVisibleCount] = useState(15);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const visibleItems = useMemo(() => getItems(activeCategory).slice(0, visibleCount), [activeCategory, visibleCount]);
   const allItems = getItems(activeCategory);
+  const activeLightboxItem = lightboxIndex === null ? null : visibleItems[lightboxIndex];
+  const lightboxDisplayIndex = lightboxIndex ?? 0;
 
   function selectCategory(category: GalleryCategoryKey) {
     setActiveCategory(category);
     setVisibleCount(12);
+    setLightboxIndex(null);
   }
+
+  const showPrevious = useCallback(() => {
+    setLightboxIndex((current) => {
+      if (current === null || visibleItems.length === 0) {
+        return current;
+      }
+
+      return current === 0 ? visibleItems.length - 1 : current - 1;
+    });
+  }, [visibleItems.length]);
+
+  const showNext = useCallback(() => {
+    setLightboxIndex((current) => {
+      if (current === null || visibleItems.length === 0) {
+        return current;
+      }
+
+      return current === visibleItems.length - 1 ? 0 : current + 1;
+    });
+  }, [visibleItems.length]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) {
+      return;
+    }
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setLightboxIndex(null);
+      }
+
+      if (event.key === "ArrowLeft") {
+        showPrevious();
+      }
+
+      if (event.key === "ArrowRight") {
+        showNext();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [lightboxIndex, showNext, showPrevious]);
 
   return (
     <>
@@ -116,7 +173,13 @@ export function GalleryTabs({ categories, moreLabel }: { categories: string[]; m
 
       <div className="mt-9 columns-4 gap-5 max-lg:columns-3 max-md:columns-2 max-sm:columns-1">
         {visibleItems.map((item, index) => (
-          <a key={`${item.src}-${index}`} href={item.src} className="mb-5 block break-inside-avoid overflow-hidden rounded-[14px] bg-[#eef6ff]">
+          <button
+            key={`${item.src}-${index}`}
+            type="button"
+            onClick={() => setLightboxIndex(index)}
+            className="mb-5 block w-full break-inside-avoid overflow-hidden rounded-[14px] bg-[#eef6ff] text-left"
+            aria-label={`Open gallery image ${index + 1}`}
+          >
             <Image
               src={item.src}
               alt={`166 Təmizlik qalereya ${index + 1}`}
@@ -126,7 +189,7 @@ export function GalleryTabs({ categories, moreLabel }: { categories: string[]; m
               className="w-full object-cover transition duration-500 hover:scale-105"
               style={{ height: `${item.height}px` }}
             />
-          </a>
+          </button>
         ))}
       </div>
 
@@ -151,6 +214,73 @@ export function GalleryTabs({ categories, moreLabel }: { categories: string[]; m
           allowFullScreen
         />
       </div>
+
+      {activeLightboxItem ? (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/78 px-6 py-8 text-white"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Gallery image preview"
+          onClick={() => setLightboxIndex(null)}
+        >
+          <div className="absolute left-6 top-6 text-[18px] font-medium">
+            {lightboxDisplayIndex + 1} / {visibleItems.length}
+          </div>
+
+          <button
+            type="button"
+            aria-label="Close gallery preview"
+            onClick={() => setLightboxIndex(null)}
+            className="absolute right-6 top-5 grid h-10 w-10 place-items-center text-white transition hover:text-brand-yellow"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-9 w-9" fill="none">
+              <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            aria-label="Previous gallery image"
+            onClick={(event) => {
+              event.stopPropagation();
+              showPrevious();
+            }}
+            className="absolute left-8 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full text-white transition hover:bg-white/10 hover:text-brand-yellow max-md:left-2"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-10 w-10" fill="none">
+              <path d="M15 5 8 12l7 7" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <div
+            className="relative h-[min(78vh,760px)] w-[min(76vw,980px)] max-md:h-[70vh] max-md:w-[calc(100vw-72px)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Image
+              src={activeLightboxItem.src}
+              alt={`166 TÉ™mizlik qalereya ${lightboxDisplayIndex + 1}`}
+              fill
+              sizes="(max-width: 768px) 90vw, 980px"
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          <button
+            type="button"
+            aria-label="Next gallery image"
+            onClick={(event) => {
+              event.stopPropagation();
+              showNext();
+            }}
+            className="absolute right-8 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full text-white transition hover:bg-white/10 hover:text-brand-yellow max-md:right-2"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-10 w-10" fill="none">
+              <path d="m9 5 7 7-7 7" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      ) : null}
     </>
   );
 }

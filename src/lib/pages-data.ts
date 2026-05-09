@@ -60,7 +60,7 @@ export function getLocalizedGalleryCategories(locale: Locale) {
 export const pageHeroAssets = {
   blog: "https://166temizlik.az/wp-content/uploads/2023/02/5282459.webp",
   partners: "https://166temizlik.az/wp-content/uploads/2023/02/business-partners.jpg",
-  employees: "https://166temizlik.az/wp-content/uploads/2023/07/166-t-mizlik-ximd-ti.png",
+  employees: "https://166temizlik.az/wp-content/uploads/2023/07/emekdash.webp",
   equipment: "https://166temizlik.az/wp-content/uploads/2023/09/aaa11.webp",
 };
 
@@ -529,6 +529,40 @@ export function getLocalizedVacancies(locale: Locale) {
   return vacancyTranslations[locale] ?? vacancies;
 }
 
+export const vacancyDetails = [
+  {
+    slug: "166-t-mizlik-xidm-ti-t-mizlikci-v-zif-sin-muraci-t-etm-y-d-v-t-edir",
+    title: "166 Təmizlik Xidməti Təmizlikçi vəzifəsinə müraciət etməyə dəvət edir!",
+    duties: [
+      "Peşə təhsilli olması arzuolunandır",
+      "Sahə üzrə 3 il iş təcrübəsi",
+      "Rus dilində ünsiyyət bacarığı arzuolunandır",
+      "Müştərilərlə ünsiyyət bacarığının olması",
+    ],
+    requirements: [
+      "Müştərilərlə etikaya uyğun olaraq ünsiyyətin qurulması",
+      "Maddələrin və avadanlıqların işlənmə yerinə görə istifadə olunması",
+    ],
+  },
+  {
+    slug: "166-t-mizlik-xidm-tind-menecer-v-zif-sin-muraci-t-etm-y-d-v-t-edir",
+    title: "166 Təmizlik Xidmətində Menecer vəzifəsinə müraciət etməyə dəvət edir!",
+    duties: [
+      "Ali təhsillinin olması",
+      "Sahə üzrə 3 il iş təcrübəsi",
+      "Azərbaycan və Rus dilində sərbəst ünsiyyət bacarığı",
+      "Bakı şəhəri və regionları üzrə ərazi biliyi",
+      "Effektiv ünsiyyət və satış bacarığı",
+    ],
+    requirements: [
+      "Müştərilərlə biznes etikası standartlarına uyğun olaraq ünsiyyətin qurulması",
+      "Şirkətin xidmətləri haqqında müştərilərin tam olaraq məlumatlandırılması və müştəri istəklərinə müvafiq olan xidmətlərin qiymətinin müştərilərə bildirilməsi",
+      "Sifarişin gedişatının və sonlandırılmasının nəzarətdə saxlanılması və hər hansı problemli vəziyyət olduqda müştəriyə dərhal məlumatın verilməsi",
+      "İşçilərin vaxtında ünvanlara çatdırılması, işlərinə nəzarətin olunması və ofisə gətirilməsi",
+    ],
+  },
+];
+
 export const equipment = [
   {
     title: "Tozsoran",
@@ -559,6 +593,33 @@ export const equipment = [
     title: "Piləkan təmizliyi üçün aparat",
     image: "https://166temizlik.az/wp-content/uploads/2023/09/aaa.webp",
     text: "Nəm təmizləmə, şampunlama, cilalama və kristallaşdırma imkanları pilləkən və sərt səthlər üçün effektiv həll təqdim edir.",
+  },
+];
+
+const equipmentFullText = [
+  {
+    title: "Tozsoran",
+    text: "Karcher ev tozsoranları çox etibarlı və yaşayış olmayan yerlərdə və küçədə təmizlik üçün idealdır: zirzəmi, qaraj, teras, atelye, daş yığan tozsoran, təmirdən sonra istifadə olunur. Həm quru, həm də yaş yerlərdə istifadə olunur. Böyük, kiçik zibil, hətta su çəkmə qabiliyyətinə malikdir. Yüksək sorucu gücü və xüsusi olaraq hazırlanmış başlıqlar bu tozsoranları məişətdə sadəcə əvəzolunmaz hala gətirir. Karcher-in güclü çox funksiyalı batareya ilə işləyən elektrik süpürgələri, simli modellərdən istifadə etmək çətin olduğu və ya mümkün olmadığı yerlərdə - bağ bağçasında və ya bağ yollarında istifadə olunur. Böyük 17 litrlik bir konteyner və kompakt WD 5 tozsoran.",
+  },
+  {
+    title: "Buxarlı döşəmə təmizləyicisi",
+    text: "Ləkələri və ya sıçrayışları döşəmədən çıxarmaq üçün onu bir mop ilə güclə sürtmək və ağır bir vedrə su daşımaq lazım deyil. Daha rahat həll, iki çən və fırlanan rulon fırçaları ilə təchiz edilmiş yaş döşəmə təmizləyicisidir. Fırçalar davamlı olaraq təmiz su ilə nəmləndirilir və çirkli su anbarında toplanan kirdən təmizlənir. Bu, adi süpürgədən istifadə etməklə müqayisədə təmizləmə səmərəliliyini 20% artırır. Eyni zamanda, gövdənin dar forması və fırça başlığının fırlanan əlavəsi sayəsində cihaz minimum saxlama yeri tutur və mebelin altındakı döşəmənin təmizlənməsini asanlaşdırır. Döşəmənin qurudulma müddəti cəmi 2 dəqiqədir ki, bu da cihazı keramik plitələr, PVC, vinil, parket və ya laminat kimi istənilən sərt döşəmə örtüklərini təmizləmək üçün təhlükəsiz istifadə etməyə imkan verir. Güclü litium-ion batareya 60 m²-ə qədər döşəmələri təmizləmək üçün kifayət qədər 20 dəqiqəyə qədər fasiləsiz işləməyi təmin edir.",
+  },
+  {
+    title: "Yuyucu tozsoran",
+    text: "Puzzi 8/1 C, xalçalar və yumşaq mebellərin üzərindəki ləkələri təmizləmək və çıxarmaq üçün xüsusi olaraq hazırlanmış, giriş səviyyəli yüksək performanslı yuyucu ləvazimatdır. Təmizləmənin sonunda çox az nəm qaldığından, kifayət qədər tez əşyalardan istifadə etməyə başlaya bilərsiniz. Kiçik sahəli xalçaların təmizlənməsi üçün yığcam və güclü tozsoran, rəqiblərin oxşar modelləri arasında ən yaxşı nəticəyə zəmanət verir. Puzzi 8/1 C-nin xüsusiyyətlərindən biri toxuculuq örtüklərinin tez qurumasıdır, bunun sayəsində dərhal onların üzərində gəzməyə başlaya bilərsiniz. Şəbəkə kabeli qatlanan kabel çəngəlinə etibarlı şəkildə sabitlənmişdir.",
+  },
+  {
+    title: "Buxar aparatı",
+    text: "Kärcher buxar təmizləyiciləri ilə siz heç bir kimyəvi maddəyə ehtiyac olmadan evinizdə mükəmməl təmizlikdən həzz ala bilərsiniz. Mükəmməl təmizləmə performansı sayəsində buxar virus və bakteriyaların 99,99%-ni öldürür. Buxarlı təmizləyicilər gigiyenik və sağlam yaşayış sahəsi təmin edir. Kärcher buxarlı təmizləyicilər inanılmaz nəticələrlə mətbəx, vanna otağı, döşəmə təmizləmə və hətta ütüləmə üçün mükəmməl təmizləmə həllidir. Buxarla təmizləmənin geniş tətbiq sahələrini kəşf edin. Karcher brendinin istehsal etdiyi və inkişaf etdirdiyi buxar təmizləyici sayəsində insan sağlamlığını riskə atan bakteriyaların sığınmasının qarşısı alınır. Buxar təmizləyiciləri bütün növ səthlərdə istifadə edilə bilər. Buxarlı təmizləyicilər yataqların mikroblardan təmizlənməsi, kafel üzərindəki bakteriyaların təmizlənməsi, oturacaqların təmizlənməsi kimi bir çox sahədə gigiyena təmin edir. Buxarlı təmizləyicilər körpəsi olan valideynlərin ehtiyac duyduğu məhsuldur. Körpə əşyaları üçün gigiyena çox vacibdir. Buna görə valideynlər buxarlı təmizləyicilərə üstünlük verirlər. Buxarlı təmizləyicilərin iş prinsipində yüksək istilik istifadə edildiyi üçün istifadəçiyə adi təmizləyicilərdən daha yüksək səviyyədə gigiyena təqdim edir.",
+  },
+  {
+    title: "Kristallaşma aparatı",
+    text: "İdeal seçim: 60 litr çənin həcmi, diskli fırça qurğusu və 2000 m²/saata qədər tutumu olan şəbəkəli təmizləyici quruducu. Minimal avadanlıqla maksimum təmizlik təmin edir. Maşın ənənəvi disk fırçası texnologiyasına malikdir. Əməliyyat xüsusi EASY Operation idarəetmə paneli sayəsində sadədir. İşçilərinin onu tez bir zamanda mənimsəməsinə imkan verən sadələşdirilmiş texniki xüsusiyyətlərə malikdir. Dəzgahın kompakt ölçüləri sayəsində yüksək manevr və yaxşı görünürlük təmin edilir. Əməliyyat zamanı maşın həmişə uzatma kabelindən istifadə edərək bir çıxışa qoşulmalıdır. Bu aparatın işləmə müddəti batareya tutumu ilə məhdudlaşmır, 7/24 işləmə gücünə malikdir. Hər növ tamet, kafel və metlax üzərində istifadə oluna bilər.",
+  },
+  {
+    title: "Piləkən təmizliyi üçün aparat",
+    text: "Nəm təmizləmə, şampunlama, cilalama və kristallaşmaya imkan verən disk fırçası ilə pilləkənləri, pəncərə deşiklərini və digər kiçik səthləri təmizləmək üçün kompakt şəbəkəli maşın. Yığcam ölçüləri (16-20 x 36 x 33 sm) sayəsində elektrik enerjisi ilə işləyən döşəmə yuyucuları və digər təmizləyici maşınlarla təmizlənə bilməyən səthlərin səmərəli mexaniki təmizlənməsinə imkan verir. Ümumi təmizləmə, sərt səthlərin kristallaşması və ya cilalanması və ya xalçanın şampunlanması kimi geniş tapşırıqlar üçün effektiv həllər təmin edir.",
   },
 ];
 
@@ -619,7 +680,8 @@ const equipmentTranslations: Partial<Record<Locale, Array<{ title: string; text:
 
 export function getLocalizedEquipment(locale: Locale) {
   const translations = equipmentTranslations[locale];
-  return equipment.map((item, index) => ({ ...item, ...(translations?.[index] ?? {}) }));
+  const copy = locale === "az" ? equipmentFullText : translations;
+  return equipment.map((item, index) => ({ ...item, ...(copy?.[index] ?? {}) }));
 }
 
 export const materialCards = [
