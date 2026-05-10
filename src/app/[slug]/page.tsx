@@ -57,7 +57,10 @@ const detailImageSets: Record<string, string[]> = {
   "pencere-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
     "https://166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi-fon.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08231.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/01/dfd32fe24f874a0cd8dc95b23407c965-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/01/3b383dbaea1ce2ccb0be116ccaac03cf-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi.-1.webp",
+    "https://166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi..-1.webp",
   ],
   "cilciraq-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2024/12/HRS03718.webp",
@@ -337,6 +340,37 @@ function IncludedSection({ service, images, locale }: { service: ServicePageItem
   const isHomeService = service.slug === "ev-temizliyi-xidmeti";
   const title = isHomeService ? copy.includedHome : service.title;
   const galleryImages = isHomeService ? getGalleryImages(images) : getGalleryImages(images).slice(0, 5);
+  const windowPrices = [
+    "1 ədəd standart ölçülü pəncərə təmizlənməsi – 10 azn-dən başlayır",
+    "1 ədəd hündürlüyü 3 m -dən hündür ölçülü pəncərə təmizliyi – 30 azn-dən başlayır",
+    "Vinil təmizliyi 1.5*2.2 kv metr üçün - 40 azn-dən başlayır",
+    "Montaj lenti təmizliyi 1.5*1.5 m - 30 azn-dən başlayır",
+  ];
+
+  if (service.slug === "pencere-temizliyi") {
+    return (
+      <section className="bg-[#f7f7f7] pb-12">
+        <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
+          <h2 className="text-center text-[20px] font-semibold text-black max-md:text-[18px]">Pəncərə təmizlənməsi qiymətləri</h2>
+          <div className="mt-[50px] grid grid-cols-[520px_470px] items-start justify-center gap-[35px] max-lg:grid-cols-1">
+            <ServiceImageGallery images={images.slice(2, 6)} title={service.title} layout="quad" />
+            <div className="flex flex-col gap-5">
+              {windowPrices.map((item, index) => (
+                <div
+                  key={item}
+                  className={`flex min-h-[64px] items-center justify-center rounded-[8px] border bg-white px-5 text-center text-[18px] font-medium leading-[21px] text-black max-md:text-[15px] ${
+                    index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
+                  }`}
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-[#f7f7f7] pb-12">
