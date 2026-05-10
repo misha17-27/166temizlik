@@ -205,6 +205,137 @@ const serviceLongCopy: Record<string, string[]> = {
   ],
 };
 
+const packagePricingServices = new Set(["ev-temizliyi-xidmeti", "ofis-temizliyi", "bag-evlerinin-temizliyi"]);
+
+const serviceTitleOverrides: Record<string, string> = {
+  "perde-yuma": "Pərdə Yuma",
+  "baximsiz-ev-temizliyi": "“Gözəl ev” təmizliyi",
+  "yangindan-sonra-ev-temizliyi": "Yanğından sonra ev təmizliyi",
+};
+
+const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad"; note?: string }> = {
+  "ev-temizliyi-xidmeti": {
+    title: "Əsaslı təmizlik xidmətinə daxildir",
+    items: [
+      "Otaq, dəhliz və zal təmizliyi",
+      "Mətbəxin təmizliyi",
+      "Tavan və divarların təmizliyi",
+      "Mebellərin tozunun alınması",
+      "Kafel və metlaxların təmizliyi",
+      "Sanitar qovşaqlarının təmizlənməsi",
+    ],
+    layout: "mosaic",
+  },
+  "ofis-temizliyi": {
+    title: "Ofis təmizliyi xidmətinə daxildir",
+    items: [
+      "Döşəmə örtüyünün müvafiq üsul ilə təmizlənməsi",
+      "Əşyaların tozunun alınması",
+      "Ofis mebelləri və avadanlıqlarının təmizlənməsi",
+      "Qapı-pəncərələrin, güzgülərin və əlavə aksesuarların təmizlənməsi",
+      "Mətbəxin təmizlənməsi",
+      "Sanitar qovşaqlarının təmizlənməsi və dezinfeksiya olunması",
+    ],
+    note: "Siz öz işinizlə uğur qazanın, ofisinizi biz təmizləyərik!",
+  },
+  "bag-evlerinin-temizliyi": {
+    title: "Bağ evlərinin təmizliyi xidmətinə daxildir:",
+    items: [
+      "Evin təmizlənməsi",
+      "Həyətin təmizlənməsi",
+      "Yer səthinin xüsusi aparatla yuyulması",
+      "Hovuzun təmizlənməsi",
+      "Zibillərin yığılması (10 kq qədər).",
+      "1 kv metr tametin aparatla yuyulmasi - 3.5 azn təşkil edir.",
+    ],
+  },
+  "erazi-temizliyi": {
+    title: "Yaşadığınız ərazinin təmizlənməsi xidmətinə daxildir:",
+    items: ["Ərazinin süpürülməsi", "Zibilin yığılması", "Yer səthinin xüsusi aparatla yuyulması", "1 kv metr tametin aparatla yuyulması – 3 azn-dən başlayır"],
+  },
+  "pencere-temizliyi": {
+    title: "Pəncərə təmizlənməsi qiymətləri",
+    items: [
+      "1 ədəd standart ölçülü pəncərə təmizlənməsi – 10 azn-dən başlayır",
+      "1 ədəd hündürlüyü 3 m -dən hündür ölçülü pəncərə təmizliyi – 30 azn-dən başlayır",
+      "Vinil təmizliyi 1.5*2.2 kv metr üçün - 40 azn-dən başlayır",
+      "Montaj lenti təmizliyi 1.5*1.5 m - 30 azn-dən başlayır",
+    ],
+    layout: "quad",
+  },
+  "cilciraq-temizliyi": {
+    title: "Çilçıraq təmizlənməsi qiymətləri",
+    items: ["3 plafon – 10 azn", "5 plafon – 20 azn", "8 plafon – 30 azn"],
+    layout: "quad",
+  },
+  "perde-yuma": {
+    title: "Pərdə və Jalüz yuma qiymətləri",
+    items: ["1 metr tül pərdə yuma – 2.50 azn", "1 kq dekor pərdə yuma – 3 azn", "1 metr jalüz yuma – 5 azn"],
+    note: "Pərdə yuma xidməti Abşeron yarımadasının istənilən nöqtəsinə xidmət göstərir.",
+    layout: "quad",
+  },
+  "yumsaq-mebel-temizlenmesi": {
+    title: "Mebel təmizliyi xidmətinə daxildir",
+    items: [
+      "Divan və kresloların kimyəvi təmizlənməsi",
+      "Dəri örtüklü mebellərin kimyəvi təmizlənməsi",
+      "Yumşaq stulların kimyəvi təmizlənməsi",
+      "Pufikin kimyəvi təmizlənməsi",
+      "Matrasların kimyəvi təmizlənməsi",
+      "Kovrolinin yuyulması",
+    ],
+  },
+  "yangindan-sonra-ev-temizliyi": {
+    title: "Yanğından sonra ev təmizliyi",
+    items: [
+      "Pəncərələrin yuyulması",
+      "Səthlərin üzərindən his və qubarın təmizlənməsi",
+      "Tavanın xüsusi kimyəvi məhlul ilə yuyulması",
+      "Fasadın üzərindən his və qubarın xüsusi apparat vasitəsi ilə yuyulması",
+      "Mebellərin üzərinin xüsusi aparat vasitəsi ilə təmizlənməsi",
+      "Zibillərin yığılması(10 kq qədər)",
+    ],
+  },
+  "temir-sonrasi-temizlik": {
+    title: "Təmirdən sonra evin təmizlənməsi xidmətinə aşağıdakılar daxildir:",
+    items: [
+      "Tikintidən sonrakı bütün çirklənmənin aradan qaldırılması",
+      "Divarların və döşəmələrin bina tozundan təmizlənməsi",
+      "Pəncərə və qapılardan qoruyucu lentin çıxarılması",
+      "Pəncərələrin yuyulması",
+      "Bütün şaquli və üfüqi səthlərin yaş və quru təmizlənməsi",
+      "Məskunlaşma üçün binaların hazırlanması",
+    ],
+  },
+  "otel-temizlenmesi": {
+    title: "Otel təmizliyi xidmətinə daxildir",
+    items: [
+      "Sanuzelin xüsusi kimyəvi məhlullar ilə təmizlənməsi",
+      "Mebel və səthlərdən tozların alınması",
+      "Döşəmə, divar və tavanların tozlarının təmizlənməsi",
+      "Aksessuarların tozların alınması",
+      "Radiator və kondisioner təmizliyi",
+      "Şkafların səliqəyə salınması",
+    ],
+  },
+  "hovuz-temizlenmesi-xidmeti": {
+    title: "Hovuzların təmizliyi xidmətinə aiddir",
+    items: [
+      "Çirklənmiş suyun buraxılması və hovuz çəninin ilkin təmizlənməsi",
+      "Duz, kalsiy, əhəng daşının təmizlənməsi",
+      "Göbələk və bakterioloji xəstəliklərin qarşısını almaq üçün dezinfeksiya olunması",
+      "Hovuzların təmizlənməsi həm Bakı daxilində həm də digər regionlara təqdim olunur. Bütün detallar danışıq əsasında sifarişçinin istəklərini nəzərə almaqla müqavilədə qeyd olunur.",
+    ],
+  },
+  "restoran-temizlenmesi": {
+    title: "Restoran təmizliy xidməti",
+  },
+  "korporativ-temizlik-xidmeti": {
+    title: "Korporativ əməkdaşlıq",
+    note: "Korporativ Əməkdaşlarımız",
+  },
+};
+
 export function generateStaticParams() {
   return [...servicePages.map((service) => ({ slug: service.slug })), ...blogPosts.map((post) => ({ slug: post.slug }))];
 }
@@ -230,6 +361,7 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
 
   const copy = pageCopy[locale];
   const images = detailImageSets[service.slug] ?? [service.image];
+  const displayTitle = locale === "az" ? serviceTitleOverrides[service.slug] ?? service.title : service.title;
   const paragraphs =
     locale === "az"
       ? serviceLongCopy[service.slug] ?? [
@@ -241,11 +373,11 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
 
   return (
     <SitePage active="services" locale={locale} currentSlug={service.slug} routeKind="service">
-      <DetailHero title={service.title} heroImage={heroImage} subtitle={copy.subtitle} />
-      <IntroBlocks service={service} images={images} paragraphs={paragraphs} />
-      <IncludedSection service={service} images={images} locale={locale} />
-      <PackagesAndNote locale={locale} />
-      <OrderFormSection serviceTitle={service.title} locale={locale} />
+      <DetailHero title={displayTitle} heroImage={heroImage} subtitle={copy.subtitle} />
+      <IntroBlocks service={service} title={displayTitle} images={images} paragraphs={paragraphs} />
+      <IncludedSection service={service} title={displayTitle} images={images} locale={locale} />
+      {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} /> : null}
+      <OrderFormSection serviceTitle={displayTitle} locale={locale} />
       <BottomImageCta locale={locale} />
     </SitePage>
   );
@@ -314,12 +446,12 @@ function IntroTextCard({
   );
 }
 
-function IntroBlocks({ service, images, paragraphs }: { service: ServicePageItem; images: string[]; paragraphs: string[] }) {
+function IntroBlocks({ service, title, images, paragraphs }: { service: ServicePageItem; title: string; images: string[]; paragraphs: string[] }) {
   return (
     <section className="bg-[#f7f7f7] pb-14 pt-[50px]">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <div className="grid grid-cols-[396px_1fr] items-start gap-0 max-lg:grid-cols-1">
-          <FramedImage src={images[0]} alt={service.title} />
+          <FramedImage src={images[0]} alt={title} />
           <IntroTextCard>
             <p>{paragraphs[0]}</p>
           </IntroTextCard>
@@ -328,75 +460,56 @@ function IntroBlocks({ service, images, paragraphs }: { service: ServicePageItem
           <IntroTextCard reverse heightClass="h-[286px]">
             <p>{paragraphs[1] ?? service.description}</p>
           </IntroTextCard>
-          <FramedImage src={images[1] ?? images[0]} alt={service.title} tone="blue" heightClass="h-[306px]" />
+          <FramedImage src={images[1] ?? images[0]} alt={title} tone="blue" heightClass="h-[306px]" />
         </div>
       </div>
     </section>
   );
 }
 
-function IncludedSection({ service, images, locale }: { service: ServicePageItem; images: string[]; locale: Locale }) {
+function IncludedSection({ service, title: serviceTitle, images, locale }: { service: ServicePageItem; title: string; images: string[]; locale: Locale }) {
   const copy = pageCopy[locale];
-  const isHomeService = service.slug === "ev-temizliyi-xidmeti";
-  const title = isHomeService ? copy.includedHome : service.title;
-  const galleryImages = isHomeService ? getGalleryImages(images) : getGalleryImages(images).slice(0, 5);
-  const windowPrices = [
-    "1 ədəd standart ölçülü pəncərə təmizlənməsi – 10 azn-dən başlayır",
-    "1 ədəd hündürlüyü 3 m -dən hündür ölçülü pəncərə təmizliyi – 30 azn-dən başlayır",
-    "Vinil təmizliyi 1.5*2.2 kv metr üçün - 40 azn-dən başlayır",
-    "Montaj lenti təmizliyi 1.5*1.5 m - 30 azn-dən başlayır",
-  ];
-
-  if (service.slug === "pencere-temizliyi") {
-    return (
-      <section className="bg-[#f7f7f7] pb-12">
-        <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-          <h2 className="text-center text-[20px] font-semibold text-black max-md:text-[18px]">Pəncərə təmizlənməsi qiymətləri</h2>
-          <div className="mt-[50px] grid grid-cols-[520px_470px] items-start justify-center gap-[35px] max-lg:grid-cols-1">
-            <ServiceImageGallery images={images.slice(2, 6)} title={service.title} layout="quad" />
-            <div className="flex flex-col gap-5">
-              {windowPrices.map((item, index) => (
-                <div
-                  key={item}
-                  className={`flex min-h-[64px] items-center justify-center rounded-[8px] border bg-white px-5 text-center text-[18px] font-medium leading-[21px] text-black max-md:text-[15px] ${
-                    index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
-                  }`}
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const detail = serviceDetailSections[service.slug];
+  const isMosaic = detail?.layout === "mosaic" || service.slug === "ev-temizliyi-xidmeti";
+  const layout = detail?.layout ?? "row";
+  const title = detail?.title ?? serviceTitle;
+  const items = detail?.items;
+  const galleryImages =
+    service.slug === "pencere-temizliyi"
+      ? images.slice(2, 6)
+      : isMosaic
+        ? getGalleryImages(images)
+        : layout === "quad"
+          ? getGalleryImages(images).slice(0, 4)
+          : getGalleryImages(images).slice(0, 5);
 
   return (
     <section className="bg-[#f7f7f7] pb-12">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <h2 className="text-center text-[20px] font-semibold text-black max-md:text-[18px]">{title}</h2>
-        {isHomeService ? (
+        {items ? (
           <div className="mt-[30px] grid grid-cols-[632px_508px] gap-0 max-lg:grid-cols-1">
             <div className="w-full">
-              <ServiceImageGallery images={galleryImages} title={service.title} />
+              <ServiceImageGallery images={galleryImages} title={serviceTitle} layout={isMosaic ? "mosaic" : layout} />
             </div>
             <div className="flex flex-col gap-5 px-[30px] max-lg:mt-8 max-lg:px-0">
-              {service.bullets.map((item, index) => (
+              {items.map((item, index) => (
                 <div
                   key={item}
-                  className={`flex h-[52px] items-center justify-center rounded-[8px] border bg-white px-4 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[16px] ${
+                  className={`flex min-h-[52px] items-center justify-center rounded-[8px] border bg-white px-4 py-3 text-center text-[18px] font-medium leading-[20px] text-black max-md:text-[16px] ${
                     index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
                   }`}
                 >
                   {item}
                 </div>
               ))}
+              {detail?.note ? <p className="text-center text-[16px] font-medium leading-[1.45] text-black">{detail.note}</p> : null}
             </div>
           </div>
         ) : (
           <div className="mt-[60px]">
-            <ServiceImageGallery images={galleryImages} title={service.title} layout="row" />
+            <ServiceImageGallery images={galleryImages} title={serviceTitle} layout="row" />
+            {detail?.note ? <p className="mt-8 text-center text-[20px] font-semibold text-black max-md:text-[18px]">{detail.note}</p> : null}
           </div>
         )}
         <p className="mt-9 text-center text-[13px] font-semibold text-black">
