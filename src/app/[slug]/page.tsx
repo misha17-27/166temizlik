@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
+import { ServiceImageGallery } from "@/components/ServiceImageGallery";
 import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
@@ -109,6 +110,10 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2024/02/image-89a.webp",
     "https://166temizlik.az/wp-content/uploads/2024/02/image-83a.jpg",
     "https://166temizlik.az/wp-content/uploads/2024/02/image-91.jpg",
+    "https://166temizlik.az/wp-content/uploads/2024/02/image-95as.jpg",
+    "https://166temizlik.az/wp-content/uploads/2024/02/image-95.jpg",
+    "https://166temizlik.az/wp-content/uploads/2024/02/image-92.jpg",
+    "https://166temizlik.az/wp-content/uploads/2024/02/image-94.jpg",
   ],
   "hovuz-temizlenmesi-xidmeti": [
     "https://166temizlik.az/wp-content/uploads/2024/02/image-89-1.webp",
@@ -124,16 +129,76 @@ const detailImageSets: Record<string, string[]> = {
 
 const serviceLongCopy: Record<string, string[]> = {
   "ev-temizliyi-xidmeti": [
-    "Təmizliyinizi 166 Təmizlik Xidmətinin peşəkar komandasına həvalə etməklə vaxtınıza qənaət edin! İş və ailə həyatının bu qədər stresli olduğu bir vaxtda ev təmizliyinə saatlarınızı sərf etmək böyük enerji tələb edir. 166-ya bir zənglə və ya saytımıza yazmaqla istəyinizə uyğun gündəlik və əsaslı təmizlik xidməti sifariş edib, evinizdəki bütün təmizlik işlərini yoluna qoya bilərsiniz.",
+    "Təmizliyinizi 166 Təmizlik Xidmətinin peşəkar komandasına həvalə etməklə vaxtınıza qənaət edin! İş və ailə həyatının bu qədər stresli olduğu bir vaxtda ev təmizliyinə saatlarınızı sərf etmək böyük enerji tələb edir. 166-ya bir zənglə və ya saytımıza yazmaqla istəyinizə uyğun “gündəlik” və “əsaslı” təmizlik xidməti sifariş edib, evinizdəki bütün təmizlik işlərini yoluna qoya bilərsiniz.",
     "Sizin üçün daha doğru qiymət təklifimizi formalaşdırmaq üçün ilkin mərhələdə evinizə baxış keçirilir və təmizlik paketlərimiz müştərilərimizin istəklərinə uyğun olaraq optimallaşdırılır. Beləcə, təmizlik paketinə istədiyiniz təmizliyi əlavə edə və ya çıxara bilərsiniz. Xidmət zamanı təmizlik işçilərinin sayı, təmizlik olunacaq saat və müddət müştərilərimizin istəyinə uyğun təyin olunur.",
   ],
   "ofis-temizliyi": [
-    "Ofis təmizliyi rahat iş mühitinin, əməkdaşların sağlamlığının və məhsuldarlığın qorunması üçün vacibdir. Peşəkar komandamız ofislərin ölçüsünə və iş qrafikinə uyğun təmizlik planı hazırlayır.",
-    "Təmiz və səliqəli ofis həm əməkdaşların rahatlığına, həm də şirkətin imicinə müsbət təsir göstərir. Xidmət zamanı mebel, döşəmə, pəncərə və sanitar sahələr diqqətlə təmizlənir.",
+    "Təmizlik sadəcə rahatlıq üçün yox eyni zamanda səmərəli iş üçün də vacibdir. Təmiz olmayan ofisdə toz və mikrob ofis əməkdaşlarının sağlamlığına təsir edir və onların əmək məhsuldarlığını azaldır. Təmizlik məsələləri həll olunmadığı müddətcə iş üçün tamamilə uyğun olmayan mühit yaranmağa başlayır.",
+    "166 Təmizlik Xidməti ofis büdcənizə təsir etmədən, müxtəlif xidmət paketləri ilə sizə uyğun ofis təmizliyini təklif edir. Təmizləmə işi ofisin xüsusiyyətləri və müştərinin istəkləri nəzərə alınaraq həyata keçirir. Peşəkar işçi heyətimiz müəyyənləşdirdiyiniz zaman kəsiyində ofisinizdə təmizliyi bərpa edəcək.",
+  ],
+  "bag-evlerinin-temizliyi": [
+    "Təbiətdən zövq almaq üçün bağ evi əla seçim olsa da, baxımsız vəziyyətdəki bağ, hovuz heç də ürəkaçan olmur. Təmizləməyə başlasanız, bağ mövsümünün sonuna qurtararsınız.",
+    "166 Təmizlik Xidməti ilin bütün fəsilləri üçün bağ evinizi sizə hazır vəziyyətə salmaq üçün təmizlik və bağa qulluğu işlərini öz üzərinə götürür. Sürətli iş rejimi ilə qısa zamanda bağ eviniz təmizlənərək istifadənizə verilir. Bağların təmizliyinə zibillərin yığılması, payız mövsümündə xəzəllərin təmizlənməsi, həmçinin istəyinizə uyğun digər xidmətlərin də görülməsi daxildir.",
+  ],
+  "erazi-temizliyi": [
+    "166 Təmizlik xidməti yaşayış binalarının, alış-veriş mərkəzlərinin, mehmanxanaların, istirahət mərkəzlərinin, məktəblərin və başqa binaların ətraf mühitinin təmizləmə işlərini həyata keçirir.",
+    "Peşəkar təmizlik komandamız ərazi təmizliyi zamanı xüsusi avadanlıq və vasitələrdən istifadə edir. Bir sözlə, əməkdaşlarımız sizə uyğun zaman aralığında müəyyənləşdirdiyiniz təmizlik işlərini həyata keçirərək yaşadığınız ərazini istifadəyə yararlı vəziyyətə gətirəcək.",
+  ],
+  "fasad-temizliyi": [
+    "Binaların xaricinin təmiz olması şirkət haqqında ilk təəssürat üçün vacibdir. Bu işi 166 Təmizlik Xidmətinin peşəkar komandasına həvalə etmək isə ən düzgün qərardır. Bakıda çoxmərtəbəli binaların sayını nəzərə alaraq, fasadlarının təmizlənməsi yüksək risk zonasına daxildir. Bu səbəbdən təmizlik zamanı əmək təhlükəsizliyinə ciddi riayət edilməlidir.",
+    "166 Təmizlik Xidməti xüsusi təchizatlı qaldırıcı sistemi ilə ən hündür yerlərin də təmizliyini həyata keçirir. İstifadə etdiyimiz təmizləyici maddələr heç bir şüşə və metal səthə ziyan vurmur.",
+  ],
+  "pencere-temizliyi": [
+    "Yüksək mərtəbəli binalarda pəncərə təmizliyi həm çətin, həm də təhlükəli bir prosesdir. Təmir sonrası təmizlikdə isə ən çətin məsələ pəncərələrdən montaj lentlərinin təmizlənməsidir.",
+    "166 Təmizlik Xidməti ilə pəncərələrinizin gündəlik və təmir sonrası təmizliyi indi daha da asan olacaq. Təmizlik üçün peşəkar təmizlik komandamız hər zaman xidmətinizdədir.",
+  ],
+  "cilciraq-temizliyi": [
+    "Çilçiraq təmizliyi zamanı platformalar tərəfimizdən təmin edilir. Təmizləmə prosesi aşağıdakı qaydada həyata keçirilir: Çilçiraq elektrikdən söndürülür; Plafonlar yuyucu maddələr vasitəsi ilə isladılır; Su ləkələrini təmizləmək və parlaqlıq vermək üçün təmamilə qurudulur;",
+    "166 Təmizlik xidməti sizin büdcənizə uyğun müxtəlif təmizlik paketlərini təqdim edir. Təmizlik xidməti sizin seçiminiz əsasında olur. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək.",
+  ],
+  "perde-yuma": [
+    "Evin dekorunda xüsusi rolu olan pərdələrin təmizliyi çox önəmli bir məsələdir. Peşəkar pərdə yuma komandamız ipək, tül, kətan və digər növ pərdələrinizi və jalüzlərinizi çıxarır xüsusi metoddan istifadə etməklə yuyur, havalandırma otağında təmamilə qurudur, ütüləyir və təyin olunmuş tarixdə sizə təhvil verir.",
+    "Pərdələrin çıxarılması və yuyulduqdan sonra təkrar yerinə asılması ödənişsizdir. Nəzərinizə çatdıraq ki, pərdələrin asılması üçün istifadə olunan asılqanlar şirkət tərəfimizdən təmin edilir. Pərdə yuma xidməti Abşeron yarımadasının istənilən nöqtəsinə xidmət göstərir.",
+  ],
+  "yumsaq-mebel-temizlenmesi": [
+    "Gündəlik istifadə olunan divan, kreslo və stul kimi mebellərin kirlənmə ehtimalı çox yüksəkdir. Hər əşya kimi yumşaq mebelləri də mütəmadi olaraq təmizləmək mütləqdir. Mebellər təmizlənmədikdə əsl bakteriya yuvası olur, həmçinin çirk onların rəngini soldurur və köhnə görkəm verir. 166 Təmizlik Xidməti ilə yumşaq mebellərinizi yenisi ilə əvəz etməyə gərək qalmayacaq.",
+    "Xüsusi avadanlıqlar və yumşaq mebelə qulluq etmək üçün tətbiq edilən keyfiyyətli təmizləyici vasitələr ilə təmizlənən yumşaq mebelləriniz təzə kimi tərtəmiz olacaq. Sifariş zamanı mebeldəki ləkələr xüsusi ləkəçıxarıcı maddələrlə təmizlənir, fırça vasitəsilə fırçalanır. Ləkələrdən tam azad olduqdan sonra, mebeldəki su vaakum aparatı ilə çəkilir.",
+  ],
+  etirlendirme: [
+    "Xoşagəlməz qoxulara qarşı effektiv üsül. Evdə, ofisdə və ya obyektdə olan pis qoxular sizi və ətrafınızdakı insanları narahat edə bilər. Bu problemi aradan qaldırmaq üçün peşəkar üsullardan istifadə etmək lazımdır. Belə ki, məkanlardakı pis qoxulardan azad olmaq istəyirsinizsə, bizə müraciət edə bilərsiniz.",
+    "166 Təmizlik xidməti sizin büdcənizə uyğun müxtəlif təmizlik paketlərini təqdim edir. Təmizlik xidməti sizin seçiminiz əsasında olur. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək.",
+  ],
+  "baximsiz-ev-temizliyi": [
+    "Təmizlik bizim işimizdir. Ən baxımsız halda yəni – yaşlı insanların, yataq xəstələrinin, qayğıya ehtiyacı olan şəxslərin evlərinin təmizliyini öz üzərimizə götürüb, xüsusi kimyəvi məhlullar və müasir avadanlıqlar vasitəsilə evinizi tərtəmiz edirik. Peşəkar komandamız ləkələr ilə mübarizə aparmaq üçün 54 gizli nou-haudan istifadə edir, hətta inadkar hesab etdiyiniz ləkələri belə təmizləyə bilirik.",
+    "Təmizlik xidməti sizin seçiminiz əsasında olur. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək. Təmizlik firması olaraq sizə ən təmiz xidməti göstərməyə çalışırıq.",
+  ],
+  "yangindan-sonra-ev-temizliyi": [
+    "Yanğından dəyən zərəri geri qaytara bilməsəkdə, bu arzuolunmaz hadisənin izlərini birdəfəlik təmizləyərik! Lazımlı vasitələr olmadan yanğın nəticəsində yaranan his, toz və qubar ləkələrinin təmizlənməsi olduqca çətindir. Ona görə də peşəkar kömək almalısınız.",
+    "Yanğın təmizliyi üzrə ixtisaslaşmış əməkdaşlarımız xüsusi maddələrdən istifadə edərək yanğının törətdiyi ləkə və izləri maksimum azaldaraq təhvil verəcək. Fasadın üzərindən his və qubarın xüsusi apparat vasitəsi ilə yuyulması da xidmətə daxildir.",
+  ],
+  "temir-sonrasi-temizlik": [
+    "Təmir sonrası təmizlik zamanı qapı və pəncərələri zədələmədən qoruyucu lentləri çıxartmaq, döşəməni cızmadan boya və kley ləkələrini təmizləmək lazımdır. Bu işləri görmək sizə yeni evinizdən zövq almağa imkan vermir. 166 Təmizlik Xidməti sizə belə çətin vəziyyətdən çıxmağa kömək olacaq! Peşəkar təmizlik komandası xüsusi təmizlik vasitələri və xüsusi avadanlıqlarla istənilən ölçüdə mənzil və obyektlərin təmir sonrası təmizlik işlərini həyata keçirir.",
+    "Təmizlik prosesinə tikinti materialları, qarışıqlar, ləkələr, yapışqan, qoruyucu lent, sement tozu, boya qalıqları və başqa çirklənmələrin aradan qaldırılması daxildir. Tullantıların yığılmasından ən kiçik sənaye ləkələrinin təmizlənməsinə qədər hər bir detal təmizlənərək mənzil və obyektləriniz qısa zamanda istifadənizə verilir. Biz sizə evinizi və iş yerinizi tam təmiz şəkildə təhvil verəcəyik.",
+  ],
+  "otel-temizlenmesi": [
+    "İnsanlar otel seçərkən onun yerləşdiyi yerə, göz oxşayan interyerə, münasib qiymətə fikir verməklə yanaşı, onun təmiz və gigiyenik olmasına da nəzər yetirir. Ona görə də seçilən otellər siyahısında olmaq istəyirsinizsə təmizliyin qeydinə qalmaq lazımdır. 166 Təmizlik Xidmətinə müraciət edib, peşəkar təmizlikdən zövq alın!",
+    "Təmizlik xidməti sizin seçiminiz əsasında olur. Belə ki, daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir. Təmizlik paketləri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək.",
+  ],
+  "restoran-temizlenmesi": [
+    "Restoranların olduqca təmiz və səliqəli olması insanlarda həmin yer ilə bağlı müsbət təəsürat yaradır və orada oturub oturmama qərarlarına birbaşa təsir edir. Restoranların təmizliyi ilk öncə orada işləyən işçi heyətinin və müştərilərinin təhlükəsizliyi üçün olduqca vacib nüansdır.",
+    "Gigiyenik qaydalara riayət edilməlidir ki, qidalar sağlam şəkildə hazırlansın. Biznesin inkişafını, müştəri məmnuniyyətini düşünürsünüzsə, həmçinin restoranın yaxşı reputasiya qazanmasını istəyirsinizsə, 166 Təmizliklik Xidmətinə müraciət edib peşəkar təmizlikdən yararlana bilərsiniz.",
+  ],
+  "kristallasdirma-xidmeti": [
+    "Məkanın daxili ilə yanaşı, onun zahiri ətraf sahəsinin də görkəmi böyük rol oynayır. Ərp və ləkələr ərazidə qaçılmazdır. Qonaqlara və ya məkanın önündən keçənlərə heç də xoş təəssürat bağışlamır. 166 təmizlik xidməti yaşayış binalarının, alış-veriş mərkəzlərinin, mehmanxanaların, istirahət mərkəzlərinin, istehsalat müəssisələrinin, məktəb və s. kimi yerlərin ərazilərinin təmizliyini həyata keçirir. Ərazi təmizliyi daha çox qış vaxtlarında və təmir sonrası problem yaşadır. Və bu halda xüsusi avadanlıq, alət və vasitələrə tələb duyulur.",
+    "Biz müxtəlif ölçülü, çirklənmə dərəcəli və müxtəlif mürəkkəblikdə iş tələb edən ərazi təmizliyini peşəkarlıqla kristallaşma apparatı vasitəsi ilə öhdəsindən gəlirik. Bu işi 166 Təmizlik Xidmətinin peşəkar komandasına həvalə etmək ən düzgün qərardır.",
+  ],
+  "hovuz-temizlenmesi-xidmeti": [
+    "Hal-hazırda hovuzlar şəxsi evlərin, villaların, bağ evlərinin, həmçinin fitnes mərkəzləri, idman zalları, qadın gözəllik və sağlamlıq mərkəzləri və əlbətdə ki, akvaparkların əvəzedilməz hissəsidir. Şəhərimizdə belə çox miqdarda hovuzların olduğunu nəzərə alaraq Bakıda hovuzların təmizlənməsi xidmətinə ehtiyac yetərincə çoxdur. Bildiyimiz kimi gün ərzində idman zalları, akvaparklardaki hovuzlardan onlarla insan istifadə edir və müntəzəm təmizlik və dezinfeksiya edilmədiyi halda onlar bakteriya və xəsətəlik daşıyıcısıdırlar. Aydındır ki, hovuzlar kafel ilə yığılır və kafel aralıqları çirk, bakteriya və xəstəlik yuvasıdır. Bu risk mozaik kafeldə bir neçə qat artır. Hovuz təmizliyi yetərincə əmək, təcrübə, xüsusi avadanlıq və təmizləyici vasitələr tələb edən prosedurdur.",
+    "166 təmizlik xidməti-nin hovuz təmizliyi xidməti bütün növ sahəli, relyefli və səthli hovuzların təmizliyinin tətbiqini təqdim edir. Təmizlik zamanı xüsusi Alman məhsullarından istifadə edilir. Xidmət sifarişçinin istəyindən asılı olaraq birdəfəlik və ya müntəzəm həyata keçirilir.",
   ],
   "korporativ-temizlik-xidmeti": [
-    "Korporativ əməkdaşlıq şirkətimizin əsas prioritetlərindən biridir. Müqaviləli müştərilər üçün operativ sifariş, nəzarət və keyfiyyət izləmə sistemi ilə xidmət göstəririk.",
-    "166 Təmizlik xidmətinin korporativ təmizliyi biznes proseslərini rahatlaşdırır, obyektlərin davamlı səliqəsini və müştəri məmnuniyyətini qorumağa kömək edir.",
+    "Korporativ əməkdaşlıq şirkətimizin əsas prioritetlərindən biridir. Korporativ müştərilərimiz üçün nəzərdə tutduğumuz güzəştlər həm iş prosesinin asanlaşmasına həm də biznes partnyorlarımızın məmnunluguna səbəb olur.",
+    "Təmizlik xidmətləri üzrə korporativ təkliflər, sifarişlərin xüsusi proqramda izlənilməsi, müştərilərin təklif və iradlarını öyrənən müştəri məmnuniyyəti zəngləri, peşəkar işçi heyəti və köçürmə vasitəsi ilə asan ödəmə imkanı təqdim edirik.",
   ],
 };
 
@@ -267,67 +332,39 @@ function IntroBlocks({ service, images, paragraphs }: { service: ServicePageItem
   );
 }
 
-function IncludedGallery({ images, title }: { images: string[]; title: string }) {
-  const gallery = getGalleryImages(images);
-  const columns = [
-    [
-      { image: gallery[0], height: "h-[218px]" },
-      { image: gallery[5], height: "h-[218px]" },
-    ],
-    [
-      { image: gallery[1], height: "h-[182px]" },
-      { image: gallery[4], height: "h-[218px]" },
-    ],
-    [
-      { image: gallery[2], height: "h-[218px]" },
-      { image: gallery[6], height: "h-[182px]" },
-    ],
-    [
-      { image: gallery[3], height: "h-[218px]" },
-      { image: gallery[7], height: "h-[218px]" },
-    ],
-  ];
-
-  return (
-    <div className="grid w-full grid-cols-4 gap-[10px] p-[10px] max-sm:grid-cols-2">
-      {columns.map((column, columnIndex) => (
-        <div key={columnIndex} className="flex flex-col gap-[10px]">
-          {column.map((item, imageIndex) => (
-            <div key={`${item.image}-${columnIndex}-${imageIndex}`} className={`relative overflow-hidden ${item.height} max-sm:h-[165px]`}>
-              <Image src={item.image} alt={`${title} ${columnIndex * 2 + imageIndex + 1}`} fill sizes="146px" className="object-cover" />
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function IncludedSection({ service, images, locale }: { service: ServicePageItem; images: string[]; locale: Locale }) {
   const copy = pageCopy[locale];
-  const title = service.slug === "ev-temizliyi-xidmeti" ? copy.includedHome : `${service.title} ${copy.included}`;
+  const isHomeService = service.slug === "ev-temizliyi-xidmeti";
+  const title = isHomeService ? copy.includedHome : service.title;
+  const galleryImages = isHomeService ? getGalleryImages(images) : getGalleryImages(images).slice(0, 5);
 
   return (
     <section className="bg-[#f7f7f7] pb-12">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <h2 className="text-center text-[20px] font-semibold text-black max-md:text-[18px]">{title}</h2>
-        <div className="mt-[30px] grid grid-cols-[632px_508px] gap-0 max-lg:grid-cols-1">
-          <div className="w-full">
-            <IncludedGallery images={images} title={service.title} />
+        {isHomeService ? (
+          <div className="mt-[30px] grid grid-cols-[632px_508px] gap-0 max-lg:grid-cols-1">
+            <div className="w-full">
+              <ServiceImageGallery images={galleryImages} title={service.title} />
+            </div>
+            <div className="flex flex-col gap-5 px-[30px] max-lg:mt-8 max-lg:px-0">
+              {service.bullets.map((item, index) => (
+                <div
+                  key={item}
+                  className={`flex h-[52px] items-center justify-center rounded-[8px] border bg-white px-4 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[16px] ${
+                    index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
+                  }`}
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-5 px-[30px] max-lg:mt-8 max-lg:px-0">
-            {service.bullets.map((item, index) => (
-              <div
-                key={item}
-                className={`flex h-[52px] items-center justify-center rounded-[8px] border bg-white px-4 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[16px] ${
-                  index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
-                }`}
-              >
-                {item}
-              </div>
-            ))}
+        ) : (
+          <div className="mt-[60px]">
+            <ServiceImageGallery images={galleryImages} title={service.title} layout="row" />
           </div>
-        </div>
+        )}
         <p className="mt-9 text-center text-[13px] font-semibold text-black">
           {copy.serviceCare}
         </p>
@@ -405,6 +442,8 @@ function PackagesAndNote({ locale }: { locale: Locale }) {
 
 function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; locale: Locale }) {
   const copy = pageCopy[locale];
+  const serviceOptions = getLocalizedServicePages(servicePages, locale).map((service) => service.title);
+  const orderedServiceOptions = [serviceTitle, ...serviceOptions.filter((title) => title !== serviceTitle)];
 
   return (
     <section className="relative overflow-hidden bg-[#eaf7ff] py-[95px]">
@@ -418,7 +457,11 @@ function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; loca
             <input className="h-10 border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formPhone} />
           </div>
           <select className="mt-3 h-10 w-full border-0 bg-white px-4 text-[12px] text-black/70 outline-none" defaultValue={serviceTitle}>
-            <option>{serviceTitle}</option>
+            {orderedServiceOptions.map((title) => (
+              <option key={title} value={title}>
+                {title}
+              </option>
+            ))}
           </select>
           <input className="mt-3 h-10 w-full border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formAddress} />
           <textarea className="mt-3 h-[92px] w-full resize-none border-0 bg-white px-4 py-3 text-[12px] outline-none" placeholder={copy.formMessage} />

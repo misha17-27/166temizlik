@@ -1,0 +1,123 @@
+"use client";
+
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+type ServiceImageGalleryProps = {
+  images: string[];
+  title: string;
+  layout?: "mosaic" | "row";
+};
+
+export function ServiceImageGallery({ images, title, layout = "mosaic" }: ServiceImageGalleryProps) {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const galleryImages = useMemo(() => images.filter(Boolean), [images]);
+
+  const close = useCallback(() => setActiveIndex(null), []);
+  const showPrevious = useCallback(() => {
+    setActiveIndex((current) => (current === null ? current : (current - 1 + galleryImages.length) % galleryImages.length));
+  }, [galleryImages.length]);
+  const showNext = useCallback(() => {
+    setActiveIndex((current) => (current === null ? current : (current + 1) % galleryImages.length));
+  }, [galleryImages.length]);
+
+  useEffect(() => {
+    galleryImages.forEach((src) => {
+      const image = new window.Image();
+      image.src = src;
+    });
+  }, [galleryImages]);
+
+  useEffect(() => {
+    if (activeIndex === null) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        close();
+      }
+      if (event.key === "ArrowLeft") {
+        showPrevious();
+      }
+      if (event.key === "ArrowRight") {
+        showNext();
+      }
+    };
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [activeIndex, close, showNext, showPrevious]);
+
+  if (!galleryImages.length) {
+    return null;
+  }
+
+  const imageButton = (src: string, index: number, className: string, sizes: string) => (
+    <button
+      key={`${src}-${index}`}
+      type="button"
+      onClick={() => setActiveIndex(index)}
+      className={`group relative block overflow-hidden bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue ${className}`}
+      aria-label={`${title} ${index + 1}`}
+    >
+      <Image src={src} alt={`${title} ${index + 1}`} fill sizes={sizes} className="object-cover transition duration-300 group-hover:scale-[1.04]" />
+    </button>
+  );
+
+  return (
+    <>
+      {layout === "row" ? (
+        <div className="grid w-full grid-cols-5 gap-[10px] max-lg:grid-cols-3 max-sm:grid-cols-2">
+          {galleryImages.map((src, index) => imageButton(src, index, "h-[240px] max-lg:h-[210px] max-sm:h-[170px]", "(max-width: 900px) 33vw, 220px"))}
+        </div>
+      ) : (
+        <div className="grid w-full grid-cols-4 gap-[10px] p-[10px] max-sm:grid-cols-2">
+          {[0, 1, 2, 3].map((columnIndex) => (
+            <div key={columnIndex} className="flex flex-col gap-[10px]">
+              {[columnIndex, columnIndex + 4].map((imageIndex) =>
+                imageButton(
+                  galleryImages[imageIndex % galleryImages.length],
+                  imageIndex % galleryImages.length,
+                  `${(columnIndex + imageIndex) % 2 === 0 ? "h-[218px]" : "h-[182px]"} max-sm:h-[165px]`,
+                  "146px",
+                ),
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeIndex !== null ? (
+        <div className="fixed inset-0 z-[200] bg-black/85 text-white" role="dialog" aria-modal="true" aria-label={title}>
+          <div className="absolute left-6 top-6 text-[16px] font-medium">
+            {activeIndex + 1} / {galleryImages.length}
+          </div>
+          <button type="button" onClick={close} className="absolute right-6 top-5 text-[42px] leading-none text-white" aria-label="Close">
+            &times;
+          </button>
+          <button type="button" onClick={showPrevious} className="absolute left-8 top-1/2 -translate-y-1/2 text-[60px] leading-none text-white/90" aria-label="Previous">
+            ‹
+          </button>
+          <button type="button" onClick={showNext} className="absolute right-8 top-1/2 -translate-y-1/2 text-[60px] leading-none text-white/90" aria-label="Next">
+            ›
+          </button>
+          <div className="flex h-full items-center justify-center px-20 py-16 max-md:px-10">
+            <div className="relative h-[min(78vh,760px)] w-[min(78vw,1050px)]">
+              <Image src={galleryImages[activeIndex]} alt={`${title} ${activeIndex + 1}`} fill sizes="90vw" className="object-contain" priority unoptimized />
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
