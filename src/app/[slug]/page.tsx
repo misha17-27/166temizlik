@@ -237,7 +237,7 @@ const serviceTitleOverrides: Record<string, string> = {
   "yangindan-sonra-ev-temizliyi": "Yanğından sonra ev təmizliyi",
 };
 
-const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office"; note?: string }> = {
+const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden"; note?: string }> = {
   "ev-temizliyi-xidmeti": {
     title: "Əsaslı təmizlik xidmətinə daxildir",
     items: [
@@ -273,6 +273,7 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
       "Zibillərin yığılması (10 kq qədər).",
       "1 kv metr tametin aparatla yuyulmasi - 3.5 azn təşkil edir.",
     ],
+    layout: "garden",
   },
   "erazi-temizliyi": {
     title: "Yaşadığınız ərazinin təmizlənməsi xidmətinə daxildir:",

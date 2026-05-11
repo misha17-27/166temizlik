@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 type ServiceImageGalleryProps = {
   images: string[];
   title: string;
-  layout?: "mosaic" | "row" | "quad" | "office";
+  layout?: "mosaic" | "row" | "quad" | "office" | "garden";
 };
 
 export function ServiceImageGallery({ images, title, layout = "mosaic" }: ServiceImageGalleryProps) {
@@ -91,6 +91,17 @@ export function ServiceImageGallery({ images, title, layout = "mosaic" }: Servic
               src,
               index,
               `${index === 2 ? "h-[451px]" : "h-[201px]"} max-md:h-[220px]`,
+              "(max-width: 900px) 50vw, 301px",
+            ),
+          )}
+        </div>
+      ) : layout === "garden" ? (
+        <div className="grid w-full grid-cols-2 gap-[10px] max-sm:grid-cols-1">
+          {galleryImages.slice(0, 4).map((src, index) =>
+            imageButton(
+              src,
+              index,
+              `${index === 0 ? "h-[389px]" : index === 1 ? "h-[204px]" : "h-[376px]"} max-md:h-[240px]`,
               "(max-width: 900px) 50vw, 301px",
             ),
           )}
