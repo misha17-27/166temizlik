@@ -271,8 +271,8 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
       "Yer səthinin xüsusi aparatla yuyulması",
       "Hovuzun təmizlənməsi",
       "Zibillərin yığılması (10 kq qədər).",
-      "1 kv metr tametin aparatla yuyulmasi - 3.5 azn təşkil edir.",
     ],
+    note: "1 kv metr tametin aparatla yuyulmasi - 3.5 azn təşkil edir.",
     layout: "garden",
   },
   "erazi-temizliyi": {
@@ -508,6 +508,12 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
         : layout === "quad"
           ? getGalleryImages(images).slice(0, 4)
           : getGalleryImages(images).slice(0, 5);
+  const sectionNote =
+    detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi") ? detail.note : copy.serviceCare;
+  const sectionNoteClass =
+    service.slug === "bag-evlerinin-temizliyi"
+      ? "mt-9 text-center text-[16px] font-normal leading-[24px] text-black"
+      : "mt-9 text-center text-[18px] font-medium leading-[18px] text-black";
 
   return (
     <section className="bg-[#f7f7f7] pb-12">
@@ -537,9 +543,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
             {detail?.note ? <p className="mt-8 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[18px]">{detail.note}</p> : null}
           </div>
         )}
-        <p className="mt-9 text-center text-[18px] font-medium leading-[18px] text-black">
-          {service.slug === "ofis-temizliyi" && detail?.note ? detail.note : copy.serviceCare}
-        </p>
+        <p className={sectionNoteClass}>{sectionNote}</p>
       </div>
     </section>
   );
