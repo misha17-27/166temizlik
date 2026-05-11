@@ -77,6 +77,7 @@ const serviceLabels: Record<Locale, string[]> = {
 export function getLocalizedServices(locale: Locale = "az") {
   return services.map((service, index) => ({
     ...service,
+    slug: service.href.replace(/^\/|\/$/g, ""),
     title: serviceLabels[locale][index] ?? service.title,
     href: getServiceHref(service.href.replace(/^\/|\/$/g, ""), locale),
   }));

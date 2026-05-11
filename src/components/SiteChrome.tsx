@@ -177,7 +177,7 @@ export function Header({
   const activeMobileSubmenu = mobileSubmenu ? navItems.find((item) => item.key === mobileSubmenu) : null;
   const activeMobileSubmenuItems =
     mobileSubmenu === "services"
-      ? localizedServices.map((service) => ({ label: service.title, href: service.href }))
+      ? localizedServices.map((service) => ({ label: service.title, href: service.href, slug: service.slug }))
       : mobileSubmenu === "about"
         ? copy.aboutMenu.map((item) => ({ ...item, href: getLocalizedHref(locale, item.href) }))
         : [];
@@ -216,7 +216,7 @@ export function Header({
             const isServicesMenu = item.key === "services";
             const menuItems =
               item.key === "services"
-                ? localizedServices.map((service) => ({ label: service.title, href: service.href }))
+                ? localizedServices.map((service) => ({ label: service.title, href: service.href, slug: service.slug }))
                 : item.key === "about"
                   ? copy.aboutMenu.map((menuItem) => ({ ...menuItem, href: getLocalizedHref(locale, menuItem.href) }))
                   : [];
@@ -241,16 +241,23 @@ export function Header({
                 {menuItems.length ? (
                   <div className="invisible absolute left-1/2 top-full z-50 w-[280px] -translate-x-1/2 pt-2 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100">
                     <div className="rounded-[22px] bg-white px-3 py-3 text-center text-[15px] font-medium leading-tight text-[#0074ca] shadow-[0_16px_38px_rgb(15_23_42_/_10%)]">
-                      {menuItems.map((menuItem) => (
-                        <Link
-                          key={menuItem.href}
-                          href={menuItem.href}
-                          prefetch={false}
-                          className={`block rounded-[14px] px-3 transition hover:bg-[#eef6ff] ${isServicesMenu ? "py-[8px]" : "py-[13px]"}`}
-                        >
-                          {menuItem.label}
-                        </Link>
-                      ))}
+                      {menuItems.map((menuItem) => {
+                        const isCurrentService = isServicesMenu && "slug" in menuItem && menuItem.slug === currentSlug;
+
+                        return (
+                          <Link
+                            key={menuItem.href}
+                            href={menuItem.href}
+                            prefetch={false}
+                            aria-current={isCurrentService ? "page" : undefined}
+                            className={`block rounded-[14px] px-3 transition hover:bg-[#eef6ff] ${
+                              isCurrentService ? "bg-[#eef6ff]" : ""
+                            } ${isServicesMenu ? "py-[8px]" : "py-[13px]"}`}
+                          >
+                            {menuItem.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 ) : null}
@@ -314,13 +321,23 @@ export function Header({
                 </div>
 
                 <ul className="mt-8 space-y-6 text-[21px] font-normal leading-tight text-[#050505]">
-                  {activeMobileSubmenuItems.map((menuItem) => (
-                    <li key={menuItem.href}>
-                      <Link href={menuItem.href} prefetch={false} onClick={closeMobileMenu} className="block py-1">
-                        {menuItem.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {activeMobileSubmenuItems.map((menuItem) => {
+                    const isCurrentService = "slug" in menuItem && menuItem.slug === currentSlug;
+
+                    return (
+                      <li key={menuItem.href}>
+                        <Link
+                          href={menuItem.href}
+                          prefetch={false}
+                          onClick={closeMobileMenu}
+                          aria-current={isCurrentService ? "page" : undefined}
+                          className={`block rounded-[14px] px-3 py-2 ${isCurrentService ? "bg-[#eef6ff] text-[#0074ca]" : ""}`}
+                        >
+                          {menuItem.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </nav>
             ) : (
