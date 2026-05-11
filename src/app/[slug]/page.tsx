@@ -530,14 +530,14 @@ function HourlyCards({ locale }: { locale: Locale }) {
   const copy = homeCopy[locale];
 
   return (
-    <div className="grid grid-cols-5 gap-5 max-lg:grid-cols-3 max-sm:grid-cols-1">
+    <div className="mx-[-42px] grid grid-cols-5 gap-0 max-lg:mx-0 max-lg:grid-cols-3 max-lg:gap-5 max-sm:grid-cols-1">
       {copy.hourlyPrices.map((price) => (
-        <article key={price.time} className="rounded-[12px] bg-white px-4 py-5 text-center shadow-[0_6px_20px_rgb(0_116_202_/_7%)]">
+        <article key={price.time} className="mx-[10px] rounded-[12px] bg-white px-4 pb-[15px] pt-[30px] text-center shadow-[0_6px_20px_rgb(0_116_202_/_7%)] max-lg:mx-0">
           <div className="mx-auto mb-3 grid h-[42px] w-[42px] place-items-center rounded-full bg-[#95df22] text-white">
             <ClockIcon className="h-[23px] w-[23px]" strokeWidth={2.1} />
           </div>
-          <h3 className="text-[15px] font-bold text-black">{price.time}</h3>
-          <p className="mt-2 text-[11px] leading-[1.5] text-black">
+          <h3 className="text-[20px] font-semibold leading-[24px] text-black">{price.time}</h3>
+          <p className="mt-2 text-[15px] font-normal leading-[22.5px] text-black">
             {price.city}
             <br />
             {price.village}
@@ -576,7 +576,7 @@ function PackagesAndNote({ locale }: { locale: Locale }) {
   return (
     <section className="bg-[#f7f7f7] pb-20">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-        <div className="grid grid-cols-2 gap-10 max-lg:grid-cols-1">
+        <div className="grid grid-cols-2 gap-0 max-lg:grid-cols-1 max-lg:gap-10">
           <CleaningPackageCard title={titles.four} items={copy.packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" weeklyItems={copy.weeklyPrices} toggleLabels={copy.packageLabels} />
           <CleaningPackageCard title={titles.eight} items={copy.packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" weeklyItems={copy.weeklyPrices} toggleLabels={copy.packageLabels} />
         </div>

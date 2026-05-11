@@ -21,16 +21,16 @@ const styles = {
     imageSize: "100px",
   },
   detail: {
-    article: "relative rounded-[20px] bg-white px-8 pb-10 pt-[72px] shadow-[0_0_10px_rgb(228_239_255_/_50%)] max-md:px-5",
-    badge: "absolute left-8 top-5 flex h-[42px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 text-[15px] font-semibold text-white",
-    icon: "h-[17px] w-[17px]",
-    list: "min-h-[210px] space-y-1 text-[13px] font-normal leading-[1.45] text-black",
+    article: "relative mx-5 rounded-[20px] bg-white px-5 pb-[50px] pt-[72px] shadow-[0_0_10px_rgb(228_239_255_/_50%)] max-md:mx-0 max-md:px-5",
+    badge: "absolute left-5 top-[-10px] flex h-[42px] min-w-[158px] items-center justify-center gap-2 rounded-full px-10 text-[18px] font-medium leading-[18px] text-white",
+    icon: "h-[18px] w-[18px]",
+    list: "min-h-[189px] space-y-0 text-[18px] font-normal leading-[27px] text-black max-md:text-[15px] max-md:leading-[22px]",
     toggle: "mt-3 inline-block text-[13px] text-[#006ed3] underline underline-offset-2",
-    grid: "mt-6 grid grid-cols-3 gap-3",
-    label: "mb-2 text-[12px] font-semibold text-black",
-    circle: "relative mx-auto grid h-[82px] w-[82px] place-items-center",
-    price: "relative text-[20px] font-semibold text-white",
-    imageSize: "82px",
+    grid: "mt-6 grid grid-cols-3 gap-4",
+    label: "mb-2 text-[16px] font-medium leading-[16px] text-black max-md:text-[13px]",
+    circle: "relative mx-auto grid h-[100px] w-[100px] place-items-center max-md:h-[78px] max-md:w-[78px]",
+    price: "relative text-[26px] font-semibold leading-[26px] text-white max-md:text-[20px]",
+    imageSize: "100px",
   },
 } satisfies Record<PackageVariant, Record<string, string>>;
 
@@ -53,8 +53,8 @@ export function CleaningPackageCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const style = styles[variant];
-  const isExpandable = priceKey === "eight" && items.length > 5;
-  const visibleItems = isExpandable && !expanded ? items.slice(0, 5) : items;
+  const isExpandable = variant !== "detail" && priceKey === "eight" && items.length > 5;
+  const visibleItems = variant === "detail" && priceKey === "eight" ? items.slice(0, 5) : isExpandable && !expanded ? items.slice(0, 5) : items;
   const circleImage = priceKey === "four" ? priceCircleImages.four : priceCircleImages.eight;
 
   return (
