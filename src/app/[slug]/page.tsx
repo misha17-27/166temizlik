@@ -628,7 +628,7 @@ function BottomImageCta({ locale }: { locale: Locale }) {
     <section className="relative min-h-[600px] overflow-hidden bg-black text-white max-md:min-h-[430px]">
       <Image src="https://166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg" alt="" fill sizes="100vw" className="object-cover opacity-55" />
       <div className="relative mx-auto flex min-h-[600px] w-[min(1140px,calc(100%-40px))] items-center justify-end max-md:min-h-[430px] max-md:justify-center">
-        <p className="max-w-[490px] text-[14px] font-semibold leading-[1.65] text-white">
+        <p className="w-[501px] max-w-full text-[16px] font-normal leading-[24px] text-white">
           {copy.bottomText}
         </p>
       </div>

@@ -255,14 +255,14 @@ export const pageCopy = {
     packagesIntro: "166 Təmizlik xidməti sizin büdcənizə uyğun müxtəlif təmizlik paketlərini təqdim edir.",
     noteTitle: "QEYD",
     noteText:
-      "Təmizlik xidməti sizin seçiminiz əsasında olur. Daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir.",
+      "Təmizlik xidməti sizin seçiminiz əsasında olur. Belə ki, daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir. Təmizlik paketleri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək. Təmizlik firması olaraq sizə ən təmiz xidməti göstərməyə çalışırıq.",
     formName: "Ad",
     formPhone: "Əlaqə nömrəsi",
     formAddress: "Təmizlik olunacaq ünvan",
     formMessage: "İsmarıc",
     order: "Sifariş et",
     bottomText:
-      "Təmizlik xidməti sizin seçiminiz əsasında olur. Təmizlik paketləri seçərkən əməkdaşlarımız istəklərinizə uyğun tövsiyələr verəcək.",
+      "Təmizlik xidməti sizin seçiminiz əsasında olur. Belə ki, daha mükəmməl təmizlik üçün premium paketi seçə bilərsiniz. Bundan əlavə saatlıq paketlər də sizin üçün münasib hesab edilir. Təmizlik paketleri seçərkən bizim əməkdaşlarımız da sizin istəklərinizə uyğun tövsiyələr verəcək. Təmizlik firması olaraq sizə ən təmiz xidməti göstərməyə çalışırıq.",
   },
   ru: {
     subtitle: "Уделите внимание себе и своим близким!",
