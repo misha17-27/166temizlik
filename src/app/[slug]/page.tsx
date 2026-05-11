@@ -15,6 +15,12 @@ const packageTitles: Record<Locale, { four: string; eight: string }> = {
   tr: { four: "4 saat", eight: "8 saat" },
 };
 
+const serviceTypeLabels: Record<Locale, string> = {
+  az: "Xidmət növü:",
+  ru: "Тип услуги:",
+  tr: "Hizmet türü:",
+};
+
 type ServicePageItem = (typeof servicePages)[number];
 
 const detailImageSets: Record<string, string[]> = {
@@ -486,7 +492,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
   return (
     <section className="bg-[#f7f7f7] pb-12">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-        <h2 className="text-center text-[20px] font-semibold text-black max-md:text-[18px]">{title}</h2>
+        <h2 className="text-center text-[24px] font-medium leading-[24px] text-black max-md:text-[20px]">{title}</h2>
         {items ? (
           <div className="mt-[30px] grid grid-cols-[632px_508px] gap-0 max-lg:grid-cols-1">
             <div className="w-full">
@@ -496,7 +502,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
               {items.map((item, index) => (
                 <div
                   key={item}
-                  className={`flex min-h-[52px] items-center justify-center rounded-[8px] border bg-white px-4 py-3 text-center text-[18px] font-medium leading-[20px] text-black max-md:text-[16px] ${
+                  className={`flex min-h-[52px] items-center justify-center rounded-[8px] border bg-white px-4 py-3 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[16px] ${
                     index % 2 === 0 ? "border-[#008cfd]" : "border-[#ffd600]"
                   }`}
                 >
@@ -509,10 +515,10 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
         ) : (
           <div className="mt-[60px]">
             <ServiceImageGallery images={galleryImages} title={serviceTitle} layout="row" />
-            {detail?.note ? <p className="mt-8 text-center text-[20px] font-semibold text-black max-md:text-[18px]">{detail.note}</p> : null}
+            {detail?.note ? <p className="mt-8 text-center text-[20px] font-medium leading-[20px] text-black max-md:text-[18px]">{detail.note}</p> : null}
           </div>
         )}
-        <p className="mt-9 text-center text-[13px] font-semibold text-black">
+        <p className="mt-9 text-center text-[18px] font-medium leading-[18px] text-black">
           {copy.serviceCare}
         </p>
       </div>
@@ -554,8 +560,8 @@ function NotePanel({ locale }: { locale: Locale }) {
         <div className="absolute -right-10 top-[-20%] h-[140%] w-[90px] rounded-[50%] border-r-[18px] border-[#ffd600] bg-brand-blue max-md:hidden" />
       </div>
       <div className="px-10 py-9 max-md:px-6">
-        <h3 className="text-[22px] font-bold">{copy.noteTitle}</h3>
-        <p className="mt-5 text-[13px] font-semibold leading-[1.6] text-white">
+        <h3 className="text-[30px] font-semibold leading-[30px]">{copy.noteTitle}</h3>
+        <p className="mt-5 text-[18px] font-normal leading-[27px] text-white">
           {copy.noteText}
         </p>
       </div>
@@ -589,6 +595,7 @@ function PackagesAndNote({ locale }: { locale: Locale }) {
 
 function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; locale: Locale }) {
   const copy = pageCopy[locale];
+  const serviceTypeLabel = serviceTypeLabels[locale];
   const serviceOptions = getLocalizedServicePages(servicePages, locale).map((service) => service.title);
   const orderedServiceOptions = [serviceTitle, ...serviceOptions.filter((title) => title !== serviceTitle)];
 
@@ -596,22 +603,23 @@ function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; loca
     <section className="relative overflow-hidden bg-[#eaf7ff] py-[95px]">
       <div className="absolute -right-16 bottom-[-90px] h-[420px] w-[520px] rotate-[-18deg] border-[42px] border-brand-blue max-md:hidden" />
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-        <form className="max-w-[430px]">
-          <h2 className="text-[22px] font-semibold text-black">{copy.packagesTitle}</h2>
-          <p className="mt-2 text-[12px] leading-[1.5] text-black/75">{copy.packagesIntro}</p>
+        <form className="max-w-[541px]">
+          <h2 className="text-[24px] font-medium leading-[24px] text-black">{copy.packagesTitle}</h2>
+          <p className="mt-3 text-[16px] font-normal leading-[16px] text-black/75">{copy.packagesIntro}</p>
           <div className="mt-5 grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-            <input className="h-10 border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formName} />
-            <input className="h-10 border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formPhone} />
+            <input className="h-10 border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formName} />
+            <input className="h-10 border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formPhone} />
           </div>
-          <select className="mt-3 h-10 w-full border-0 bg-white px-4 text-[12px] text-black/70 outline-none" defaultValue={serviceTitle}>
+          <label className="mt-4 block text-[16px] font-light leading-[24px] text-black">{serviceTypeLabel}</label>
+          <select className="mt-2 h-10 w-full border-0 bg-white px-5 text-[15px] leading-[21px] text-black/70 outline-none" defaultValue={serviceTitle}>
             {orderedServiceOptions.map((title) => (
               <option key={title} value={title}>
                 {title}
               </option>
             ))}
           </select>
-          <input className="mt-3 h-10 w-full border-0 bg-white px-4 text-[12px] outline-none" placeholder={copy.formAddress} />
-          <textarea className="mt-3 h-[92px] w-full resize-none border-0 bg-white px-4 py-3 text-[12px] outline-none" placeholder={copy.formMessage} />
+          <input className="mt-3 h-10 w-full border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formAddress} />
+          <textarea className="mt-3 h-[92px] w-full resize-none border-0 bg-white px-5 py-3 text-[15px] leading-[21px] outline-none" placeholder={copy.formMessage} />
           <button type="button" className="mt-4 rounded-full bg-brand-yellow px-8 py-3 text-[12px] font-bold text-black">
             {copy.order}
           </button>
@@ -628,7 +636,7 @@ function BottomImageCta({ locale }: { locale: Locale }) {
     <section className="relative min-h-[600px] overflow-hidden bg-black text-white max-md:min-h-[430px]">
       <Image src="https://166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg" alt="" fill sizes="100vw" className="object-cover opacity-55" />
       <div className="relative mx-auto flex min-h-[600px] w-[min(1140px,calc(100%-40px))] items-center justify-end max-md:min-h-[430px] max-md:justify-center">
-        <p className="w-[501px] max-w-full text-[16px] font-normal leading-[24px] text-white">
+        <p className="w-[470px] max-w-full text-[18px] font-medium leading-[27px] text-white">
           {copy.bottomText}
         </p>
       </div>
