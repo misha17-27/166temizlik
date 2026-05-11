@@ -54,7 +54,7 @@ export function CleaningPackageCard({
   const [expanded, setExpanded] = useState(false);
   const style = styles[variant];
   const isExpandable = variant !== "detail" && priceKey === "eight" && items.length > 5;
-  const visibleItems = variant === "detail" && priceKey === "eight" ? items.slice(0, 5) : isExpandable && !expanded ? items.slice(0, 5) : items;
+  const visibleItems = isExpandable && !expanded ? items.slice(0, 5) : items;
   const circleImage = priceKey === "four" ? priceCircleImages.four : priceCircleImages.eight;
 
   return (
