@@ -213,6 +213,24 @@ const serviceLongCopy: Record<string, string[]> = {
 
 const packagePricingServices = new Set(["ev-temizliyi-xidmeti", "ofis-temizliyi", "bag-evlerinin-temizliyi"]);
 
+const officeWeeklyPrices = {
+  az: [
+    { label: "1 gün / həftə", four: "80₼", eight: "100₼" },
+    { label: "2 gün / həftə", four: "140₼", eight: "180₼" },
+    { label: "3 gün / həftə", four: "180₼", eight: "240₼" },
+  ],
+  ru: [
+    { label: "1 день / неделя", four: "80₼", eight: "100₼" },
+    { label: "2 дня / неделя", four: "140₼", eight: "180₼" },
+    { label: "3 дня / неделя", four: "180₼", eight: "240₼" },
+  ],
+  tr: [
+    { label: "1 gün / hafta", four: "80₼", eight: "100₼" },
+    { label: "2 gün / hafta", four: "140₼", eight: "180₼" },
+    { label: "3 gün / hafta", four: "180₼", eight: "240₼" },
+  ],
+} satisfies Record<Locale, { label: string; four: string; eight: string }[]>;
+
 const serviceTitleOverrides: Record<string, string> = {
   "perde-yuma": "Pərdə Yuma",
   "baximsiz-ev-temizliyi": "“Gözəl ev” təmizliyi",
@@ -383,7 +401,7 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
       <DetailHero title={displayTitle} heroImage={heroImage} subtitle={copy.subtitle} />
       <IntroBlocks service={service} title={displayTitle} images={images} paragraphs={paragraphs} />
       <IncludedSection service={service} title={displayTitle} images={images} locale={locale} />
-      {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} /> : null}
+      {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} serviceSlug={service.slug} /> : null}
       <OrderFormSection serviceTitle={displayTitle} locale={locale} />
       <BottomImageCta locale={locale} />
     </SitePage>
@@ -510,7 +528,6 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
                   {item}
                 </div>
               ))}
-              {detail?.note ? <p className="text-center text-[16px] font-medium leading-[1.45] text-black">{detail.note}</p> : null}
             </div>
           </div>
         ) : (
@@ -520,7 +537,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
           </div>
         )}
         <p className="mt-9 text-center text-[18px] font-medium leading-[18px] text-black">
-          {copy.serviceCare}
+          {service.slug === "ofis-temizliyi" && detail?.note ? detail.note : copy.serviceCare}
         </p>
       </div>
     </section>
@@ -570,16 +587,17 @@ function NotePanel({ locale }: { locale: Locale }) {
   );
 }
 
-function PackagesAndNote({ locale }: { locale: Locale }) {
+function PackagesAndNote({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
   const copy = homeCopy[locale];
   const titles = packageTitles[locale];
+  const weeklyItems = serviceSlug === "ofis-temizliyi" ? officeWeeklyPrices[locale] : copy.weeklyPrices;
 
   return (
     <section className="bg-[#f7f7f7] pb-20">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <div className="grid grid-cols-2 gap-0 max-lg:grid-cols-1 max-lg:gap-10">
-          <CleaningPackageCard title={titles.four} items={copy.packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" weeklyItems={copy.weeklyPrices} toggleLabels={copy.packageLabels} />
-          <CleaningPackageCard title={titles.eight} items={copy.packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" weeklyItems={copy.weeklyPrices} toggleLabels={copy.packageLabels} />
+          <CleaningPackageCard title={titles.four} items={copy.packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" weeklyItems={weeklyItems} toggleLabels={copy.packageLabels} />
+          <CleaningPackageCard title={titles.eight} items={copy.packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" weeklyItems={weeklyItems} toggleLabels={copy.packageLabels} />
         </div>
         <div className="mt-[92px] rounded-[30px] bg-[#e4efff] px-[42px] pb-[70px] pt-0 max-lg:px-8 max-md:mt-10 max-md:px-4 max-md:py-8">
           <div className="relative z-10 -translate-y-[54px] max-md:translate-y-0">
