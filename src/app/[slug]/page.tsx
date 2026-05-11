@@ -45,10 +45,10 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2023/05/J1A8016.jpg",
   ],
   "bag-evlerinin-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2024/05/t-mzilik-xidm-ti.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1-1.jpg",
     "https://166temizlik.az/wp-content/uploads/2024/12/HRS03584-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03584.webp",
+    "https://166temizlik.az/wp-content/uploads/2023/02/53c32e194d4f010dc834b5db35f86f85-1.png",
+    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03522.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/05/m-nzil-t-mizl-nm-si-1.jpg",
   ],
   "erazi-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2023/02/erazi2-1-1.jpg",
