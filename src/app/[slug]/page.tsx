@@ -595,7 +595,7 @@ function NotePanel({ locale }: { locale: Locale }) {
 function PackagesAndNote({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
   const copy = homeCopy[locale];
   const titles = packageTitles[locale];
-  const weeklyItems = serviceSlug === "ofis-temizliyi" ? officeWeeklyPrices[locale] : copy.weeklyPrices;
+  const weeklyItems = serviceSlug === "ofis-temizliyi" || serviceSlug === "bag-evlerinin-temizliyi" ? officeWeeklyPrices[locale] : copy.weeklyPrices;
 
   return (
     <section className="bg-[#f7f7f7] pb-20">
