@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 type ServiceImageGalleryProps = {
   images: string[];
   title: string;
-  layout?: "mosaic" | "row" | "quad";
+  layout?: "mosaic" | "row" | "quad" | "office";
 };
 
 export function ServiceImageGallery({ images, title, layout = "mosaic" }: ServiceImageGalleryProps) {
@@ -84,15 +84,26 @@ export function ServiceImageGallery({ images, title, layout = "mosaic" }: Servic
         <div className="grid w-full grid-cols-2 gap-[10px]">
           {galleryImages.slice(0, 4).map((src, index) => imageButton(src, index, "h-[190px] max-md:h-[155px]", "(max-width: 900px) 50vw, 240px"))}
         </div>
+      ) : layout === "office" ? (
+        <div className="grid w-full grid-cols-2 gap-[10px] max-sm:grid-cols-1">
+          {galleryImages.slice(0, 4).map((src, index) =>
+            imageButton(
+              src,
+              index,
+              `${index === 2 ? "h-[451px]" : "h-[201px]"} max-md:h-[220px]`,
+              "(max-width: 900px) 50vw, 301px",
+            ),
+          )}
+        </div>
       ) : (
         <div className="grid w-full grid-cols-4 gap-[10px] p-[10px] max-sm:grid-cols-2">
           {[0, 1, 2, 3].map((columnIndex) => (
             <div key={columnIndex} className="flex flex-col gap-[10px]">
-              {[columnIndex, columnIndex + 4].map((imageIndex) =>
+              {[columnIndex, columnIndex + 4].map((imageIndex, rowIndex) =>
                 imageButton(
                   galleryImages[imageIndex % galleryImages.length],
                   imageIndex % galleryImages.length,
-                  `${(columnIndex + imageIndex) % 2 === 0 ? "h-[218px]" : "h-[182px]"} max-sm:h-[165px]`,
+                  `${(columnIndex + rowIndex) % 2 === 0 ? "h-[218px]" : "h-[182px]"} max-sm:h-[165px]`,
                   "146px",
                 ),
               )}
