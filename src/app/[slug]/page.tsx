@@ -523,7 +523,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
           : getGalleryImages(images).slice(0, 5);
   const sectionNote =
     detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi" || service.slug === "erazi-temizliyi") ? detail.note : copy.serviceCare;
-  const shouldShowSectionNote = service.slug !== "fasad-temizliyi";
+  const shouldShowSectionNote = service.slug !== "fasad-temizliyi" && service.slug !== "pencere-temizliyi";
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
       ? "mt-9 text-center text-[16px] font-normal leading-[24px] text-black"
