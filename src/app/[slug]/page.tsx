@@ -136,6 +136,13 @@ const detailImageSets: Record<string, string[]> = {
   ],
 };
 
+const introImageSets: Record<string, string[]> = {
+  "bag-evlerinin-temizliyi": [
+    "https://166temizlik.az/wp-content/uploads/2024/05/t-mzilik-xidm-ti.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1-1.jpg",
+  ],
+};
+
 const serviceLongCopy: Record<string, string[]> = {
   "ev-temizliyi-xidmeti": [
     "Təmizliyinizi 166 Təmizlik Xidmətinin peşəkar komandasına həvalə etməklə vaxtınıza qənaət edin! İş və ailə həyatının bu qədər stresli olduğu bir vaxtda ev təmizliyinə saatlarınızı sərf etmək böyük enerji tələb edir. 166-ya bir zənglə və ya saytımıza yazmaqla istəyinizə uyğun “gündəlik” və “əsaslı” təmizlik xidməti sifariş edib, evinizdəki bütün təmizlik işlərini yoluna qoya bilərsiniz.",
@@ -387,6 +394,7 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
 
   const copy = pageCopy[locale];
   const images = detailImageSets[service.slug] ?? [service.image];
+  const introImages = introImageSets[service.slug] ?? images;
   const displayTitle = locale === "az" ? serviceTitleOverrides[service.slug] ?? service.title : service.title;
   const paragraphs =
     locale === "az"
@@ -400,7 +408,7 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
   return (
     <SitePage active="services" locale={locale} currentSlug={service.slug} routeKind="service">
       <DetailHero title={displayTitle} heroImage={heroImage} subtitle={copy.subtitle} />
-      <IntroBlocks service={service} title={displayTitle} images={images} paragraphs={paragraphs} />
+      <IntroBlocks service={service} title={displayTitle} images={introImages} paragraphs={paragraphs} />
       <IncludedSection service={service} title={displayTitle} images={images} locale={locale} />
       {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} serviceSlug={service.slug} /> : null}
       <OrderFormSection serviceTitle={displayTitle} locale={locale} />
@@ -596,7 +604,7 @@ const officeNoteItems: Record<Locale, { before: string; strong: string; after?: 
 
 function NotePanel({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
   const copy = pageCopy[locale];
-  const noteItems = serviceSlug === "ofis-temizliyi" ? officeNoteItems[locale] : null;
+  const noteItems = serviceSlug === "ofis-temizliyi" || serviceSlug === "bag-evlerinin-temizliyi" ? officeNoteItems[locale] : null;
 
   return (
     <div className="mx-auto grid max-w-[850px] grid-cols-[0.85fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-md:grid-cols-1">
