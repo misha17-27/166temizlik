@@ -54,6 +54,9 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2023/02/erazi2-1-1.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/02/erazi3-1-1.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/02/6237238ed7fec9df2f8a5ef54160bf80-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/01/1dc0d539081fc0263c4da89a9ef4d40f.jpeg",
+    "https://166temizlik.az/wp-content/uploads/2023/02/72c66bb8b599dfcc1af3b2488cf67f71-1.jpeg",
+    "https://166temizlik.az/wp-content/uploads/2023/02/erazi4-1-1.jpg",
   ],
   "fasad-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2023/02/fasad1-1.jpg",
@@ -244,7 +247,7 @@ const serviceTitleOverrides: Record<string, string> = {
   "yangindan-sonra-ev-temizliyi": "Yanğından sonra ev təmizliyi",
 };
 
-const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden"; note?: string }> = {
+const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area"; note?: string }> = {
   "ev-temizliyi-xidmeti": {
     title: "Əsaslı təmizlik xidmətinə daxildir",
     items: [
@@ -284,7 +287,9 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
   },
   "erazi-temizliyi": {
     title: "Yaşadığınız ərazinin təmizlənməsi xidmətinə daxildir:",
-    items: ["Ərazinin süpürülməsi", "Zibilin yığılması", "Yer səthinin xüsusi aparatla yuyulması", "1 kv metr tametin aparatla yuyulması – 3 azn-dən başlayır"],
+    items: ["Ərazinin süpürülməsi", "Zibilin yığılması", "Yer səthinin xüsusi aparatla yuyulması"],
+    note: "1 kv metr tametin aparatla yuyulması – 3 azn-dən başlayır",
+    layout: "area",
   },
   "pencere-temizliyi": {
     title: "Pəncərə təmizlənməsi qiymətləri",
@@ -517,7 +522,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
           ? getGalleryImages(images).slice(0, 4)
           : getGalleryImages(images).slice(0, 5);
   const sectionNote =
-    detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi") ? detail.note : copy.serviceCare;
+    detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi" || service.slug === "erazi-temizliyi") ? detail.note : copy.serviceCare;
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
       ? "mt-9 text-center text-[16px] font-normal leading-[24px] text-black"
