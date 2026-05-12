@@ -624,27 +624,27 @@ function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; loca
   const orderedServiceOptions = [serviceTitle, ...serviceOptions.filter((title) => title !== serviceTitle)];
 
   return (
-    <section className="relative overflow-hidden bg-[#eaf7ff] py-[95px]">
+    <section className="relative overflow-hidden bg-[#eaf7ff] pb-[95px] pt-[130px] max-md:py-[70px]">
       <div className="absolute -right-16 bottom-[-90px] h-[420px] w-[520px] rotate-[-18deg] border-[42px] border-brand-blue max-md:hidden" />
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-        <form className="max-w-[541px]">
+        <form className="ml-[160px] max-w-[541px] max-lg:mx-auto max-lg:ml-auto">
           <h2 className="text-[24px] font-medium leading-[24px] text-black">{copy.packagesTitle}</h2>
           <p className="mt-3 text-[16px] font-normal leading-[16px] text-black/75">{copy.packagesIntro}</p>
           <div className="mt-5 grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-            <input className="h-10 border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formName} />
-            <input className="h-10 border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formPhone} />
+            <input className="h-10 rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formName} />
+            <input className="h-10 rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formPhone} />
           </div>
           <label className="mt-4 block text-[16px] font-light leading-[24px] text-black">{serviceTypeLabel}</label>
-          <select className="mt-2 h-10 w-full border-0 bg-white px-5 text-[15px] leading-[21px] text-black/70 outline-none" defaultValue={serviceTitle}>
+          <select className="mt-2 h-10 w-full rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] text-black/70 outline-none" defaultValue={serviceTitle}>
             {orderedServiceOptions.map((title) => (
               <option key={title} value={title}>
                 {title}
               </option>
             ))}
           </select>
-          <input className="mt-3 h-10 w-full border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formAddress} />
-          <textarea className="mt-3 h-[92px] w-full resize-none border-0 bg-white px-5 py-3 text-[15px] leading-[21px] outline-none" placeholder={copy.formMessage} />
-          <button type="button" className="mt-4 rounded-full bg-brand-yellow px-8 py-3 text-[12px] font-bold text-black">
+          <input className="mt-3 h-10 w-full rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formAddress} />
+          <textarea className="mt-3 h-[94px] w-full resize-none rounded-[3px] border-0 bg-white px-5 py-3 text-[15px] leading-[21px] outline-none" placeholder={copy.formMessage} />
+          <button type="button" className="mt-4 h-10 w-[155px] rounded-[15px] bg-brand-yellow text-[15px] font-bold text-black">
             {copy.order}
           </button>
         </form>
