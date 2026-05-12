@@ -573,8 +573,30 @@ function HourlyCards({ locale }: { locale: Locale }) {
   );
 }
 
-function NotePanel({ locale }: { locale: Locale }) {
+const officeNoteItems: Record<Locale, { before: string; strong: string; after?: string }[]> = {
+  az: [
+    { before: "Təmizlik zamanı bütün vasitə və təmizləyici maddələr ", strong: "qiymətə daxildir." },
+    { before: "Təmizlik zamanı ", strong: "hər əlavə saata görə 10 AZN", after: " hesablanacaqdır." },
+    { before: "Təhlükəli yerdə olan pəncərələrin silinməsi ", strong: "qiymətə daxil deyil." },
+    { before: "Yumşaq mebellərin kimyəvi təmizlənməsi ", strong: "qiymətə daxil deyil." },
+  ],
+  ru: [
+    { before: "Все средства и чистящие материалы ", strong: "входят в стоимость." },
+    { before: "Каждый дополнительный час уборки рассчитывается по ", strong: "10 AZN." },
+    { before: "Мытье окон в опасных местах ", strong: "не входит в стоимость." },
+    { before: "Химчистка мягкой мебели ", strong: "не входит в стоимость." },
+  ],
+  tr: [
+    { before: "Tüm araçlar ve temizlik maddeleri ", strong: "fiyata dahildir." },
+    { before: "Her ek temizlik saati için ", strong: "10 AZN", after: " hesaplanır." },
+    { before: "Tehlikeli yerlerdeki pencerelerin silinmesi ", strong: "fiyata dahil değildir." },
+    { before: "Yumuşak mobilyaların kuru temizliği ", strong: "fiyata dahil değildir." },
+  ],
+};
+
+function NotePanel({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
   const copy = pageCopy[locale];
+  const noteItems = serviceSlug === "ofis-temizliyi" ? officeNoteItems[locale] : null;
 
   return (
     <div className="mx-auto grid max-w-[850px] grid-cols-[0.85fr_1.15fr] overflow-hidden rounded-[14px] bg-brand-blue text-white max-md:grid-cols-1">
@@ -584,9 +606,21 @@ function NotePanel({ locale }: { locale: Locale }) {
       </div>
       <div className="px-10 py-9 max-md:px-6">
         <h3 className="text-[30px] font-semibold leading-[30px]">{copy.noteTitle}</h3>
-        <p className="mt-5 text-[18px] font-normal leading-[27px] text-white">
-          {copy.noteText}
-        </p>
+        {noteItems ? (
+          <ul className="mt-5 list-disc space-y-1 pl-6 text-[18px] font-normal leading-[27px] text-white">
+            {noteItems.map((item) => (
+              <li key={`${item.before}-${item.strong}`}>
+                {item.before}
+                <strong className="font-bold">{item.strong}</strong>
+                {item.after}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-5 text-[18px] font-normal leading-[27px] text-white">
+            {copy.noteText}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -609,7 +643,7 @@ function PackagesAndNote({ locale, serviceSlug }: { locale: Locale; serviceSlug:
             <HourlyCards locale={locale} />
           </div>
           <div className="pt-[72px] max-md:pt-8">
-            <NotePanel locale={locale} />
+            <NotePanel locale={locale} serviceSlug={serviceSlug} />
           </div>
         </div>
       </div>
