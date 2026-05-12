@@ -70,7 +70,7 @@ export function ServiceImageGallery({ images, title, layout = "mosaic" }: Servic
       className={`group relative block overflow-hidden bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue ${className}`}
       aria-label={`${title} ${index + 1}`}
     >
-      <Image src={src} alt={`${title} ${index + 1}`} fill sizes={sizes} className="object-cover transition duration-300 group-hover:scale-[1.04]" />
+      <Image src={src} alt={`${title} ${index + 1}`} fill sizes={sizes} className="object-cover transition duration-300 group-hover:scale-[1.04]" quality={100} unoptimized />
     </button>
   );
 
@@ -115,7 +115,7 @@ export function ServiceImageGallery({ images, title, layout = "mosaic" }: Servic
                   galleryImages[imageIndex % galleryImages.length],
                   imageIndex % galleryImages.length,
                   `${(columnIndex + rowIndex) % 2 === 0 ? "h-[218px]" : "h-[182px]"} max-sm:h-[165px]`,
-                  "146px",
+                  "(max-width: 640px) 50vw, (max-width: 900px) 25vw, 190px",
                 ),
               )}
             </div>
@@ -138,9 +138,9 @@ export function ServiceImageGallery({ images, title, layout = "mosaic" }: Servic
             ›
           </button>
           <div className="flex h-full items-center justify-center px-20 py-16 max-md:px-10">
-            <div className="relative h-[min(78vh,760px)] w-[min(78vw,1050px)]">
+            <button type="button" onClick={showNext} className="relative block h-[min(78vh,760px)] w-[min(78vw,1050px)]" aria-label="Next image">
               <Image src={galleryImages[activeIndex]} alt={`${title} ${activeIndex + 1}`} fill sizes="90vw" className="object-contain" priority unoptimized />
-            </div>
+            </button>
           </div>
         </div>
       ) : null}
