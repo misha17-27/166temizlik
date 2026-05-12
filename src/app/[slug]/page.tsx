@@ -76,6 +76,7 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2024/12/HRS03721.webp",
     "https://166temizlik.az/wp-content/uploads/2024/12/HRS03722.webp",
     "https://166temizlik.az/wp-content/uploads/2023/01/cilciraq4.jpg",
+    "https://166temizlik.az/wp-content/uploads/2024/12/rv.webp",
   ],
   "perde-yuma": [
     "https://166temizlik.az/wp-content/uploads/2023/05/222.jpg",
@@ -247,7 +248,7 @@ const serviceTitleOverrides: Record<string, string> = {
   "yangindan-sonra-ev-temizliyi": "Yanğından sonra ev təmizliyi",
 };
 
-const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area"; note?: string }> = {
+const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier"; note?: string }> = {
   "ev-temizliyi-xidmeti": {
     title: "Əsaslı təmizlik xidmətinə daxildir",
     items: [
@@ -304,7 +305,7 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
   "cilciraq-temizliyi": {
     title: "Çilçıraq təmizlənməsi qiymətləri",
     items: ["3 plafon – 10 azn", "5 plafon – 20 azn", "8 plafon – 30 azn"],
-    layout: "quad",
+    layout: "chandelier",
   },
   "perde-yuma": {
     title: "Pərdə və Jalüz yuma qiymətləri",
@@ -535,6 +536,8 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
   const galleryImages =
     service.slug === "pencere-temizliyi"
       ? images.slice(2, 6)
+      : service.slug === "cilciraq-temizliyi"
+        ? images.slice(1, 5)
       : isMosaic
         ? getGalleryImages(images)
         : layout === "quad"
