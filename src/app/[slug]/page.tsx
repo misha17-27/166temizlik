@@ -729,6 +729,7 @@ const bottomCtaImages: Record<string, string> = {
   "erazi-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/499c118beae7d28065328c1f6622c8d4.jpeg",
   "fasad-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/f5130ec2ed62e432bf6eea48a4720f3f-1.jpeg",
   "pencere-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
+  "cilciraq-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/maxresdefault-1.jpg",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
