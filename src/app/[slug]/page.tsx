@@ -736,6 +736,7 @@ const bottomCtaImages: Record<string, string> = {
   "fasad-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/f5130ec2ed62e432bf6eea48a4720f3f-1.jpeg",
   "pencere-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
   "cilciraq-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/maxresdefault-1.jpg",
+  "perde-yuma": "https://166temizlik.az/wp-content/uploads/2023/01/201410cc1626ea7478c1323445ef0eef-1.png",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
