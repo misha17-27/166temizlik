@@ -404,7 +404,7 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
       <IncludedSection service={service} title={displayTitle} images={images} locale={locale} />
       {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} serviceSlug={service.slug} /> : null}
       <OrderFormSection serviceTitle={displayTitle} locale={locale} />
-      <BottomImageCta locale={locale} />
+      <BottomImageCta locale={locale} serviceSlug={service.slug} />
     </SitePage>
   );
 }
@@ -687,12 +687,17 @@ function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; loca
   );
 }
 
-function BottomImageCta({ locale }: { locale: Locale }) {
+const bottomCtaImages: Record<string, string> = {
+  "ofis-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/ofis4-1.jpg",
+};
+
+function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
   const copy = pageCopy[locale];
+  const image = bottomCtaImages[serviceSlug] ?? "https://166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg";
 
   return (
     <section className="relative min-h-[600px] overflow-hidden bg-black text-white max-md:min-h-[430px]">
-      <Image src="https://166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg" alt="" fill sizes="100vw" className="object-cover opacity-55" />
+      <Image src={image} alt="" fill sizes="100vw" className="object-cover opacity-55" />
       <div className="relative mx-auto flex min-h-[600px] w-[min(1140px,calc(100%-40px))] items-center justify-end max-md:min-h-[430px] max-md:justify-center">
         <p className="w-[470px] max-w-full text-[18px] font-medium leading-[27px] text-white">
           {copy.bottomText}
