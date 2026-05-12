@@ -703,6 +703,7 @@ function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; loca
 const bottomCtaImages: Record<string, string> = {
   "ofis-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/ofis4-1.jpg",
   "bag-evlerinin-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/bag3-1.jpg",
+  "erazi-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/499c118beae7d28065328c1f6622c8d4.jpeg",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
