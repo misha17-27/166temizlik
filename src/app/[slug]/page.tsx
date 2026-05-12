@@ -492,7 +492,7 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
         <div className="grid grid-cols-[396px_1fr] items-start gap-0 max-lg:grid-cols-1">
           <FramedImage src={images[0]} alt={title} />
           <IntroTextCard>
-            <p>{paragraphs[0]}</p>
+            {service.slug === "cilciraq-temizliyi" ? <ChandelierIntroText /> : <p>{paragraphs[0]}</p>}
           </IntroTextCard>
         </div>
         <div className="mt-[50px] grid grid-cols-[1fr_396px] items-start gap-0 max-lg:grid-cols-1">
@@ -503,6 +503,23 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
         </div>
       </div>
     </section>
+  );
+}
+
+function ChandelierIntroText() {
+  return (
+    <div>
+      <p>
+        Çilçiraq təmizliyi zamanı platformalar tərəfimizdən təmin edilir.
+        <br />
+        Təmizləmə prosesi aşağıdakı qaydada həyata keçirilir:
+      </p>
+      <ul className="mt-4 list-disc pl-6">
+        <li>Çilçiraq elektrikdən söndürülür;</li>
+        <li>Plafonlar yuyucu maddələr vasitəsi ilə isladılır;</li>
+        <li>Su ləkələrini təmizləmək və parlaqlıq vermək üçün təmamilə qurudulur;</li>
+      </ul>
+    </div>
   );
 }
 
