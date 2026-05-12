@@ -82,7 +82,9 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2023/05/222.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/05/DSC08248-1.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/05/DSC08207.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08236.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08201.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08225.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08231.jpg",
   ],
   "yumsaq-mebel-temizlenmesi": [
     "https://166temizlik.az/wp-content/uploads/2024/01/WhatsApp-Image-2023-12-20-at-21.06.50-2.webp",
@@ -178,7 +180,7 @@ const serviceLongCopy: Record<string, string[]> = {
   ],
   "perde-yuma": [
     "Evin dekorunda xüsusi rolu olan pərdələrin təmizliyi çox önəmli bir məsələdir. Peşəkar pərdə yuma komandamız ipək, tül, kətan və digər növ pərdələrinizi və jalüzlərinizi çıxarır xüsusi metoddan istifadə etməklə yuyur, havalandırma otağında təmamilə qurudur, ütüləyir və təyin olunmuş tarixdə sizə təhvil verir.",
-    "Pərdələrin çıxarılması və yuyulduqdan sonra təkrar yerinə asılması ödənişsizdir. Nəzərinizə çatdıraq ki, pərdələrin asılması üçün istifadə olunan asılqanlar şirkət tərəfimizdən təmin edilir. Pərdə yuma xidməti Abşeron yarımadasının istənilən nöqtəsinə xidmət göstərir.",
+    "Pərdələrin çıxarılması və yuyulduqdan sonra təkrar yerinə asılması ödənişsizdir. Nəzərinizə çatdıraq ki, pərdələrin asılması üçün istifadə olunan asılqanlar şirkət tərəfimizdən təmin edilir.",
   ],
   "yumsaq-mebel-temizlenmesi": [
     "Gündəlik istifadə olunan divan, kreslo və stul kimi mebellərin kirlənmə ehtimalı çox yüksəkdir. Hər əşya kimi yumşaq mebelləri də mütəmadi olaraq təmizləmək mütləqdir. Mebellər təmizlənmədikdə əsl bakteriya yuvası olur, həmçinin çirk onların rəngini soldurur və köhnə görkəm verir. 166 Təmizlik Xidməti ilə yumşaq mebellərinizi yenisi ilə əvəz etməyə gərək qalmayacaq.",
@@ -248,7 +250,7 @@ const serviceTitleOverrides: Record<string, string> = {
   "yangindan-sonra-ev-temizliyi": "Yanğından sonra ev təmizliyi",
 };
 
-const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier"; note?: string }> = {
+const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier" | "curtain"; note?: string }> = {
   "ev-temizliyi-xidmeti": {
     title: "Əsaslı təmizlik xidmətinə daxildir",
     items: [
@@ -311,7 +313,7 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
     title: "Pərdə və Jalüz yuma qiymətləri",
     items: ["1 metr tül pərdə yuma – 2.50 azn", "1 kq dekor pərdə yuma – 3 azn", "1 metr jalüz yuma – 5 azn"],
     note: "Pərdə yuma xidməti Abşeron yarımadasının istənilən nöqtəsinə xidmət göstərir.",
-    layout: "quad",
+    layout: "curtain",
   },
   "yumsaq-mebel-temizlenmesi": {
     title: "Mebel təmizliyi xidmətinə daxildir",
@@ -536,6 +538,8 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
   const galleryImages =
     service.slug === "pencere-temizliyi"
       ? images.slice(2, 6)
+      : service.slug === "perde-yuma"
+        ? images.slice(2, 6)
       : service.slug === "cilciraq-temizliyi"
         ? images.slice(1, 5)
       : isMosaic
@@ -544,7 +548,9 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
           ? getGalleryImages(images).slice(0, 4)
           : getGalleryImages(images).slice(0, 5);
   const sectionNote =
-    detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi" || service.slug === "erazi-temizliyi") ? detail.note : copy.serviceCare;
+    detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi" || service.slug === "erazi-temizliyi" || service.slug === "perde-yuma")
+      ? detail.note
+      : copy.serviceCare;
   const shouldShowSectionNote = service.slug !== "fasad-temizliyi" && service.slug !== "pencere-temizliyi" && service.slug !== "cilciraq-temizliyi";
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
