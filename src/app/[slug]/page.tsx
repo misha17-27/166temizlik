@@ -554,7 +554,11 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
     detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi" || service.slug === "erazi-temizliyi" || service.slug === "perde-yuma")
       ? detail.note
       : copy.serviceCare;
-  const shouldShowSectionNote = service.slug !== "fasad-temizliyi" && service.slug !== "pencere-temizliyi" && service.slug !== "cilciraq-temizliyi";
+  const shouldShowSectionNote =
+    service.slug !== "fasad-temizliyi" &&
+    service.slug !== "pencere-temizliyi" &&
+    service.slug !== "cilciraq-temizliyi" &&
+    service.slug !== "yumsaq-mebel-temizlenmesi";
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
       ? "mt-9 text-center text-[16px] font-normal leading-[24px] text-black"
@@ -740,6 +744,7 @@ const bottomCtaImages: Record<string, string> = {
   "pencere-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
   "cilciraq-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/maxresdefault-1.jpg",
   "perde-yuma": "https://166temizlik.az/wp-content/uploads/2023/01/201410cc1626ea7478c1323445ef0eef-1.png",
+  "yumsaq-mebel-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/01/163eb70b66301186d622afe9b376fb38-1.png",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
