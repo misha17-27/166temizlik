@@ -81,10 +81,10 @@ const detailImageSets: Record<string, string[]> = {
   "perde-yuma": [
     "https://166temizlik.az/wp-content/uploads/2023/05/222.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/05/DSC08248-1.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08207.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08201.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08225.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08231.jpg",
+    "/images/services/perde-yuma-1.jpg",
+    "/images/services/perde-yuma-2.jpg",
+    "/images/services/perde-yuma-3.jpg",
+    "/images/services/perde-yuma-4.jpg",
   ],
   "yumsaq-mebel-temizlenmesi": [
     "https://166temizlik.az/wp-content/uploads/2024/01/WhatsApp-Image-2023-12-20-at-21.06.50-2.webp",
