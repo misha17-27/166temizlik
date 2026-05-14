@@ -48,8 +48,8 @@ const serviceLabels: Record<Locale, string[]> = {
     "Уборка после ремонта",
     "Уборка отелей",
     "Уборка ресторанов",
-    "Кристаллизация",
     "Чистка бассейнов",
+    "Кристаллизация",
     "Корпоративная уборка",
   ],
   tr: [
@@ -68,8 +68,8 @@ const serviceLabels: Record<Locale, string[]> = {
     "Tadilat sonrası temizlik",
     "Otel temizliği",
     "Restoran temizliği",
-    "Kristalizasyon hizmeti",
     "Havuz temizliği",
+    "Kristalizasyon hizmeti",
     "Kurumsal temizlik hizmeti",
   ],
 };
