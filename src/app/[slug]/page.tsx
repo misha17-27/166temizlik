@@ -106,9 +106,9 @@ const detailImageSets: Record<string, string[]> = {
   "baximsiz-ev-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2023/01/e427f74ecdda74a13f0ddf96c4a31341-1.png",
     "https://166temizlik.az/wp-content/uploads/2023/01/6c0c0d48bb70a4c7a8634111438b8b97-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/f546b0e0f60e45e29683d58ebe91d979-1.png",
     "https://166temizlik.az/wp-content/uploads/2023/01/ec3ce0ce31994102b8310b37f0525609-1.png",
     "https://166temizlik.az/wp-content/uploads/2023/01/e7cc1eb0b8f682d49c4b9e6992e17df4-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/02/8-1.png",
   ],
   "yangindan-sonra-ev-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2023/01/yangin222.jpg",
