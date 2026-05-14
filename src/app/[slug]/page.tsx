@@ -122,9 +122,10 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2023/02/8ff3e8c4c9.webp",
   ],
   "otel-temizlenmesi": [
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03405-1.webp",
     "https://166temizlik.az/wp-content/uploads/2024/12/HRS03522-1-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03357.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03468.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03405.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03584-2.webp",
   ],
   "restoran-temizlenmesi": [
     "https://166temizlik.az/wp-content/uploads/2023/05/J1A7451.jpg",
@@ -156,6 +157,9 @@ const introImageSets: Record<string, string[]> = {
   "bag-evlerinin-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2024/05/t-mzilik-xidm-ti.webp",
     "https://166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1-1.jpg",
+  ],
+  "otel-temizlenmesi": [
+    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03405-1.webp",
   ],
 };
 
@@ -371,6 +375,7 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
       "Radiator və kondisioner təmizliyi",
       "Şkafların səliqəyə salınması",
     ],
+    layout: "curtain",
   },
   "hovuz-temizlenmesi-xidmeti": {
     title: "Hovuzların təmizliyi xidmətinə aiddir",
@@ -511,7 +516,10 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
             {service.slug === "cilciraq-temizliyi" ? <ChandelierIntroText /> : <p>{paragraphs[0]}</p>}
           </IntroTextCard>
         </div>
-        {service.slug === "cilciraq-temizliyi" || service.slug === "etirlendirme" || service.slug === "baximsiz-ev-temizliyi" ? null : (
+        {service.slug === "cilciraq-temizliyi" ||
+        service.slug === "etirlendirme" ||
+        service.slug === "baximsiz-ev-temizliyi" ||
+        service.slug === "otel-temizlenmesi" ? null : (
           <div className="mt-[50px] grid grid-cols-[1fr_396px] items-start gap-0 max-lg:grid-cols-1">
             <IntroTextCard reverse heightClass="h-[286px]">
               <p>{paragraphs[1] ?? service.description}</p>
@@ -576,6 +584,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
     service.slug !== "baximsiz-ev-temizliyi" &&
     service.slug !== "yangindan-sonra-ev-temizliyi" &&
     service.slug !== "temir-sonrasi-temizlik" &&
+    service.slug !== "otel-temizlenmesi" &&
     service.slug !== "etirlendirme";
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
@@ -766,6 +775,7 @@ const bottomCtaImages: Record<string, string> = {
   etirlendirme: "https://166temizlik.az/wp-content/uploads/2023/01/508ff33bcc85386acd15a427b03d8b8d-1.png",
   "yangindan-sonra-ev-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/89e800bb068aa1b43e8d61778c5ed1db.jpg",
   "temir-sonrasi-temizlik": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
+  "otel-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/03/44.webp",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
