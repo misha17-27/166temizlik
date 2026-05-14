@@ -7,7 +7,7 @@ import { ServiceImageGallery } from "@/components/ServiceImageGallery";
 import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { site } from "@/lib/site-data";
+import { partners, site } from "@/lib/site-data";
 
 const packageTitles: Record<Locale, { four: string; eight: string }> = {
   az: { four: "4 saat", eight: "8 saat" },
@@ -435,6 +435,10 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
       : [service.description, copy.bottomText];
   const heroImage = service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog;
 
+  if (service.slug === "korporativ-temizlik-xidmeti" && locale === "az") {
+    return <CorporateServiceContent service={service} displayTitle={displayTitle} />;
+  }
+
   return (
     <SitePage active="services" locale={locale} currentSlug={service.slug} routeKind="service">
       <DetailHero title={displayTitle} heroImage={heroImage} subtitle={copy.subtitle} />
@@ -531,6 +535,118 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
             <FramedImage src={images[1] ?? images[0]} alt={title} tone="blue" heightClass="h-[306px]" />
           </div>
         )}
+      </div>
+    </section>
+  );
+}
+
+function CorporateServiceContent({ service, displayTitle }: { service: ServicePageItem; displayTitle: string }) {
+  return (
+    <SitePage active="services" locale="az" currentSlug={service.slug} routeKind="service">
+      <DetailHero title={displayTitle} heroImage={pageHeroAssets.partners} subtitle={pageCopy.az.subtitle} />
+      <section className="bg-[#f7f7f7] pb-16 pt-[60px]">
+        <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
+          <CorporateTextImageRow
+            title="Korporativ əməkdaşlıq"
+            text="Korporativ əməkdaşlıq şirkətimizin əsas prioritetlərindən biridir. Korporativ müştərilərimiz üçün nəzərdə tutduğumuz güzəştlər həm iş prosesinin asanlaşmasına həm də biznes partnyorlarımızın məmnunluguna səbəb olur."
+            image="https://166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg"
+            imageAlt="Korporativ təmizlik xidməti"
+            imageHeight="h-[600px]"
+            imageFirst={false}
+          />
+          <CorporateTextImageRow
+            title="Niyə 166 təmizlik?"
+            items={[
+              "Təmizlik xidmətləri üzrə korporativ təkliflər",
+              "Sifarişlərin xüsusi proqramda izlənilməsi",
+              "Müştərilərin təklif və iradlarını öyrənən müştəri məmnuniyyəti zəngləri",
+              "Peşəkar işçi heyəti",
+              "Köçürmə vasitəsi ilə asan ödəmə imkanı",
+            ]}
+            image="https://166temizlik.az/wp-content/uploads/2024/09/DSCF2761.webp"
+            imageAlt="Korporativ əməkdaşlıq"
+            imageHeight="h-[500px]"
+            imageFirst
+          />
+          <CorporateTextImageRow
+            title="166 Təmizlik xidmətinin başlıca xüsusiyyətləri:"
+            items={[
+              "İşçi heyətinin etibarlılığı",
+              "İşçi heyətin peşəkarlığı",
+              "Gigiyenik təmizliyi qorumaq",
+              "İşin səliqəli və təmiz görülməsi",
+              "Yuyucu vasitələrin keyfiyyətli olması",
+              "İstifadə olunan təmizlik vasitələrinin mebelə və s. zədələnməməsi.",
+            ]}
+            image="https://166temizlik.az/wp-content/uploads/2024/09/DSCF3391-Edit.webp"
+            imageAlt="166 Təmizlik korporativ xidmət"
+            imageHeight="h-[500px]"
+            imageFirst={false}
+          />
+        </div>
+      </section>
+      <CorporatePartnersSection />
+      <OrderFormSection serviceTitle={displayTitle} locale="az" />
+    </SitePage>
+  );
+}
+
+function CorporateTextImageRow({
+  title,
+  text,
+  items,
+  image,
+  imageAlt,
+  imageHeight,
+  imageFirst,
+}: {
+  title: string;
+  text?: string;
+  items?: string[];
+  image: string;
+  imageAlt: string;
+  imageHeight: string;
+  imageFirst: boolean;
+}) {
+  const textBlock = (
+    <div className="flex min-h-[360px] flex-col justify-center px-5 py-8 text-black max-lg:min-h-0 max-lg:px-0">
+      <h2 className="text-[32px] font-medium leading-[42px] max-md:text-[24px] max-md:leading-[32px]">{title}</h2>
+      {text ? <p className="mt-8 text-[20px] font-normal leading-[29px] max-md:text-[16px] max-md:leading-[24px]">{text}</p> : null}
+      {items ? (
+        <ul className="mt-8 list-disc space-y-1 pl-8 text-[20px] font-normal leading-[29px] max-md:text-[16px] max-md:leading-[24px]">
+          {items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+  const imageBlock = (
+    <div className={`relative ${imageHeight} max-lg:h-[420px] max-md:h-[320px]`}>
+      <Image src={image} alt={imageAlt} fill sizes="(max-width: 900px) 100vw, 400px" className="object-cover" />
+    </div>
+  );
+
+  return (
+    <div className="mb-[70px] grid grid-cols-[583px_400px] items-center justify-between gap-16 max-lg:grid-cols-1 max-lg:gap-8">
+      {imageFirst ? imageBlock : textBlock}
+      {imageFirst ? textBlock : imageBlock}
+    </div>
+  );
+}
+
+function CorporatePartnersSection() {
+  return (
+    <section className="bg-[#f7f7f7] pb-20 pt-2">
+      <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
+        <h2 className="text-center text-[32px] font-medium leading-[42px] text-black max-md:text-[24px]">Korporativ Əməkdaşlarımız</h2>
+        <div className="mt-12 grid grid-cols-5 gap-6 max-lg:grid-cols-3 max-sm:grid-cols-2">
+          {partners.map((logo) => (
+            <div key={logo} className="grid h-[120px] place-items-center rounded-[8px] bg-white p-5 shadow-[0_8px_25px_rgb(0_0_0_/_6%)]">
+              <Image src={logo} alt="" width={170} height={95} className="max-h-[85px] w-auto object-contain" />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
