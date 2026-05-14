@@ -779,6 +779,7 @@ const bottomCtaImages: Record<string, string> = {
   "yangindan-sonra-ev-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/89e800bb068aa1b43e8d61778c5ed1db.jpg",
   "temir-sonrasi-temizlik": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
   "otel-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/03/44.webp",
+  "restoran-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/03/foto.webp",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
