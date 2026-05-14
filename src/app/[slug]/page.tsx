@@ -144,9 +144,10 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2024/02/image-94.jpg",
   ],
   "hovuz-temizlenmesi-xidmeti": [
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-89-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-83-1.webp",
     "https://166temizlik.az/wp-content/uploads/2024/02/image-48.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/02/image-aa.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/02/unsplash_Iu6parQAO-U.webp",
+    "https://166temizlik.az/wp-content/uploads/2024/02/unsplash_teMzdpisXWA.webp",
   ],
   "korporativ-temizlik-xidmeti": [
     "https://166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg",
@@ -385,8 +386,9 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
       "Çirklənmiş suyun buraxılması və hovuz çəninin ilkin təmizlənməsi",
       "Duz, kalsiy, əhəng daşının təmizlənməsi",
       "Göbələk və bakterioloji xəstəliklərin qarşısını almaq üçün dezinfeksiya olunması",
-      "Hovuzların təmizlənməsi həm Bakı daxilində həm də digər regionlara təqdim olunur. Bütün detallar danışıq əsasında sifarişçinin istəklərini nəzərə almaqla müqavilədə qeyd olunur.",
     ],
+    note: "Hovuzların təmizlənməsi həm Bakı daxilində həm də digər regionlara təqdim olunur. Bütün detallar danışıq əsasında sifarişçinin istəklərini nəzərə almaqla müqavilədə qeyd olunur.",
+    layout: "quad",
   },
   "restoran-temizlenmesi": {
     title: "Restoran təmizliy xidməti",
@@ -575,7 +577,12 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
           ? getGalleryImages(images).slice(0, 4)
           : getGalleryImages(images).slice(0, 5);
   const sectionNote =
-    detail?.note && (service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi" || service.slug === "erazi-temizliyi" || service.slug === "perde-yuma")
+    detail?.note &&
+    (service.slug === "ofis-temizliyi" ||
+      service.slug === "bag-evlerinin-temizliyi" ||
+      service.slug === "erazi-temizliyi" ||
+      service.slug === "perde-yuma" ||
+      service.slug === "hovuz-temizlenmesi-xidmeti")
       ? detail.note
       : copy.serviceCare;
   const shouldShowSectionNote =
@@ -592,6 +599,8 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
       ? "mt-9 text-center text-[16px] font-normal leading-[24px] text-black"
+      : service.slug === "hovuz-temizlenmesi-xidmeti"
+        ? "mx-auto mt-9 max-w-[1040px] text-center text-[16px] font-normal leading-[20px] text-black"
       : "mt-9 text-center text-[18px] font-medium leading-[18px] text-black";
 
   return (
