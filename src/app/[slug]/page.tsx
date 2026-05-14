@@ -97,7 +97,11 @@ const detailImageSets: Record<string, string[]> = {
   etirlendirme: [
     "https://166temizlik.az/wp-content/uploads/2023/02/etir.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/02/6f736f7db92cef24bb99d694c2e7c2c6-1-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/02/Air_Purifier_iStock_607646922.7.webp",
+    "https://166temizlik.az/wp-content/uploads/2023/02/6f736f7db92cef24bb99d694c2e7c2c6-1-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/02/29902f175cfb21144fcd9279725845bf-1-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/02/4ba2a6810f64ca3c6902a854decfb38a-1-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/02/00c98d5a004ab8593543547933797276-1-1.png",
+    "https://166temizlik.az/wp-content/uploads/2023/01/d5c3ac01d06ff9e8c0212c7d623d5b24-1.png",
   ],
   "baximsiz-ev-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2023/01/e427f74ecdda74a13f0ddf96c4a31341-1.png",
@@ -558,7 +562,8 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
     service.slug !== "fasad-temizliyi" &&
     service.slug !== "pencere-temizliyi" &&
     service.slug !== "cilciraq-temizliyi" &&
-    service.slug !== "yumsaq-mebel-temizlenmesi";
+    service.slug !== "yumsaq-mebel-temizlenmesi" &&
+    service.slug !== "etirlendirme";
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
       ? "mt-9 text-center text-[16px] font-normal leading-[24px] text-black"
