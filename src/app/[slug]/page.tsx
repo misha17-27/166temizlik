@@ -257,7 +257,7 @@ const serviceTitleOverrides: Record<string, string> = {
   "yangindan-sonra-ev-temizliyi": "Yanğından sonra ev təmizliyi",
 };
 
-const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier" | "curtain"; note?: string }> = {
+const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier" | "curtain" | "softFurniture"; note?: string }> = {
   "ev-temizliyi-xidmeti": {
     title: "Əsaslı təmizlik xidmətinə daxildir",
     items: [
@@ -332,6 +332,7 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
       "Matrasların kimyəvi təmizlənməsi",
       "Kovrolinin yuyulması",
     ],
+    layout: "softFurniture",
   },
   "yangindan-sonra-ev-temizliyi": {
     title: "Yanğından sonra ev təmizliyi",

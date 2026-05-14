@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 type ServiceImageGalleryProps = {
   images: string[];
   title: string;
-  layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier" | "curtain";
+  layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier" | "curtain" | "softFurniture";
 };
 
 export function ServiceImageGallery({ images, title, layout = "mosaic" }: ServiceImageGalleryProps) {
@@ -93,6 +93,17 @@ export function ServiceImageGallery({ images, title, layout = "mosaic" }: Servic
       ) : layout === "curtain" ? (
         <div className="grid w-full grid-cols-2 gap-[10px] max-sm:grid-cols-1">
           {galleryImages.slice(0, 4).map((src, index) => imageButton(src, index, "h-[376px] max-md:h-[220px]", "(max-width: 900px) 50vw, 301px"))}
+        </div>
+      ) : layout === "softFurniture" ? (
+        <div className="grid w-full grid-cols-2 gap-[10px] max-sm:grid-cols-1">
+          {galleryImages.slice(0, 4).map((src, index) =>
+            imageButton(
+              src,
+              index,
+              `${index === 0 ? "h-[298px]" : index === 3 ? "h-[291px]" : "h-[301px]"} max-md:h-[220px]`,
+              "(max-width: 900px) 50vw, 301px",
+            ),
+          )}
         </div>
       ) : layout === "office" ? (
         <div className="grid w-full grid-cols-2 gap-[10px] max-sm:grid-cols-1">
