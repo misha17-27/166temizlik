@@ -750,6 +750,7 @@ const bottomCtaImages: Record<string, string> = {
   "cilciraq-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/maxresdefault-1.jpg",
   "perde-yuma": "https://166temizlik.az/wp-content/uploads/2023/01/201410cc1626ea7478c1323445ef0eef-1.png",
   "yumsaq-mebel-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/01/163eb70b66301186d622afe9b376fb38-1.png",
+  etirlendirme: "https://166temizlik.az/wp-content/uploads/2023/01/508ff33bcc85386acd15a427b03d8b8d-1.png",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
