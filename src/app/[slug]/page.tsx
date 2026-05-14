@@ -128,9 +128,11 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2024/12/HRS03584-2.webp",
   ],
   "restoran-temizlenmesi": [
+    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7422.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7918.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7696.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7620.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/05/J1A7451.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7802.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A8070.jpg",
   ],
   "kristallasdirma-xidmeti": [
     "https://166temizlik.az/wp-content/uploads/2024/02/image-89a.webp",
@@ -585,6 +587,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
     service.slug !== "yangindan-sonra-ev-temizliyi" &&
     service.slug !== "temir-sonrasi-temizlik" &&
     service.slug !== "otel-temizlenmesi" &&
+    service.slug !== "restoran-temizlenmesi" &&
     service.slug !== "etirlendirme";
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
