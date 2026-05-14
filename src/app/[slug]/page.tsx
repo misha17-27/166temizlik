@@ -117,8 +117,8 @@ const detailImageSets: Record<string, string[]> = {
     "https://166temizlik.az/wp-content/uploads/2023/01/ya2.jpg",
   ],
   "temir-sonrasi-temizlik": [
-    "https://166temizlik.az/wp-content/uploads/2023/02/fit_960_530_false_crop_1000_562_0_52_q90_2709852_1b72823ed32f1521bbdb3e471.webp",
     "https://166temizlik.az/wp-content/uploads/2023/02/XXL-1.webp",
+    "https://166temizlik.az/wp-content/uploads/2023/02/fit_960_530_false_crop_1000_562_0_52_q90_2709852_1b72823ed32f1521bbdb3e471.webp",
     "https://166temizlik.az/wp-content/uploads/2023/02/8ff3e8c4c9.webp",
   ],
   "otel-temizlenmesi": [
@@ -260,7 +260,7 @@ const serviceTitleOverrides: Record<string, string> = {
   "yangindan-sonra-ev-temizliyi": "Yanğından sonra ev təmizliyi",
 };
 
-const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier" | "curtain" | "softFurniture"; note?: string }> = {
+const serviceDetailSections: Record<string, { title: string; items?: string[]; layout?: "mosaic" | "row" | "quad" | "office" | "garden" | "area" | "chandelier" | "curtain" | "softFurniture" | "repair"; note?: string }> = {
   "ev-temizliyi-xidmeti": {
     title: "Əsaslı təmizlik xidmətinə daxildir",
     items: [
@@ -359,6 +359,7 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
       "Bütün şaquli və üfüqi səthlərin yaş və quru təmizlənməsi",
       "Məskunlaşma üçün binaların hazırlanması",
     ],
+    layout: "repair",
   },
   "otel-temizlenmesi": {
     title: "Otel təmizliyi xidmətinə daxildir",
@@ -556,6 +557,8 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
         ? images.slice(0, 5)
       : service.slug === "cilciraq-temizliyi"
         ? images.slice(1, 5)
+      : layout === "repair"
+        ? images.slice(0, 3)
       : isMosaic
         ? getGalleryImages(images)
         : layout === "quad"
