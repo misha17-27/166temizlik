@@ -765,6 +765,7 @@ const bottomCtaImages: Record<string, string> = {
   "yumsaq-mebel-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/01/163eb70b66301186d622afe9b376fb38-1.png",
   etirlendirme: "https://166temizlik.az/wp-content/uploads/2023/01/508ff33bcc85386acd15a427b03d8b8d-1.png",
   "yangindan-sonra-ev-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/89e800bb068aa1b43e8d61778c5ed1db.jpg",
+  "temir-sonrasi-temizlik": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
 };
 
 function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
