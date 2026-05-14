@@ -595,6 +595,7 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
     service.slug !== "temir-sonrasi-temizlik" &&
     service.slug !== "otel-temizlenmesi" &&
     service.slug !== "restoran-temizlenmesi" &&
+    service.slug !== "kristallasdirma-xidmeti" &&
     service.slug !== "etirlendirme";
   const sectionNoteClass =
     service.slug === "bag-evlerinin-temizliyi"
