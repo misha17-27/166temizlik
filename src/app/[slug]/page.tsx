@@ -505,7 +505,7 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
             {service.slug === "cilciraq-temizliyi" ? <ChandelierIntroText /> : <p>{paragraphs[0]}</p>}
           </IntroTextCard>
         </div>
-        {service.slug === "cilciraq-temizliyi" ? null : (
+        {service.slug === "cilciraq-temizliyi" || service.slug === "etirlendirme" ? null : (
           <div className="mt-[50px] grid grid-cols-[1fr_396px] items-start gap-0 max-lg:grid-cols-1">
             <IntroTextCard reverse heightClass="h-[286px]">
               <p>{paragraphs[1] ?? service.description}</p>
