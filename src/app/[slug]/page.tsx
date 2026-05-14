@@ -113,7 +113,8 @@ const detailImageSets: Record<string, string[]> = {
   "yangindan-sonra-ev-temizliyi": [
     "https://166temizlik.az/wp-content/uploads/2023/01/yangin222.jpg",
     "https://166temizlik.az/wp-content/uploads/2023/01/yangin333.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/03/yangin.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/01/ya.jpg",
+    "https://166temizlik.az/wp-content/uploads/2023/01/ya33.jpg",
   ],
   "temir-sonrasi-temizlik": [
     "https://166temizlik.az/wp-content/uploads/2023/02/fit_960_530_false_crop_1000_562_0_52_q90_2709852_1b72823ed32f1521bbdb3e471.webp",
@@ -346,6 +347,7 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
       "Mebellərin üzərinin xüsusi aparat vasitəsi ilə təmizlənməsi",
       "Zibillərin yığılması(10 kq qədər)",
     ],
+    layout: "quad",
   },
   "temir-sonrasi-temizlik": {
     title: "Təmirdən sonra evin təmizlənməsi xidmətinə aşağıdakılar daxildir:",
