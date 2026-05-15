@@ -23,10 +23,10 @@ export function PartnersPageContent({ locale = "az" }: { locale?: Locale }) {
 
       <section className="bg-[#f5f5f5] py-9 pb-16">
         <div className="container-shell bg-white px-16 py-14 max-md:px-4">
-          <div className="grid grid-cols-6 gap-4 max-xl:grid-cols-5 max-lg:grid-cols-4 max-md:grid-cols-2">
+          <div className="grid grid-cols-5 gap-4 max-lg:grid-cols-4 max-md:grid-cols-2">
             {[...partnerLogos, ...newerPartnerLogos].map((src, index) => (
-              <div key={`${src}-${index}`} className="relative h-[112px] rounded-[16px] border border-[#dcdcdc] bg-white">
-                <Image src={src} alt={`${copy.title} ${index + 1}`} fill sizes="180px" className="object-contain p-5" />
+              <div key={`${src}-${index}`} className="relative h-[126px] rounded-[16px] border border-[#dcdcdc] bg-white">
+                <Image src={src} alt={`${copy.title} ${index + 1}`} fill sizes="200px" className="object-contain" />
               </div>
             ))}
           </div>
