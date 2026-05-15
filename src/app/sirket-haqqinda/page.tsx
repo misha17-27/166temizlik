@@ -147,8 +147,8 @@ function TextBlock({
 }) {
   return (
     <div className={className}>
-      <h2 className="mb-7 text-[28px] font-medium leading-[1.15] text-[#1c1c1c] max-md:text-[23px]">{title}</h2>
-      <div className="space-y-4 text-[14px] font-normal leading-[1.75] text-[#5f6470] max-md:text-[13px]">{children}</div>
+      <h2 className="mb-7 text-[35px] font-normal leading-[42px] text-black max-md:text-[25px] max-md:leading-[32px]">{title}</h2>
+      <div className="space-y-4 text-[18px] font-normal leading-[28.8px] text-black/70 max-md:text-[15px] max-md:leading-[24px]">{children}</div>
     </div>
   );
 }
@@ -240,7 +240,7 @@ export function AboutPageContent({ locale = "az" }: { locale?: Locale }) {
 
       <section className="bg-white py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
-          <ImageBox src={assets.spray} alt={body.materialsAlt} className="h-[520px] w-[420px] max-lg:mx-auto max-md:h-[360px] max-md:w-full" contain={false} />
+          <ImageBox src={assets.spray} alt={body.materialsAlt} className="h-[520px] w-[420px] overflow-hidden rounded-[20px] max-lg:mx-auto max-md:h-[360px] max-md:w-full" contain={false} />
           <TextBlock title={copy.featuresTitle}>
             <ol className="list-decimal space-y-1 pl-5">
               {body.features.map((item) => (
