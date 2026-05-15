@@ -622,13 +622,20 @@ function CorporateTextImageRow({
     </div>
   );
   const imageBlock = (
-    <div className={`relative ${imageHeight} max-lg:h-[420px] max-md:h-[320px]`}>
-      <Image src={image} alt={imageAlt} fill sizes="(max-width: 900px) 100vw, 400px" className="object-cover" />
+    <div className="relative min-h-[570px] max-lg:min-h-0">
+      <div
+        className={`absolute bottom-[-45px] h-[230px] w-[230px] bg-[url('https://166temizlik.az/wp-content/uploads/2023/01/travel-pattern-bg.png')] bg-repeat opacity-90 max-lg:hidden ${
+          imageFirst ? "right-[58px]" : "left-[18px]"
+        }`}
+      />
+      <div className={`relative z-10 w-[400px] max-w-full overflow-hidden rounded-[8px] ${imageHeight} max-lg:h-[420px] max-md:h-[320px] ${imageFirst ? "" : "ml-auto"}`}>
+        <Image src={image} alt={imageAlt} fill sizes="(max-width: 900px) 100vw, 400px" className="object-cover" />
+      </div>
     </div>
   );
 
   return (
-    <div className="mb-[70px] grid grid-cols-[583px_400px] items-center justify-between gap-16 max-lg:grid-cols-1 max-lg:gap-8">
+    <div className="mb-[70px] grid grid-cols-[583px_573px] items-center gap-0 max-lg:grid-cols-1 max-lg:gap-8">
       {imageFirst ? imageBlock : textBlock}
       {imageFirst ? textBlock : imageBlock}
     </div>
