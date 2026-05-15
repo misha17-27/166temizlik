@@ -613,11 +613,11 @@ function CorporateTextImageRow({
       <h2 className="text-[32px] font-medium leading-[42px] max-md:text-[24px] max-md:leading-[32px]">{title}</h2>
       {text ? <p className="mt-8 text-[20px] font-normal leading-[29px] max-md:text-[16px] max-md:leading-[24px]">{text}</p> : null}
       {items ? (
-        <ul className="mt-8 list-disc space-y-1 pl-8 text-[20px] font-normal leading-[29px] max-md:text-[16px] max-md:leading-[24px]">
+        <ol className="mt-8 list-decimal space-y-1 pl-8 text-[20px] font-normal leading-[29px] max-md:text-[16px] max-md:leading-[24px]">
           {items.map((item) => (
             <li key={item}>{item}</li>
           ))}
-        </ul>
+        </ol>
       ) : null}
     </div>
   );
