@@ -152,6 +152,92 @@ function LanguageSwitcher({
   );
 }
 
+function OrderPopup({
+  locale,
+  services,
+  open,
+  onClose,
+}: {
+  locale: Locale;
+  services: Array<{ title: string; href: string; slug: string }>;
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!open) {
+    return null;
+  }
+
+  const labels =
+    locale === "ru"
+      ? {
+          title: "Пакеты уборки",
+          name: "Имя",
+          phone: "Номер телефона",
+          service: "Тип услуги:",
+          address: "Адрес уборки",
+          note: "Примечание",
+          submit: "Заказать",
+        }
+      : locale === "tr"
+        ? {
+            title: "Temizlik paketleri",
+            name: "Ad",
+            phone: "Telefon numarası",
+            service: "Hizmet türü:",
+            address: "Temizlik yapılacak adres",
+            note: "Not",
+            submit: "Sipariş et",
+          }
+        : {
+            title: "Təmizlik paketləri",
+            name: "Ad",
+            phone: "Əlaqə nömrəsi",
+            service: "Xidmət növü:",
+            address: "Təmizlik olunacaq ünvan",
+            note: "İsmaric",
+            submit: "Sifariş et",
+          };
+
+  return (
+    <div className="fixed inset-0 z-[120] grid place-items-center bg-black/75 px-4 py-8" role="dialog" aria-modal="true" aria-label={labels.title}>
+      <div className="relative w-full max-w-[800px] rounded-[18px] bg-[#eaf8ff] px-[38px] py-[70px] shadow-[0_20px_60px_rgb(0_0_0_/_24%)] max-md:px-5 max-md:py-14">
+        <button
+          type="button"
+          aria-label="Close order form"
+          onClick={onClose}
+          className="absolute right-7 top-6 grid h-8 w-8 place-items-center text-[#222] transition-colors hover:text-[#0074ca]"
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-8 w-8" fill="none">
+            <path d="M6 6 18 18M18 6 6 18" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+          </svg>
+        </button>
+
+        <h2 className="mb-7 text-center text-[29px] font-normal leading-tight text-black max-md:text-[25px]">{labels.title}</h2>
+        <form className="grid gap-3">
+          <div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
+            <input className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-black outline-none placeholder:text-[#a9a9a9]" placeholder={labels.name} />
+            <input className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-black outline-none placeholder:text-[#a9a9a9]" placeholder={labels.phone} />
+          </div>
+          <label className="mt-1 text-[18px] font-normal text-black">{labels.service}</label>
+          <select className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-[#777] outline-none">
+            {services.map((service) => (
+              <option key={service.slug}>{service.title}</option>
+            ))}
+          </select>
+          <input className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-black outline-none placeholder:text-[#b9b9b9]" placeholder={labels.address} />
+          <textarea className="min-h-[110px] rounded-[4px] bg-white px-4 py-3 text-[16px] text-black outline-none placeholder:text-[#b9b9b9]" placeholder={labels.note} />
+          <button
+            type="submit"
+            className="mt-2 inline-flex h-[50px] w-[168px] items-center justify-center rounded-full bg-brand-yellow text-[18px] font-bold text-black transition-colors hover:bg-black hover:text-white"
+          >
+            {labels.submit}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export function Header({
   active = "home",
   locale = "az",
@@ -165,8 +251,12 @@ export function Header({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
+  const [orderOpen, setOrderOpen] = useState(false);
   const copy = chromeCopy[locale];
   const localizedServices = getLocalizedServices(locale);
+  const popupServices = currentSlug
+    ? [...localizedServices].sort((a, b) => (a.slug === currentSlug ? -1 : b.slug === currentSlug ? 1 : 0))
+    : localizedServices;
   const navItems = [
     { key: "home", label: copy.nav.home, href: getLocalizedHref(locale, "/") },
     { key: "services", label: copy.nav.services, href: getLocalizedHref(locale, "/temizlik-xidmetleri/"), hasMenu: true },
@@ -188,7 +278,7 @@ export function Header({
   }
 
   useEffect(() => {
-    if (!mobileMenuOpen) {
+    if (!mobileMenuOpen && !orderOpen) {
       return;
     }
 
@@ -201,7 +291,7 @@ export function Header({
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
     };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, orderOpen]);
 
   return (
     <header className="sticky top-0 z-50 blue-band">
@@ -267,12 +357,13 @@ export function Header({
         </nav>
 
         <div className="flex items-center gap-3 max-md:gap-1">
-          <Link
-            href={site.orderHref}
-            className="whitespace-nowrap rounded-full bg-brand-yellow px-6 py-3 text-[15px] font-bold text-[#171717] transition hover:bg-white max-md:px-4 max-md:py-2.5 max-md:text-[14px]"
+          <button
+            type="button"
+            onClick={() => setOrderOpen(true)}
+            className="whitespace-nowrap rounded-full bg-brand-yellow px-6 py-3 text-[15px] font-bold text-[#171717] transition hover:bg-black hover:text-white max-md:px-4 max-md:py-2.5 max-md:text-[14px]"
           >
             {copy.nav.order}
-          </Link>
+          </button>
           <button
             type="button"
             aria-label="Open menu"
@@ -372,6 +463,7 @@ export function Header({
           </div>
         </div>
       ) : null}
+      <OrderPopup locale={locale} services={popupServices} open={orderOpen} onClose={() => setOrderOpen(false)} />
     </header>
   );
 }

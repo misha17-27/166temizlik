@@ -82,7 +82,7 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
         <div className="absolute -right-20 top-[300px] h-[360px] w-[170px] rounded-[55%] bg-[#e8fbff]" />
         <div className="container-shell relative grid grid-cols-2 items-start gap-20 max-lg:grid-cols-1 max-lg:gap-12">
           <form className="rounded-[10px] bg-white p-[72px] shadow-[0_12px_42px_rgb(25_34_70_/_8%)] max-md:p-7">
-            <h1 className="mb-8 text-[34px] font-bold leading-tight text-[#6252ee] max-md:text-[26px]">
+            <h1 className="mb-8 text-[32px] font-semibold leading-none text-[#5947de] max-md:text-[26px]">
               {copy.formTitle}
             </h1>
             <div className="grid gap-7">
@@ -90,14 +90,14 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
                 <input
                   key={placeholder}
                   placeholder={placeholder}
-                  className="h-[48px] rounded-[4px] bg-[#fafafa] px-4 text-[15px] text-[#222] outline-none placeholder:text-[#9aa0ad]"
+                  className="h-[47px] rounded-[5px] bg-[#fafafa] px-4 text-[15px] font-normal leading-[21px] text-[#3d4459] outline-none placeholder:text-[#9aa0ad]"
                 />
               ))}
               <textarea
                 placeholder={copy.message}
-                className="min-h-[100px] rounded-[4px] bg-[#fafafa] px-4 py-3 text-[15px] text-[#222] outline-none placeholder:text-[#9aa0ad]"
+                className="min-h-[100px] rounded-[5px] bg-[#fafafa] px-4 py-3 text-[15px] font-normal leading-[21px] text-[#3d4459] outline-none placeholder:text-[#9aa0ad]"
               />
-              <button className="ml-auto inline-flex items-center gap-4 rounded-full bg-brand-yellow px-8 py-4 text-[15px] font-medium text-black transition-colors hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white focus-visible:outline-none">
+              <button className="ml-auto inline-flex h-[47px] items-center gap-4 rounded-full bg-brand-yellow px-8 text-[16px] font-medium leading-none text-[#13287e] transition-colors hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white focus-visible:outline-none">
                 {copy.submit}
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
                   <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -115,7 +115,7 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
                     <Image src={item.icon} alt="" width={28} height={28} className="object-contain" />
                   </div>
                   <div className="text-[#20294b]">
-                    <h3 className="text-[20px] font-medium leading-tight">{item.title}</h3>
+                    <h3 className="text-[20px] font-normal leading-[24px]">{item.title}</h3>
                     {item.href ? (
                       <Link href={item.href} className="mt-1 block text-[16px] font-normal">
                         {item.value}
