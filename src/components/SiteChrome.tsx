@@ -386,10 +386,10 @@ export function Header({
               type="button"
               aria-label="Close menu"
               onClick={closeMobileMenu}
-              className="absolute right-5 top-10 grid h-[19px] w-[19px] place-items-center rounded-full border border-[#050505] text-[#050505]"
+              className="absolute right-5 top-10 grid h-7 w-7 place-items-center rounded-full border border-[#050505] text-[#050505]"
             >
-              <svg aria-hidden="true" viewBox="0 0 18 18" className="h-3 w-3" fill="none">
-                <path d="M5 5 13 13M13 5 5 13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+              <svg aria-hidden="true" viewBox="0 0 18 18" className="h-4 w-4" fill="none">
+                <path d="M5 5 13 13M13 5 5 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
             </button>
 
