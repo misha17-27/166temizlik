@@ -22,10 +22,20 @@ export const navItems = [
   { label: "Əlaqə", href: "#contact" },
 ];
 
-export const heroSlides = [
+export type HeroSlide = {
+  eyebrow?: string;
+  title?: string;
+  images?: string[];
+  desktopImage: string;
+  mobileImage: string;
+};
+
+export const heroSlides: HeroSlide[] = [
   {
     eyebrow: "Ev təmizliyi + kimyəvi təmizlik + pərdə yuma sifariş edənlərə",
     title: "30% ENDİRİM",
+    desktopImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-5.webp",
+    mobileImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-4.webp",
     images: [
       "https://166temizlik.az/wp-content/uploads/2024/08/Artboard-1-copy-1-2.webp",
       "https://166temizlik.az/wp-content/uploads/2024/06/Artboard-1-copy-2-2.webp",
@@ -35,6 +45,8 @@ export const heroSlides = [
   {
     eyebrow: "Peşəkar komanda və müasir avadanlıqla",
     title: "TƏMİZ EV, RAHAT GÜN",
+    desktopImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-2-1.webp",
+    mobileImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-2-2-1.webp",
     images: [
       "https://166temizlik.az/wp-content/uploads/2024/04/yumshaq2.webp",
       "https://166temizlik.az/wp-content/uploads/2024/04/yumshaq.webp",
@@ -44,11 +56,20 @@ export const heroSlides = [
   {
     eyebrow: "Bakı və Bakı kəndləri üzrə operativ xidmət",
     title: "166 TƏMİZLİK",
+    desktopImage: "https://166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
+    mobileImage: "https://166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
     images: [
       "https://166temizlik.az/wp-content/uploads/2024/04/AA1.webp",
       "https://166temizlik.az/wp-content/uploads/2024/04/AA2.webp",
       "https://166temizlik.az/wp-content/uploads/2024/04/yum2.webp",
     ],
+  },
+  {
+    eyebrow: "166 Təmizlik",
+    title: "Xidmətlər",
+    desktopImage: "https://166temizlik.az/wp-content/uploads/2026/04/az-desc.webp",
+    mobileImage: "https://166temizlik.az/wp-content/uploads/2026/04/az-mob.webp",
+    images: [],
   },
 ];
 

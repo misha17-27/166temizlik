@@ -481,17 +481,30 @@ export const homeCopy = {
       {
         eyebrow: "При заказе уборки дома + химчистки + стирки штор",
         title: "СКИДКА 30%",
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-2-3-1.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-3-2.webp",
         images: heroSlides[0].images,
       },
       {
         eyebrow: "Профессиональная команда и современное оборудование",
         title: "ЧИСТЫЙ ДОМ, УЮТНЫЙ ДЕНЬ",
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/01/Rus-1.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-1-1.webp",
         images: heroSlides[1].images,
       },
       {
         eyebrow: "Оперативный сервис по Баку и поселкам Баку",
         title: "166 TEMİZLİK",
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
         images: heroSlides[2].images,
+      },
+      {
+        eyebrow: "166 Temizlik",
+        title: "Services",
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2026/04/ru-desc.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2026/04/ru-mob.webp",
+        images: [],
       },
     ],
     servicesTitle: "Наши услуги",
@@ -576,11 +589,15 @@ export const homeCopy = {
   tr: {
     heroSlides: [
       {
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-5.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-4.webp",
         eyebrow: "Ev temizliği + kuru temizleme + perde yıkama sipariş edenlere",
         title: "%30 İNDİRİM",
         images: heroSlides[0].images,
       },
       {
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-2-1.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-2-2-1.webp",
         eyebrow: "Profesyonel ekip ve modern ekipmanlarla",
         title: "TEMİZ EV, RAHAT GÜN",
         images: heroSlides[1].images,
@@ -588,7 +605,16 @@ export const homeCopy = {
       {
         eyebrow: "Bakü ve Bakü çevresi için hızlı hizmet",
         title: "166 TEMİZLİK",
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
         images: heroSlides[2].images,
+      },
+      {
+        eyebrow: "166 Temizlik",
+        title: "Hizmetler",
+        desktopImage: "https://166temizlik.az/wp-content/uploads/2026/04/tr-desc-1.webp",
+        mobileImage: "https://166temizlik.az/wp-content/uploads/2026/04/tr-mob-1.webp",
+        images: [],
       },
     ],
     servicesTitle: "Hizmetlerimiz",
