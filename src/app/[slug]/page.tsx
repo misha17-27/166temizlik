@@ -7,7 +7,7 @@ import { ServiceImageGallery } from "@/components/ServiceImageGallery";
 import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { partners, site } from "@/lib/site-data";
+import { site } from "@/lib/site-data";
 
 const packageTitles: Record<Locale, { four: string; eight: string }> = {
   az: { four: "4 saat", eight: "8 saat" },
@@ -22,6 +22,10 @@ const serviceTypeLabels: Record<Locale, string> = {
 };
 
 type ServicePageItem = (typeof servicePages)[number];
+
+const corporatePartnerLogos = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 1].map(
+  (file) => `https://166temizlik.az/wp-content/uploads/2024/09/${file}.jpg`
+);
 
 const detailImageSets: Record<string, string[]> = {
   "ev-temizliyi-xidmeti": [
@@ -647,11 +651,14 @@ function CorporatePartnersSection() {
     <section className="bg-[#f7f7f7] pb-20 pt-2">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <h2 className="text-center text-[32px] font-medium leading-[42px] text-black max-md:text-[24px]">Korporativ Əməkdaşlarımız</h2>
-        <div className="mt-12 grid grid-cols-5 gap-6 max-lg:grid-cols-3 max-sm:grid-cols-2">
-          {partners.map((logo) => (
-            <div key={logo} className="grid h-[120px] place-items-center rounded-[8px] bg-white p-5 shadow-[0_8px_25px_rgb(0_0_0_/_6%)]">
-              <Image src={logo} alt="" width={170} height={95} className="max-h-[85px] w-auto object-contain" />
-            </div>
+        <div className="mx-auto mt-12 grid max-w-[1060px] grid-cols-5 justify-center gap-x-[30px] gap-y-[30px] max-lg:grid-cols-3 max-sm:grid-cols-2">
+          {corporatePartnerLogos.map((logo) => (
+            <div
+              key={logo}
+              className="h-[124px] w-[186px] max-w-full bg-contain bg-center bg-repeat"
+              style={{ backgroundImage: `url(${logo})` }}
+              aria-label="Korporativ əməkdaş"
+            />
           ))}
         </div>
       </div>
