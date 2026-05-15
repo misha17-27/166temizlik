@@ -295,9 +295,9 @@ export function Header({
 
   return (
     <header className="sticky top-0 z-50 blue-band">
-      <div className="mx-auto flex h-[78px] w-[min(var(--header-container),calc(100%-40px))] items-center justify-between gap-5 max-md:h-[72px] max-md:w-[calc(100%-20px)] max-md:gap-2">
-        <Link href={getLocalizedHref(locale, "/")} aria-label={copy.logoLabel} className="relative h-[58px] w-[112px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
-          <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="120px" className="object-contain brightness-0 invert" />
+      <div className="mx-auto flex h-[110px] w-[min(var(--header-container),calc(100%-40px))] items-center justify-between gap-5 max-md:h-[72px] max-md:w-[calc(100%-20px)] max-md:gap-2">
+        <Link href={getLocalizedHref(locale, "/")} aria-label={copy.logoLabel} className="relative h-[80px] w-[154px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
+          <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="154px" className="object-contain brightness-0 invert" />
         </Link>
 
         <nav className="flex flex-1 items-center justify-end gap-2 text-[14px] font-semibold text-white max-lg:hidden">
