@@ -15,24 +15,24 @@ export function EquipmentPageContent({ locale = "az" }: { locale?: Locale }) {
 
   return (
     <SitePage active="about" locale={locale} currentSlug="equipment">
-      <section className="relative h-[260px] bg-white max-md:h-[190px]">
-        <Image src={pageHeroAssets.equipment} alt={copy.title} fill priority sizes="100vw" className="object-cover opacity-35" />
+      <section className="relative h-[400px] bg-white max-md:h-[240px]">
+        <Image src={pageHeroAssets.equipment} alt={copy.title} fill priority sizes="100vw" className="object-cover" />
         <div className="container-shell relative flex h-full items-center">
-          <h1 className="text-[24px] font-semibold text-[#253b8d] max-md:text-[20px]">{copy.title}</h1>
+          <h1 className="text-[32px] font-normal leading-[32px] text-[#13287e] max-md:text-[24px]">{copy.title}</h1>
         </div>
       </section>
 
       <section className="bg-white py-10 pb-20">
         <div className="container-shell">
-          <h2 className="mb-14 text-center text-[28px] font-bold text-black">{copy.equipmentTitle}</h2>
+          <h2 className="mb-14 text-center text-[35px] font-semibold leading-[42px] text-black max-md:text-[26px]">{copy.equipmentTitle}</h2>
           <div className="space-y-20">
             {equipment.map((item, index) => {
               const reverse = index % 2 === 1;
               return (
                 <article key={item.title} className={`grid grid-cols-2 items-center gap-16 max-lg:grid-cols-1 ${reverse ? "lg:[&>div:first-child]:order-2" : ""}`}>
                   <div>
-                    <h3 className="mb-8 text-[23px] font-medium text-[#252525]">{item.title}</h3>
-                    <p className="text-[13px] font-normal leading-[1.75] text-[#4b4b4b]">{item.text}</p>
+                    <h3 className="mb-8 text-[35px] font-normal leading-[42px] text-black max-md:text-[25px]">{item.title}</h3>
+                    <p className="text-[18px] font-normal leading-[28.8px] text-black/70 max-md:text-[15px] max-md:leading-[24px]">{item.text}</p>
                   </div>
                   <div className="relative mx-auto w-full max-w-[420px]">
                     <div className="absolute -bottom-12 -left-10 h-[190px] w-[260px] bg-[radial-gradient(#d4d4d4_1px,transparent_1.5px)] [background-size:14px_14px]" />

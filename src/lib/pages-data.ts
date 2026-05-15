@@ -61,7 +61,7 @@ export const pageHeroAssets = {
   blog: "https://166temizlik.az/wp-content/uploads/2023/02/5282459.webp",
   partners: "https://166temizlik.az/wp-content/uploads/2023/02/business-partners.jpg",
   employees: "https://166temizlik.az/wp-content/uploads/2023/07/emekdash.webp",
-  equipment: "https://166temizlik.az/wp-content/uploads/2023/09/aaa11.webp",
+  equipment: "https://166temizlik.az/wp-content/uploads/2023/01/10-1.jpg",
 };
 
 export const blogPosts = [
