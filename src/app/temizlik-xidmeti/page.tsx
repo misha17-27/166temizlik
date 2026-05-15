@@ -45,12 +45,13 @@ export function EquipmentPageContent({ locale = "az" }: { locale?: Locale }) {
             })}
           </div>
 
-          <h2 className="mb-8 mt-24 text-center text-[28px] font-bold text-black">{copy.materialsTitle}</h2>
+          <h2 className="mb-8 mt-24 text-center text-[35px] font-semibold leading-[42px] text-black max-md:text-[26px]">{copy.materialsTitle}</h2>
           <div className="grid grid-cols-2 gap-5 max-md:grid-cols-1">
             {materialCards.map((item) => (
               <article key={item.title} className="rounded-[10px] bg-white p-5 shadow-[0_3px_16px_rgb(15_23_42_/_10%)]">
-                <h3 className="text-[13px] font-bold text-[#4a4a4a]">{item.title}</h3>
-                <p className="mt-2 text-[12px] leading-[1.55] text-[#606060]">{item.text}</p>
+                <p className="text-[18px] font-normal leading-[28.8px] text-black/70 max-md:text-[15px] max-md:leading-[24px]">
+                  <strong className="font-bold">{item.title}</strong> – {item.text}
+                </p>
               </article>
             ))}
           </div>

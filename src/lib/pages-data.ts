@@ -685,13 +685,13 @@ export function getLocalizedEquipment(locale: Locale) {
 }
 
 export const materialCards = [
-  ["H-04 Genel Fresh Multi Clean", "Antibakterial məhsul, kif və göbələyə qarşı bütün səthlərdə istifadə olunur. Güzgü və şüşələri tozdan qoruyur."],
-  ["H-19 Asit Miracle Plus", "Hamam və sanuzel təmizliyində istifadə üçün əvəzolunmaz antibakterial məhsuldur. Ərpin qarşısını alır."],
-  ["K-11 Yağ Kir Overget", "Mətbəxdə əvəzolunmaz, yüksək keyfiyyətli yağ sökücü maddədir. Qril və yanmış yağları təmizləməyə kömək edir."],
-  ["K-12 Ərp Ripper Scale", "Ərp önləyici və təmizləyici vasitədir. Hamam və sanuzeldə qalmış kirəc və ərplərin təmizliyinə kömək edir."],
-  ["H-23 Luxe Oxi", "Ağardıcı dezinfeksiyaedici vasitə. Ləkələri iz qoymadan rahatlıqla çıxardır və bakteriyalara qarşı effektivdir."],
-  ["H-17 Orgine", "Kimyəvi təmizlik zamanı istifadə olunan lokal ləkə təmizləyici mayədir. Yumşaq mebellər üçün uyğundur."],
-  ["Antistiker", "Yapışqan lentlərin iz saxlamadan çıxarılmasına kömək edir. Stiker və saqqız ləkələrini qoparır."],
+  ["H-04 Genel Fresh Multi Clean", "Antibakterial məhsul , kif və göbələyə qarşı bütün səthlərdə(mərmər taxta) istifadə olunacaq təmizləyici vasitədir.Güzgü və şüşələri tozdan qoruyaraq, bir neçə müddət parıltisını qoruyub saxlayır.Bakterialara qarşi çox effektivdir."],
+  ["H-19 Asit Miracle Plus", "Hamam və sanuzel təmizliyində istifadə üçün əvəz olunmaz bir təmizləyici məhsuldur . Antibakterialdır. Rahatlıqla hamamda ərpin qarşısın alır."],
+  ["K-11 Yağ kir Overget", "Mətbəxdə əvəzolunmaz bir məhsuldur.Çox yüksək keyfiyyətli yağ sökücü maddədir. Qril və yanmış yağları rahatlıqla təmizləmək mümkündür."],
+  ["K-12 Ərp Ripper Scale", "Ərp önləyici və təmizləyici vasitədir.Hamam otağınızin ideal təmizliyi üçün keyfiyyətli məhsuldur. Hamam və sanuzeldə qalmış kirəc və ərplərin rahatlıqla təmizliyinə kömək edir."],
+  ["H-23 Luxe Oxi", "Ağardıcı dezinfeksiyaedici vasitə.Ləkələri iz qoymadan rahatliqla çıxardır və yeni kimi edir. Bakteriya və mikrobların qatı düşmənidir.Hamam sanuzeldə rahatlıqla istifadə edilə bilər."],
+  ["H-17 Orgine", "Kimyəvi təmizlik zamanı istifadə olunur. Lokal ləkə təmizləyici mayədir. Yumşaq mebellərdə ləkələrin asanlıqla getməsi üçündür.Hər növ parçalarin yumşaqliğını qoruyaraq təmizliyinə kömək edir."],
+  ["Antistiker", "Yapışqan lentlərin iz saxlamadan gedilməsinə kömək edir.Stiker,saqqız ləkələrini qopardır və tər təmiz edir."],
 ].map(([title, text]) => ({ title, text }));
 
 const materialCardTranslations: Partial<Record<Locale, Array<{ title: string; text: string }>>> = {
