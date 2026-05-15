@@ -655,7 +655,7 @@ function CorporatePartnersSection() {
           {corporatePartnerLogos.map((logo) => (
             <div
               key={logo}
-              className="h-[124px] w-[186px] max-w-full bg-contain bg-center bg-repeat"
+              className="h-[124px] w-[186px] max-w-full overflow-hidden rounded-[14px] bg-contain bg-center bg-repeat"
               style={{ backgroundImage: `url(${logo})` }}
               aria-label="Korporativ əməkdaş"
             />
