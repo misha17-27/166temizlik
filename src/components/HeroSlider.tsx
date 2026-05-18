@@ -27,17 +27,18 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
           key={`${item.desktopImage}-${index}`}
           aria-hidden={active !== index}
           style={{ backgroundColor: item.desktopBgColor }}
-          className={`absolute inset-0 transition-opacity duration-700 ${
+          className={`absolute inset-0 transition-opacity duration-700 md:flex md:items-center md:justify-center ${
             active === index ? "opacity-100" : "opacity-0"
           }`}
         >
           <Image
             src={item.desktopImage}
             alt={index === active ? (slide?.title ?? "166 Təmizlik") : ""}
-            fill
+            width={item.desktopWidth}
+            height={item.desktopHeight}
             preload={index === 0}
-            sizes="100vw"
-            className="hidden object-contain md:block"
+            sizes={`(max-width: ${item.desktopWidth}px) 100vw, ${item.desktopWidth}px`}
+            className="hidden h-auto max-h-full w-auto max-w-full object-contain md:block"
           />
           <Image
             src={item.mobileImage}
