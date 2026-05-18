@@ -38,7 +38,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
             height={item.desktopHeight}
             preload={index === 0}
             sizes={`(max-width: ${item.desktopWidth}px) 100vw, ${item.desktopWidth}px`}
-            className="hidden h-auto max-h-full w-auto max-w-full object-contain md:block"
+              className="hidden h-auto w-full object-contain md:block"
           />
           <Image
             src={item.mobileImage}
