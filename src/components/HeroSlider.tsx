@@ -26,6 +26,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
         <div
           key={`${item.desktopImage}-${index}`}
           aria-hidden={active !== index}
+          style={{ backgroundColor: item.desktopBgColor }}
           className={`absolute inset-0 transition-opacity duration-700 ${
             active === index ? "opacity-100" : "opacity-0"
           }`}
@@ -36,7 +37,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
             fill
             preload={index === 0}
             sizes="100vw"
-            className="hidden object-cover md:block"
+            className="hidden object-contain md:block"
           />
           <Image
             src={item.mobileImage}

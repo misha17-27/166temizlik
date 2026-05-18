@@ -28,6 +28,7 @@ export type HeroSlide = {
   images?: string[];
   desktopImage: string;
   mobileImage: string;
+  desktopBgColor: string;
 };
 
 export const heroSlides: HeroSlide[] = [
@@ -36,6 +37,7 @@ export const heroSlides: HeroSlide[] = [
     title: "30% ENDİRİM",
     desktopImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-5.webp",
     mobileImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-4.webp",
+    desktopBgColor: "#0271C9",
     images: [
       "https://166temizlik.az/wp-content/uploads/2024/08/Artboard-1-copy-1-2.webp",
       "https://166temizlik.az/wp-content/uploads/2024/06/Artboard-1-copy-2-2.webp",
@@ -47,6 +49,7 @@ export const heroSlides: HeroSlide[] = [
     title: "TƏMİZ EV, RAHAT GÜN",
     desktopImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-2-1.webp",
     mobileImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-2-2-1.webp",
+    desktopBgColor: "#FFF424",
     images: [
       "https://166temizlik.az/wp-content/uploads/2024/04/yumshaq2.webp",
       "https://166temizlik.az/wp-content/uploads/2024/04/yumshaq.webp",
@@ -58,6 +61,7 @@ export const heroSlides: HeroSlide[] = [
     title: "166 TƏMİZLİK",
     desktopImage: "https://166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
     mobileImage: "https://166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
+    desktopBgColor: "#0271C9",
     images: [
       "https://166temizlik.az/wp-content/uploads/2024/04/AA1.webp",
       "https://166temizlik.az/wp-content/uploads/2024/04/AA2.webp",
@@ -69,6 +73,7 @@ export const heroSlides: HeroSlide[] = [
     title: "Xidmətlər",
     desktopImage: "https://166temizlik.az/wp-content/uploads/2026/04/az-desc.webp",
     mobileImage: "https://166temizlik.az/wp-content/uploads/2026/04/az-mob.webp",
+    desktopBgColor: "#FFF424",
     images: [],
   },
 ];
