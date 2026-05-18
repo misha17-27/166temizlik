@@ -53,7 +53,7 @@ export const heroSlides: HeroSlide[] = [
     title: "TƏMİZ EV, RAHAT GÜN",
     desktopImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-2-1.webp",
     mobileImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-2-2-1.webp",
-    desktopBgColor: "#FFF424",
+    desktopBgColor: "#FBEA13",
     desktopWidth: 1200,
     desktopHeight: 500,
     images: [
@@ -81,7 +81,7 @@ export const heroSlides: HeroSlide[] = [
     title: "Xidmətlər",
     desktopImage: "https://166temizlik.az/wp-content/uploads/2026/04/az-desc.webp",
     mobileImage: "https://166temizlik.az/wp-content/uploads/2026/04/az-mob.webp",
-    desktopBgColor: "#FFF424",
+    desktopBgColor: "#FBEA13",
     desktopWidth: 1376,
     desktopHeight: 768,
     images: [],

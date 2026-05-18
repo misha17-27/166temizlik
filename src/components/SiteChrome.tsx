@@ -386,10 +386,10 @@ export function Header({
               type="button"
               aria-label="Close menu"
               onClick={closeMobileMenu}
-              className="absolute right-5 top-10 grid h-7 w-7 place-items-center rounded-full border border-[#050505] text-[#050505]"
+              className="absolute right-4 top-6 grid h-9 w-9 place-items-center rounded-full border border-[#050505] text-[#050505]"
             >
-              <svg aria-hidden="true" viewBox="0 0 18 18" className="h-4 w-4" fill="none">
-                <path d="M5 5 13 13M13 5 5 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              <svg aria-hidden="true" viewBox="0 0 18 18" className="h-5 w-5" fill="none">
+                <path d="M5 5 13 13M13 5 5 13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
               </svg>
             </button>
 
@@ -474,23 +474,23 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
 
   return (
     <>
-      <section id="order" className="blue-band py-14">
+      <section id="order" className="blue-band py-14 max-sm:py-9">
         <div className="container-shell flex items-center justify-between gap-8 max-lg:flex-col max-lg:text-center">
           <h2 className="text-[23px] font-bold leading-tight text-white max-md:text-[20px]">{copy.cta.title}</h2>
-          <div className="flex gap-9 max-sm:flex-col">
-            <Link href={getLocalizedHref(locale, "/166-temizlik-elaqe/")} className="rounded-full bg-brand-yellow px-12 py-3 text-[12px] font-bold text-black">
+          <div className="flex gap-9 max-sm:w-full max-sm:flex-col max-sm:gap-5">
+            <Link href={getLocalizedHref(locale, "/166-temizlik-elaqe/")} className="rounded-full bg-brand-yellow px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
               {copy.cta.contact}
             </Link>
-            <Link href={site.whatsappHref} className="rounded-full bg-white px-12 py-3 text-[12px] font-bold text-black">
+            <Link href={site.whatsappHref} className="rounded-full bg-white px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
               {copy.cta.order}
             </Link>
           </div>
         </div>
       </section>
       <footer id="contact" className="blue-band text-white">
-        <div className="container-shell grid grid-cols-[1.1fr_1fr_1fr_1.35fr] gap-16 py-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          <div className="text-center max-sm:text-left">
-            <div className="relative mx-auto h-[132px] w-[170px] max-sm:mx-0">
+        <div className="container-shell grid grid-cols-[1.1fr_1fr_1fr_1.35fr] gap-16 py-8 max-lg:grid-cols-2 max-sm:grid-cols-1 max-sm:text-center">
+          <div className="text-center">
+            <div className="relative mx-auto h-[132px] w-[170px]">
               <Image src={site.footerLogo} alt="166 Təmizlik" fill sizes="170px" className="object-contain" />
             </div>
             <p className="mt-3 text-[12px] font-normal">{copy.footer.motto}</p>

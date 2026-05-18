@@ -21,13 +21,13 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
   }, [slides.length]);
 
   return (
-    <section className="relative h-[650px] overflow-hidden bg-brand-blue max-md:h-[300px]">
+    <section className="relative h-[650px] overflow-hidden bg-brand-blue max-md:h-[330px] max-md:bg-white">
       {slides.map((item, index) => (
         <div
           key={`${item.desktopImage}-${index}`}
           aria-hidden={active !== index}
           style={{ backgroundColor: item.desktopBgColor }}
-          className={`absolute inset-0 transition-opacity duration-700 md:flex md:items-center md:justify-center ${
+          className={`absolute inset-0 transition-opacity duration-700 max-md:inset-x-6 max-md:inset-y-[10px] max-md:overflow-hidden max-md:rounded-[12px] md:flex md:items-center md:justify-center ${
             active === index ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -54,7 +54,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
       <div className="absolute inset-0">
         <button
           aria-label="Previous slide"
-          className="absolute left-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center text-[#100e0e] transition hover:text-black max-md:left-1 max-md:h-8 max-md:w-8"
+          className="absolute left-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center text-[#100e0e] transition hover:text-black max-md:hidden"
           onClick={() => setActive((active - 1 + slides.length) % slides.length)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-9 w-9 max-md:h-7 max-md:w-7" fill="none">
@@ -64,13 +64,26 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
 
         <button
           aria-label="Next slide"
-          className="absolute right-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center text-[#100e0e] transition hover:text-black max-md:right-1 max-md:h-8 max-md:w-8"
+          className="absolute right-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center text-[#100e0e] transition hover:text-black max-md:hidden"
           onClick={() => setActive((active + 1) % slides.length)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-9 w-9 max-md:h-7 max-md:w-7" fill="none">
             <path d="m9 5 7 7-7 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
+      </div>
+
+      <div className="absolute bottom-[18px] left-1/2 z-10 hidden -translate-x-1/2 items-center gap-[10px] max-md:flex">
+        {slides.map((item, index) => (
+          <button
+            key={`hero-dot-${item.mobileImage}-${index}`}
+            type="button"
+            aria-label={`Go to slide ${index + 1}`}
+            aria-current={active === index}
+            onClick={() => setActive(index)}
+            className={`h-[6px] w-[6px] rounded-full transition ${active === index ? "bg-black" : "bg-black/20"}`}
+          />
+        ))}
       </div>
     </section>
   );

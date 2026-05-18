@@ -10,7 +10,7 @@ type PackageVariant = "home" | "detail";
 const styles = {
   home: {
     article: "relative rounded-[18px] bg-white px-10 pb-9 pt-20 shadow-[0_8px_24px_rgb(0_116_202_/_8%)] max-md:px-6",
-    badge: "absolute -top-3 left-8 flex h-[44px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 text-[17px] font-semibold text-white",
+    badge: "absolute -top-3 left-8 flex h-[44px] min-w-[158px] items-center justify-center gap-2 rounded-full px-8 text-[17px] font-semibold text-white max-md:left-1/2 max-md:-translate-x-1/2",
     icon: "h-[18px] w-[18px]",
     list: "min-h-[180px] space-y-2 text-[18px] font-normal leading-[1.38] text-black max-md:text-[15px]",
     toggle: "mt-3 inline-block text-[17px] text-[#006ed3] underline underline-offset-2",
@@ -22,7 +22,7 @@ const styles = {
   },
   detail: {
     article: "relative mx-5 rounded-[20px] bg-white px-5 pb-[50px] pt-[72px] shadow-[0_0_10px_rgb(228_239_255_/_50%)] max-md:mx-0 max-md:px-5",
-    badge: "absolute left-5 top-[-10px] flex h-[42px] min-w-[158px] items-center justify-center gap-2 rounded-full px-10 text-[18px] font-medium leading-[18px] text-white",
+    badge: "absolute left-5 top-[-10px] flex h-[42px] min-w-[158px] items-center justify-center gap-2 rounded-full px-10 text-[18px] font-medium leading-[18px] text-white max-md:left-1/2 max-md:-translate-x-1/2",
     icon: "h-[18px] w-[18px]",
     list: "min-h-[189px] space-y-0 text-[18px] font-normal leading-[27px] text-black max-md:text-[15px] max-md:leading-[22px]",
     toggle: "mt-3 inline-block text-[13px] text-[#006ed3] underline underline-offset-2",
