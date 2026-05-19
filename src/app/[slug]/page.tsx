@@ -536,7 +536,8 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
     service.slug === "cilciraq-temizliyi" ||
     service.slug === "pencere-temizliyi" ||
     service.slug === "fasad-temizliyi" ||
-    service.slug === "temir-sonrasi-temizlik";
+    service.slug === "temir-sonrasi-temizlik" ||
+    service.slug === "restoran-temizlenmesi";
 
   return (
     <section className="bg-[#f7f7f7] pb-14 pt-[50px] max-md:pt-5">
