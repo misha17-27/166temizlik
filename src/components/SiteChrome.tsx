@@ -549,8 +549,8 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
         </div>
       </section>
       <footer id="contact" className="blue-band text-white">
-        <div className="container-shell grid grid-cols-[1.1fr_1fr_1fr_1.35fr] gap-16 py-8 max-lg:grid-cols-2 max-sm:grid-cols-1 max-sm:text-center">
-          <div className="text-center">
+        <div className="container-shell grid grid-cols-[1.1fr_1fr_1fr_1.35fr] gap-16 py-8 max-lg:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-x-6 max-sm:gap-y-10 max-sm:text-center">
+          <div className="text-center max-sm:col-span-2">
             <div className="relative mx-auto h-[132px] w-[170px]">
               <Image src={site.footerLogo} alt="166 Təmizlik" fill sizes="170px" className="object-contain" />
             </div>
@@ -582,7 +582,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
               ))}
             </ul>
           </div>
-          <div>
+          <div className="max-sm:col-span-2">
             <h3 className="mb-3 text-[16px] font-bold">{copy.footer.contact}</h3>
             <ul className="space-y-2 text-[14px] font-normal leading-[1.45]">
               <li className="flex items-start gap-2">
