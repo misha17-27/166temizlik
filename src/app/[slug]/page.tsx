@@ -520,7 +520,10 @@ function IntroTextCard({
 
 function IntroBlocks({ service, title, images, paragraphs }: { service: ServicePageItem; title: string; images: string[]; paragraphs: string[] }) {
   const useStackedMobileIntro =
-    service.slug === "ev-temizliyi-xidmeti" || service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi";
+    service.slug === "ev-temizliyi-xidmeti" ||
+    service.slug === "ofis-temizliyi" ||
+    service.slug === "bag-evlerinin-temizliyi" ||
+    service.slug === "erazi-temizliyi";
 
   return (
     <section className="bg-[#f7f7f7] pb-14 pt-[50px] max-md:pt-5">
