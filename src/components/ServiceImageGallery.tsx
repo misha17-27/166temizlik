@@ -165,21 +165,21 @@ export function ServiceImageGallery({ images, title, layout = "mosaic" }: Servic
       )}
 
       {activeIndex !== null ? (
-        <div className="fixed inset-0 z-[200] bg-black/85 text-white" role="dialog" aria-modal="true" aria-label={title}>
-          <div className="absolute left-6 top-6 text-[16px] font-medium">
+        <div className="fixed inset-0 z-[200] h-[100svh] overflow-hidden bg-black/85 text-white" role="dialog" aria-modal="true" aria-label={title}>
+          <div className="absolute left-6 top-6 text-[16px] font-medium max-md:left-4 max-md:top-4">
             {activeIndex + 1} / {galleryImages.length}
           </div>
-          <button type="button" onClick={close} className="absolute right-6 top-5 text-[42px] leading-none text-white" aria-label="Close">
+          <button type="button" onClick={close} className="absolute right-6 top-5 z-10 text-[42px] leading-none text-white max-md:right-4 max-md:top-3 max-md:text-[40px]" aria-label="Close">
             &times;
           </button>
-          <button type="button" onClick={showPrevious} className="absolute left-8 top-1/2 -translate-y-1/2 text-[60px] leading-none text-white/90" aria-label="Previous">
+          <button type="button" onClick={showPrevious} className="absolute left-8 top-1/2 z-10 -translate-y-1/2 text-[60px] leading-none text-white/90 max-md:left-4 max-md:text-[52px]" aria-label="Previous">
             ‹
           </button>
-          <button type="button" onClick={showNext} className="absolute right-8 top-1/2 -translate-y-1/2 text-[60px] leading-none text-white/90" aria-label="Next">
+          <button type="button" onClick={showNext} className="absolute right-8 top-1/2 z-10 -translate-y-1/2 text-[60px] leading-none text-white/90 max-md:right-4 max-md:text-[52px]" aria-label="Next">
             ›
           </button>
-          <div className="flex h-full items-center justify-center px-20 py-16 max-md:px-10">
-            <button type="button" onClick={showNext} className="relative block h-[min(78vh,760px)] w-[min(78vw,1050px)]" aria-label="Next image">
+          <div className="flex h-full items-center justify-center px-20 py-16 max-md:px-12 max-md:py-16">
+            <button type="button" onClick={showNext} className="relative block h-[min(78vh,760px)] w-[min(78vw,1050px)] max-md:h-[calc(100svh-150px)] max-md:w-[calc(100vw-96px)]" aria-label="Next image">
               <Image src={galleryImages[activeIndex]} alt={`${title} ${activeIndex + 1}`} fill sizes="90vw" className="object-contain" priority unoptimized />
             </button>
           </div>
