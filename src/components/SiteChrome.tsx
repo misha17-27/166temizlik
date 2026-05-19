@@ -90,6 +90,38 @@ const contactIcons = {
 
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
+const overlayTransitionMs = 260;
+
+function useAnimatedPresence(open: boolean, duration = overlayTransitionMs) {
+  const [mounted, setMounted] = useState(open);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      let frame = 0;
+      const timeout = window.setTimeout(() => {
+        setMounted(true);
+        frame = window.requestAnimationFrame(() => setVisible(true));
+      }, 0);
+
+      return () => {
+        window.clearTimeout(timeout);
+        window.cancelAnimationFrame(frame);
+      };
+    }
+
+    const hideTimeout = window.setTimeout(() => setVisible(false), 0);
+    const unmountTimeout = window.setTimeout(() => setMounted(false), duration);
+
+    return () => {
+      window.clearTimeout(hideTimeout);
+      window.clearTimeout(unmountTimeout);
+    };
+  }, [duration, open]);
+
+  return { mounted, visible };
+}
+
 function GlobeIcon({ className = "" }: { className?: string }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="none">
@@ -163,9 +195,7 @@ function OrderPopup({
   open: boolean;
   onClose: () => void;
 }) {
-  if (!open) {
-    return null;
-  }
+  const presence = useAnimatedPresence(open);
 
   const labels =
     locale === "ru"
@@ -198,9 +228,25 @@ function OrderPopup({
             submit: "Sifariş et",
           };
 
+  if (!presence.mounted) {
+    return null;
+  }
+
   return (
-    <div className="fixed inset-0 z-[120] grid place-items-center bg-black/75 px-4 py-8" role="dialog" aria-modal="true" aria-label={labels.title}>
-      <div className="relative w-full max-w-[800px] rounded-[18px] bg-[#eaf8ff] px-[38px] py-[70px] shadow-[0_20px_60px_rgb(0_0_0_/_24%)] max-md:px-5 max-md:py-14">
+    <div
+      className={`fixed inset-0 z-[120] grid place-items-center bg-black/75 px-4 py-8 transition-opacity duration-[260ms] ease-out ${
+        presence.visible ? "opacity-100" : "opacity-0"
+      }`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={labels.title}
+      aria-hidden={!presence.visible}
+    >
+      <div
+        className={`relative w-full max-w-[800px] rounded-[18px] bg-[#eaf8ff] px-[38px] py-[70px] shadow-[0_20px_60px_rgb(0_0_0_/_24%)] transition-all duration-[260ms] ease-out max-md:px-5 max-md:py-14 ${
+          presence.visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-4 scale-[0.985] opacity-0"
+        }`}
+      >
         <button
           type="button"
           aria-label="Close order form"
@@ -252,6 +298,7 @@ export function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
+  const mobileMenuPresence = useAnimatedPresence(mobileMenuOpen);
   const copy = chromeCopy[locale];
   const localizedServices = getLocalizedServices(locale);
   const popupServices = currentSlug
@@ -274,11 +321,10 @@ export function Header({
 
   function closeMobileMenu() {
     setMobileMenuOpen(false);
-    setMobileSubmenu(null);
   }
 
   useEffect(() => {
-    if (!mobileMenuOpen && !orderOpen) {
+    if (!mobileMenuPresence.mounted && !orderOpen) {
       return;
     }
 
@@ -291,7 +337,17 @@ export function Header({
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
     };
-  }, [mobileMenuOpen, orderOpen]);
+  }, [mobileMenuPresence.mounted, orderOpen]);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => setMobileSubmenu(null), overlayTransitionMs);
+
+    return () => window.clearTimeout(timeout);
+  }, [mobileMenuOpen]);
 
   return (
     <header className="sticky top-0 z-50 blue-band">
@@ -379,8 +435,13 @@ export function Header({
         </div>
       </div>
 
-      {mobileMenuOpen ? (
-        <div className="fixed inset-0 z-[80] overflow-y-auto bg-white text-[#050505] lg:hidden">
+      {mobileMenuPresence.mounted ? (
+        <div
+          className={`fixed inset-0 z-[80] overflow-y-auto bg-white text-[#050505] transition-all duration-[260ms] ease-out lg:hidden ${
+            mobileMenuPresence.visible ? "translate-y-0 opacity-100" : "-translate-y-3 opacity-0"
+          }`}
+          aria-hidden={!mobileMenuPresence.visible}
+        >
           <div className="relative mx-auto min-h-full w-full max-w-[520px] px-4 pb-16 pt-10">
             <button
               type="button"
