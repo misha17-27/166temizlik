@@ -519,11 +519,23 @@ function IntroTextCard({
 }
 
 function IntroBlocks({ service, title, images, paragraphs }: { service: ServicePageItem; title: string; images: string[]; paragraphs: string[] }) {
+  const skipSecondIntro =
+    service.slug === "cilciraq-temizliyi" ||
+    service.slug === "etirlendirme" ||
+    service.slug === "baximsiz-ev-temizliyi" ||
+    service.slug === "otel-temizlenmesi";
   const useStackedMobileIntro =
     service.slug === "ev-temizliyi-xidmeti" ||
     service.slug === "ofis-temizliyi" ||
     service.slug === "bag-evlerinin-temizliyi" ||
-    service.slug === "erazi-temizliyi";
+    service.slug === "erazi-temizliyi" ||
+    service.slug === "yangindan-sonra-ev-temizliyi" ||
+    service.slug === "etirlendirme" ||
+    service.slug === "yumsaq-mebel-temizlenmesi" ||
+    service.slug === "perde-yuma" ||
+    service.slug === "cilciraq-temizliyi" ||
+    service.slug === "pencere-temizliyi" ||
+    service.slug === "fasad-temizliyi";
 
   return (
     <section className="bg-[#f7f7f7] pb-14 pt-[50px] max-md:pt-5">
@@ -533,9 +545,11 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
             <MobileIntroBlock src={images[0]} alt={title} tone="yellow">
               <p>{paragraphs[0]}</p>
             </MobileIntroBlock>
-            <MobileIntroBlock src={images[1] ?? images[0]} alt={title} tone="blue">
-              <p>{paragraphs[1] ?? service.description}</p>
-            </MobileIntroBlock>
+            {!skipSecondIntro ? (
+              <MobileIntroBlock src={images[1] ?? images[0]} alt={title} tone="blue">
+                <p>{paragraphs[1] ?? service.description}</p>
+              </MobileIntroBlock>
+            ) : null}
           </div>
         ) : null}
         <div className={`grid grid-cols-[396px_1fr] items-start gap-0 max-lg:grid-cols-1 ${useStackedMobileIntro ? "max-md:hidden" : ""}`}>
@@ -544,10 +558,7 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
             {service.slug === "cilciraq-temizliyi" ? <ChandelierIntroText /> : <p>{paragraphs[0]}</p>}
           </IntroTextCard>
         </div>
-        {service.slug === "cilciraq-temizliyi" ||
-        service.slug === "etirlendirme" ||
-        service.slug === "baximsiz-ev-temizliyi" ||
-        service.slug === "otel-temizlenmesi" ? null : (
+        {skipSecondIntro ? null : (
           <div className={`mt-[50px] grid grid-cols-[1fr_396px] items-start gap-0 max-lg:grid-cols-1 ${useStackedMobileIntro ? "max-md:hidden" : ""}`}>
             <IntroTextCard reverse heightClass="h-[286px]">
               <p>{paragraphs[1] ?? service.description}</p>
