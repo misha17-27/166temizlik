@@ -519,12 +519,13 @@ function IntroTextCard({
 }
 
 function IntroBlocks({ service, title, images, paragraphs }: { service: ServicePageItem; title: string; images: string[]; paragraphs: string[] }) {
-  const useHomeMobileIntro = service.slug === "ev-temizliyi-xidmeti";
+  const useStackedMobileIntro =
+    service.slug === "ev-temizliyi-xidmeti" || service.slug === "ofis-temizliyi" || service.slug === "bag-evlerinin-temizliyi";
 
   return (
     <section className="bg-[#f7f7f7] pb-14 pt-[50px] max-md:pt-5">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))] max-md:w-full">
-        {useHomeMobileIntro ? (
+        {useStackedMobileIntro ? (
           <div className="space-y-10 md:hidden">
             <MobileIntroBlock src={images[0]} alt={title} tone="yellow">
               <p>{paragraphs[0]}</p>
@@ -534,7 +535,7 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
             </MobileIntroBlock>
           </div>
         ) : null}
-        <div className={`grid grid-cols-[396px_1fr] items-start gap-0 max-lg:grid-cols-1 ${useHomeMobileIntro ? "max-md:hidden" : ""}`}>
+        <div className={`grid grid-cols-[396px_1fr] items-start gap-0 max-lg:grid-cols-1 ${useStackedMobileIntro ? "max-md:hidden" : ""}`}>
           <FramedImage src={images[0]} alt={title} />
           <IntroTextCard>
             {service.slug === "cilciraq-temizliyi" ? <ChandelierIntroText /> : <p>{paragraphs[0]}</p>}
@@ -544,7 +545,7 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
         service.slug === "etirlendirme" ||
         service.slug === "baximsiz-ev-temizliyi" ||
         service.slug === "otel-temizlenmesi" ? null : (
-          <div className={`mt-[50px] grid grid-cols-[1fr_396px] items-start gap-0 max-lg:grid-cols-1 ${useHomeMobileIntro ? "max-md:hidden" : ""}`}>
+          <div className={`mt-[50px] grid grid-cols-[1fr_396px] items-start gap-0 max-lg:grid-cols-1 ${useStackedMobileIntro ? "max-md:hidden" : ""}`}>
             <IntroTextCard reverse heightClass="h-[286px]">
               <p>{paragraphs[1] ?? service.description}</p>
             </IntroTextCard>
