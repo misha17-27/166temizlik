@@ -38,7 +38,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
             height={item.desktopHeight}
             preload={index === 0}
             sizes={`(max-width: ${item.desktopWidth}px) 100vw, ${item.desktopWidth}px`}
-              className="hidden h-auto w-full object-contain md:block"
+            className="hidden h-auto w-full object-contain md:block"
           />
           <Image
             src={item.mobileImage}
@@ -46,7 +46,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
             fill
             preload={index === 0}
             sizes="(max-width: 768px) 100vw"
-            className="object-cover md:hidden"
+            className="object-contain md:hidden"
           />
         </div>
       ))}
