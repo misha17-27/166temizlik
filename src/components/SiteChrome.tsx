@@ -184,6 +184,38 @@ function LanguageSwitcher({
   );
 }
 
+function MobileLanguageSwitcher({
+  locale,
+  currentSlug,
+  routeKind,
+}: {
+  locale: Locale;
+  currentSlug: string;
+  routeKind: RouteKind;
+}) {
+  const options = getLanguageSwitcherOptions(locale, currentSlug, routeKind);
+
+  return (
+    <div className="mt-auto border-t border-[#ececec] pt-8">
+      <div className="flex items-center gap-3">
+        {options.map((item) => (
+          <Link
+            key={item.locale}
+            href={item.href}
+            prefetch={false}
+            aria-current={item.active ? "page" : undefined}
+            className={`grid h-10 min-w-10 place-items-center rounded-[10px] px-3 text-[15px] font-semibold transition ${
+              item.active ? "bg-[#fff7d7] text-[#c49a00]" : "text-[#6d7280] hover:bg-[#f5f7fb]"
+            }`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function OrderPopup({
   locale,
   services,
@@ -431,7 +463,9 @@ export function Header({
               <path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
             </svg>
           </button>
-          <LanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
+          <div className="max-lg:hidden">
+            <LanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
+          </div>
         </div>
       </div>
 
@@ -442,7 +476,7 @@ export function Header({
           }`}
           aria-hidden={!mobileMenuPresence.visible}
         >
-          <div className="relative mx-auto min-h-full w-full max-w-[520px] px-4 pb-16 pt-10">
+          <div className="relative mx-auto flex min-h-full w-full max-w-[520px] flex-col px-4 pb-8 pt-10">
             <button
               type="button"
               aria-label="Close menu"
@@ -521,6 +555,7 @@ export function Header({
                 </ul>
               </nav>
             )}
+            <MobileLanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
           </div>
         </div>
       ) : null}
