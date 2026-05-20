@@ -476,19 +476,41 @@ export function Header({
           }`}
           aria-hidden={!mobileMenuPresence.visible}
         >
-          <div className="relative mx-auto flex min-h-full w-full max-w-[520px] flex-col px-4 pb-8 pt-10">
-            <button
-              type="button"
-              aria-label="Close menu"
-              onClick={closeMobileMenu}
-              className="absolute right-4 top-6 grid h-9 w-9 place-items-center rounded-full border border-[#050505] text-[#050505]"
-            >
-              <svg aria-hidden="true" viewBox="0 0 18 18" className="h-5 w-5" fill="none">
-                <path d="M5 5 13 13M13 5 5 13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-              </svg>
-            </button>
+          <div className="relative mx-auto flex min-h-full w-full max-w-[520px] flex-col px-4 pb-8 pt-6">
+            <div className="flex min-h-[52px] items-center justify-between gap-4">
+              <Link
+                href={getLocalizedHref(locale, "/")}
+                prefetch={false}
+                onClick={closeMobileMenu}
+                className="relative block h-[52px] w-[92px] shrink-0"
+                aria-label="166 Təmizlik"
+              >
+                <Image
+                  src={site.logo}
+                  alt="166 Təmizlik"
+                  fill
+                  sizes="92px"
+                  className="object-contain"
+                  style={{
+                    filter:
+                      "brightness(0) saturate(100%) invert(35%) sepia(100%) saturate(1950%) hue-rotate(182deg) brightness(92%) contrast(101%)",
+                  }}
+                  priority
+                />
+              </Link>
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={closeMobileMenu}
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#050505] text-[#050505]"
+              >
+                <svg aria-hidden="true" viewBox="0 0 18 18" className="h-5 w-5" fill="none">
+                  <path d="M5 5 13 13M13 5 5 13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
 
-            <div className="mt-[33px] h-[2px] w-full bg-brand-yellow" />
+            <div className="mt-5 h-[2px] w-full bg-brand-yellow" />
 
             {mobileSubmenu ? (
               <nav className="pt-8">
