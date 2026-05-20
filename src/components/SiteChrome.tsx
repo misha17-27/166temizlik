@@ -477,19 +477,19 @@ export function Header({
           aria-hidden={!mobileMenuPresence.visible}
         >
           <div className="relative mx-auto flex min-h-full w-full max-w-[520px] flex-col px-4 pb-8 pt-6">
-            <div className="flex min-h-[52px] items-center justify-between gap-4">
+            <div className="flex min-h-[62px] items-center justify-between gap-4">
               <Link
                 href={getLocalizedHref(locale, "/")}
                 prefetch={false}
                 onClick={closeMobileMenu}
-                className="relative block h-[52px] w-[92px] shrink-0"
+                className="relative block h-[62px] w-[112px] shrink-0"
                 aria-label="166 Təmizlik"
               >
                 <Image
                   src={site.logo}
                   alt="166 Təmizlik"
                   fill
-                  sizes="92px"
+                  sizes="112px"
                   className="object-contain"
                   style={{
                     filter:
