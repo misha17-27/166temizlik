@@ -1,12 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 import { heroSlides, type HeroSlide } from "@/lib/site-data";
 
 export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
   const [active, setActive] = useState(0);
+  const dragStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
   const slide = slides[active];
+  const showPrevious = useCallback(() => {
+    setActive((current) => (current - 1 + slides.length) % slides.length);
+  }, [slides.length]);
+  const showNext = useCallback(() => {
+    setActive((current) => (current + 1) % slides.length);
+  }, [slides.length]);
 
   useEffect(() => {
     if (slides.length < 2) {
@@ -14,14 +21,54 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
     }
 
     const id = window.setInterval(() => {
-      setActive((current) => (current + 1) % slides.length);
+      showNext();
     }, 5200);
 
     return () => window.clearInterval(id);
-  }, [slides.length]);
+  }, [showNext, slides.length]);
+
+  const onPointerDown = (event: PointerEvent<HTMLElement>) => {
+    if (slides.length < 2 || (event.target as HTMLElement).closest("button")) {
+      return;
+    }
+
+    dragStartRef.current = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const onPointerUp = (event: PointerEvent<HTMLElement>) => {
+    const start = dragStartRef.current;
+    dragStartRef.current = null;
+
+    if (!start || start.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - start.x;
+    const deltaY = event.clientY - start.y;
+    if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY) * 1.2) {
+      return;
+    }
+
+    if (deltaX > 0) {
+      showPrevious();
+    } else {
+      showNext();
+    }
+  };
+
+  const onPointerCancel = () => {
+    dragStartRef.current = null;
+  };
 
   return (
-    <section className="relative h-[650px] overflow-hidden bg-brand-blue max-md:h-[330px] max-md:bg-white">
+    <section
+      className="relative h-[650px] touch-pan-y overflow-hidden bg-brand-blue max-md:h-[330px] max-md:bg-white"
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerCancel}
+      onPointerLeave={onPointerCancel}
+    >
       {slides.map((item, index) => (
         <div
           key={`${item.desktopImage}-${index}`}
@@ -55,7 +102,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
         <button
           aria-label="Previous slide"
           className="absolute left-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center text-[#100e0e] transition hover:text-black max-md:hidden"
-          onClick={() => setActive((active - 1 + slides.length) % slides.length)}
+          onClick={showPrevious}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-9 w-9 max-md:h-7 max-md:w-7" fill="none">
             <path d="m15 5-7 7 7 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -65,7 +112,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
         <button
           aria-label="Next slide"
           className="absolute right-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center text-[#100e0e] transition hover:text-black max-md:hidden"
-          onClick={() => setActive((active + 1) % slides.length)}
+          onClick={showNext}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-9 w-9 max-md:h-7 max-md:w-7" fill="none">
             <path d="m9 5 7 7-7 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
