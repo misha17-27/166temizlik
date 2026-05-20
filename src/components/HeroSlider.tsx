@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent, type TouchEvent } from "react";
 import { heroSlides, type HeroSlide } from "@/lib/site-data";
 
 export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
   const [active, setActive] = useState(0);
   const dragStartRef = useRef<{ x: number; y: number; pointerId: number } | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const lastSwipeAtRef = useRef(0);
   const slide = slides[active];
   const showPrevious = useCallback(() => {
     setActive((current) => (current - 1 + slides.length) % slides.length);
@@ -27,6 +29,27 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
     return () => window.clearInterval(id);
   }, [showNext, slides.length]);
 
+  const completeSwipe = useCallback(
+    (deltaX: number, deltaY: number) => {
+      const now = Date.now();
+      if (now - lastSwipeAtRef.current < 350) {
+        return;
+      }
+
+      if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY) * 1.2) {
+        return;
+      }
+
+      lastSwipeAtRef.current = now;
+      if (deltaX > 0) {
+        showPrevious();
+      } else {
+        showNext();
+      }
+    },
+    [showNext, showPrevious],
+  );
+
   const onPointerDown = (event: PointerEvent<HTMLElement>) => {
     if (slides.length < 2 || (event.target as HTMLElement).closest("button")) {
       return;
@@ -44,21 +67,32 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
       return;
     }
 
-    const deltaX = event.clientX - start.x;
-    const deltaY = event.clientY - start.y;
-    if (Math.abs(deltaX) < 45 || Math.abs(deltaX) < Math.abs(deltaY) * 1.2) {
-      return;
-    }
-
-    if (deltaX > 0) {
-      showPrevious();
-    } else {
-      showNext();
-    }
+    completeSwipe(event.clientX - start.x, event.clientY - start.y);
   };
 
   const onPointerCancel = () => {
     dragStartRef.current = null;
+  };
+
+  const onTouchStart = (event: TouchEvent<HTMLElement>) => {
+    if (slides.length < 2 || (event.target as HTMLElement).closest("button")) {
+      return;
+    }
+
+    const touch = event.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const onTouchEnd = (event: TouchEvent<HTMLElement>) => {
+    const start = touchStartRef.current;
+    touchStartRef.current = null;
+
+    if (!start) {
+      return;
+    }
+
+    const touch = event.changedTouches[0];
+    completeSwipe(touch.clientX - start.x, touch.clientY - start.y);
   };
 
   return (
@@ -68,6 +102,11 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerCancel}
       onPointerLeave={onPointerCancel}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={() => {
+        touchStartRef.current = null;
+      }}
     >
       {slides.map((item, index) => (
         <div
