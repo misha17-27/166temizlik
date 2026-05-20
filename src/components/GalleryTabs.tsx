@@ -81,7 +81,7 @@ function getItems(category: GalleryCategoryKey | null) {
   return galleryItems.filter((item) => item.categories.includes(category));
 }
 
-export function GalleryTabs({ categories, moreLabel }: { categories: string[]; moreLabel: string }) {
+export function GalleryTabs({ categories, moreLabel, allLabel }: { categories: string[]; moreLabel: string; allLabel: string }) {
   const [activeCategory, setActiveCategory] = useState<GalleryCategoryKey | null>(null);
   const [visibleCount, setVisibleCount] = useState(15);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -94,6 +94,12 @@ export function GalleryTabs({ categories, moreLabel }: { categories: string[]; m
   function selectCategory(category: GalleryCategoryKey) {
     setActiveCategory(category);
     setVisibleCount(12);
+    setLightboxIndex(null);
+  }
+
+  function showAllCategories() {
+    setActiveCategory(null);
+    setVisibleCount(15);
     setLightboxIndex(null);
   }
 
@@ -159,7 +165,34 @@ export function GalleryTabs({ categories, moreLabel }: { categories: string[]; m
 
   return (
     <>
-      <div className="mx-auto mt-9 flex max-w-[980px] flex-wrap justify-center gap-x-5 gap-y-4 text-center text-[17px] font-medium text-[#333] max-md:mt-8 max-md:gap-x-3 max-md:text-[14px]">
+      <div className="relative mx-auto mt-8 hidden max-w-[360px] max-md:block">
+        <select
+          value={activeCategory ?? ""}
+          onChange={(event) => {
+            const value = event.target.value as GalleryCategoryKey | "";
+            if (!value) {
+              showAllCategories();
+              return;
+            }
+
+            selectCategory(value);
+          }}
+          className="h-[48px] w-full appearance-none rounded-[4px] border border-[#cfcfcf] bg-white px-4 pr-10 text-[16px] font-medium text-[#333] outline-none transition focus:border-brand-blue"
+          aria-label="Qalereya kateqoriyası"
+        >
+          <option value="">{allLabel}</option>
+          {categoryKeys.map((key, index) => (
+            <option key={key} value={key}>
+              {categories[index]}
+            </option>
+          ))}
+        </select>
+        <svg aria-hidden="true" viewBox="0 0 20 20" className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#777]" fill="none">
+          <path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+
+      <div className="mx-auto mt-9 flex max-w-[980px] flex-wrap justify-center gap-x-5 gap-y-4 text-center text-[17px] font-medium text-[#333] max-md:hidden">
         {categoryKeys.map((key, index) => {
           const isActive = activeCategory === key;
 

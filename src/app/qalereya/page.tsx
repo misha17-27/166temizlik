@@ -11,6 +11,7 @@ export const metadata = {
 export function GalleryPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale];
   const categories = getLocalizedGalleryCategories(locale);
+  const allLabel = locale === "ru" ? "Смотреть все" : locale === "tr" ? "Tümünü göster" : "Hamısına bax";
 
   return (
     <SitePage active="gallery" locale={locale} currentSlug="gallery">
@@ -21,7 +22,7 @@ export function GalleryPageContent({ locale = "az" }: { locale?: Locale }) {
             <p className="mt-3 text-[19px] font-bold text-[#8c8c8c] max-md:text-[16px]">{copy.gallery.subtitle}</p>
           </div>
 
-          <GalleryTabs categories={categories} moreLabel={copy.more} />
+          <GalleryTabs categories={categories} moreLabel={copy.more} allLabel={allLabel} />
         </div>
       </section>
     </SitePage>
