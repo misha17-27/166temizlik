@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
         hostname: "166temizlik.az",
         pathname: "/wp-content/**",
       },
+      {
+        protocol: "https",
+        hostname: "admin.166temizlik.az",
+        pathname: "/wp-content/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "admin.166temizlik.az",
+        pathname: "/wp-content/**",
+      },
     ],
   },
 };
