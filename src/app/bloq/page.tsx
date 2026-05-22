@@ -4,14 +4,33 @@ import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedBlogPosts, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
+import { getWordPressImageUrl, getWordPressPosts, stripHtml } from "@/lib/wordpress";
 
 export const metadata = {
   title: "Bloq - 166 Təmizlik",
 };
 
-export function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
+async function getBlogCards(locale: Locale) {
+  try {
+    const response = await getWordPressPosts(locale, 1, 100);
+    if (response.items.length > 0) {
+      return response.items.map((post) => ({
+        slug: post.slug,
+        title: post.title,
+        image: getWordPressImageUrl(post) || pageHeroAssets.blog,
+        excerpt: stripHtml(post.excerpt || post.content),
+      }));
+    }
+  } catch {
+    // Keep the frontend available if WordPress is temporarily unavailable.
+  }
+
+  return getLocalizedBlogPosts(locale);
+}
+
+export async function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale];
-  const posts = getLocalizedBlogPosts(locale);
+  const posts = await getBlogCards(locale);
 
   return (
     <SitePage active="about" locale={locale} currentSlug="blog">
@@ -33,6 +52,6 @@ export function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
   );
 }
 
-export default function BlogPage() {
+export default async function BlogPage() {
   return <BlogPageContent />;
 }
