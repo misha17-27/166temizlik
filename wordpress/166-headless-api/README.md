@@ -24,9 +24,11 @@ https://admin.166temizlik.az/wp-json/headless/v1/posts?lang=az
 
 ## Optional revalidation
 
-Add to `wp-config.php` when the Next.js revalidation endpoint is ready:
+Add to `wp-config.php` when the Next.js revalidation endpoint is ready. The plugin sends a JSON payload with `type`, `slug`, `lang`, `tags`, and `paths` after supported content is saved.
 
 ```php
-define('ONE66_REVALIDATE_URL', 'https://166temizlik.az/api/revalidate');
+define('ONE66_REVALIDATE_URL', 'https://166temizlik.vercel.app/api/revalidate');
 define('ONE66_REVALIDATE_SECRET', 'replace-with-long-secret');
 ```
+
+Use the final production domain in `ONE66_REVALIDATE_URL` after the Vercel frontend is moved to `166temizlik.az`.

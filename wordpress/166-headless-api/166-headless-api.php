@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: 166 Temizlik
  */
 
@@ -279,14 +279,68 @@ final class One66_Headless_API
             'timeout' => 3,
             'blocking' => false,
             'headers' => [
+                'Content-Type' => 'application/json',
                 'X-Revalidate-Secret' => $secret,
             ],
-            'body' => [
+            'body' => wp_json_encode([
                 'id' => $post_id,
                 'type' => $post->post_type,
                 'slug' => $post->post_name,
-            ],
+                'lang' => self::post_language($post_id) ?: 'az',
+                'tags' => self::revalidate_tags($post),
+                'paths' => self::revalidate_paths($post),
+            ]),
         ]);
+    }
+
+    private static function revalidate_tags(WP_Post $post): array
+    {
+        $slug = $post->post_name;
+
+        if ($post->post_type === 'post') {
+            return ['wordpress:posts', 'wordpress:post:' . $slug];
+        }
+
+        if ($post->post_type === 'vakansiya') {
+            return ['wordpress:vacancies', 'wordpress:vacancy:' . $slug];
+        }
+
+        if ($post->post_type === 'emakdaslar') {
+            return ['wordpress:employees', 'wordpress:employee:' . $slug];
+        }
+
+        if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
+            return ['wordpress:pages', 'wordpress:page:' . $slug, 'wordpress:services', 'wordpress:service:' . $slug];
+        }
+
+        return ['wordpress:pages', 'wordpress:page:' . $slug];
+    }
+
+    private static function revalidate_paths(WP_Post $post): array
+    {
+        $slug = $post->post_name;
+
+        if ($post->post_type === 'post') {
+            return ['/bloq', '/' . $slug];
+        }
+
+        if ($post->post_type === 'vakansiya') {
+            return ['/vakansiya', '/vakansiya/' . $slug];
+        }
+
+        if ($post->post_type === 'emakdaslar') {
+            return ['/emekdaslarimiz'];
+        }
+
+        if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
+            return ['/temizlik-xidmetleri', '/' . $slug];
+        }
+
+        if ($post->post_type === 'page') {
+            return ['/' . $slug];
+        }
+
+        return [];
     }
 
     private static function read_route(string $route, string $callback, array $extra_args = []): void
