@@ -1020,7 +1020,7 @@ async function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?:
               <h1 className="max-w-[850px] text-[36px] font-bold leading-tight max-md:text-[26px]">{title}</h1>
             </div>
           </div>
-          <article className="mx-auto mt-10 max-w-[880px] rounded-[18px] bg-white px-10 py-10 shadow-[0_12px_30px_rgb(0_0_0_/_6%)] max-md:px-6 max-md:py-7">
+          <article className="mx-auto mt-10 w-full max-w-[1140px] rounded-[18px] bg-white px-10 py-10 shadow-[0_12px_30px_rgb(0_0_0_/_6%)] max-md:px-6 max-md:py-7">
             <p className="text-[18px] font-medium leading-[1.7] text-[#30313a] max-md:text-[16px]">{excerpt}</p>
             <div className="mt-8 space-y-5 text-[16px] font-normal leading-[1.85] text-[#3f4652]">
               {wpPost ? (
