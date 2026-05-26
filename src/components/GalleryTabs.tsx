@@ -19,6 +19,8 @@ type GalleryItem = {
   height: number;
 };
 
+export type GalleryTabItem = GalleryItem;
+
 const categoryKeys: GalleryCategoryKey[] = [
   "home-office",
   "garden",
@@ -73,21 +75,33 @@ const galleryItems: GalleryItem[] = [
 
 const defaultOrder = [0, 32, 12, 6, 33, 9, 1, 7, 34, 11, 14, 4, 15, 36, 30, 17, 22, 28, 23, 19, 37, 2, 31, 35, 3, 5, 8, 10, 13, 16, 18, 20, 21, 24, 25, 26, 27, 29];
 
-function getItems(category: GalleryCategoryKey | null) {
+function getItems(category: GalleryCategoryKey | null, items: GalleryItem[] = galleryItems) {
   if (!category) {
-    return defaultOrder.map((index) => galleryItems[index]).filter(Boolean);
+    return items === galleryItems ? defaultOrder.map((index) => galleryItems[index]).filter(Boolean) : items;
   }
 
-  return galleryItems.filter((item) => item.categories.includes(category));
+  return items.filter((item) => item.categories.includes(category));
 }
 
-export function GalleryTabs({ categories, moreLabel, allLabel }: { categories: string[]; moreLabel: string; allLabel: string }) {
+export function GalleryTabs({
+  categories,
+  moreLabel,
+  allLabel,
+  items = galleryItems,
+  videoUrl = "https://www.youtube.com/watch?v=BXwEEGgWVO0",
+}: {
+  categories: string[];
+  moreLabel: string;
+  allLabel: string;
+  items?: GalleryItem[];
+  videoUrl?: string;
+}) {
   const [activeCategory, setActiveCategory] = useState<GalleryCategoryKey | null>(null);
   const [visibleCount, setVisibleCount] = useState(15);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const visibleItems = useMemo(() => getItems(activeCategory).slice(0, visibleCount), [activeCategory, visibleCount]);
-  const allItems = getItems(activeCategory);
+  const visibleItems = useMemo(() => getItems(activeCategory, items).slice(0, visibleCount), [activeCategory, items, visibleCount]);
+  const allItems = getItems(activeCategory, items);
   const activeLightboxItem = lightboxIndex === null ? null : visibleItems[lightboxIndex];
   const lightboxDisplayIndex = lightboxIndex ?? 0;
 
@@ -248,7 +262,7 @@ export function GalleryTabs({ categories, moreLabel, allLabel }: { categories: s
       <div className="mx-auto mt-10 max-w-[1120px] overflow-hidden rounded-[14px] bg-black">
         <iframe
           className="aspect-video w-full"
-          src="https://www.youtube.com/embed/BXwEEGgWVO0"
+          src={videoUrl.replace("watch?v=", "embed/")}
           title="Temiz Evim Pencere temizliyi nece olmalıdır?"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
