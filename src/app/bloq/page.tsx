@@ -12,16 +12,23 @@ export const metadata = {
   title: "Bloq - 166 Təmizlik",
 };
 
+function getPostTimestamp(date: string) {
+  const timestamp = Date.parse(date);
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
 async function getBlogCards(locale: Locale) {
   try {
     const response = await getWordPressPosts(locale, 1, 100, { cache: "no-store" });
     if (response.items.length > 0) {
-      return response.items.map((post) => ({
-        slug: post.slug,
-        title: post.title,
-        image: getWordPressImageUrl(post) || pageHeroAssets.blog,
-        excerpt: stripHtml(post.excerpt || post.content),
-      }));
+      return [...response.items]
+        .sort((left, right) => getPostTimestamp(right.date) - getPostTimestamp(left.date))
+        .map((post) => ({
+          slug: post.slug,
+          title: post.title,
+          image: getWordPressImageUrl(post) || pageHeroAssets.blog,
+          excerpt: stripHtml(post.excerpt || post.content),
+        }));
     }
   } catch {
     // Keep the frontend available if WordPress is temporarily unavailable.
