@@ -5,6 +5,8 @@ import { pageHeroAssets, vacancyDetails } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import { getWordPressVacancy } from "@/lib/wordpress";
 
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return vacancyDetails.map((vacancy) => ({ vacancySlug: vacancy.slug }));
 }

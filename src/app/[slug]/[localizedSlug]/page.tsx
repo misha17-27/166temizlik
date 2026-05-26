@@ -20,6 +20,8 @@ import {
 } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
 
+export const dynamic = "force-dynamic";
+
 type PageParams = {
   slug: string;
   localizedSlug: string;

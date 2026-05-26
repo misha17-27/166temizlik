@@ -6,6 +6,8 @@ import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
 import { getWordPressImageUrl, getWordPressPosts, stripHtml } from "@/lib/wordpress";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Bloq - 166 Təmizlik",
 };

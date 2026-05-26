@@ -87,13 +87,13 @@ export async function wpFetch<T>(path: string, options: WordPressFetchOptions = 
     },
   };
 
-  if (options.cache) {
-    requestOptions.cache = options.cache;
-  } else {
+  if (options.revalidate !== undefined) {
     requestOptions.next = {
-      revalidate: options.revalidate ?? 300,
+      revalidate: options.revalidate,
       tags,
     };
+  } else {
+    requestOptions.cache = options.cache ?? "no-store";
   }
 
   const response = await fetch(url, requestOptions);

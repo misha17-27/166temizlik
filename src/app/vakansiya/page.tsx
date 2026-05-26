@@ -5,6 +5,8 @@ import type { Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import { getWordPressVacancies, stripHtml } from "@/lib/wordpress";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Vakansiya - 166 Təmizlik",
 };
