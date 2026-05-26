@@ -10,6 +10,8 @@ import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { site } from "@/lib/site-data";
 import { getWordPressImageUrl, getWordPressPost, stripHtml } from "@/lib/wordpress";
 
+export const dynamic = "force-dynamic";
+
 const packageTitles: Record<Locale, { four: string; eight: string }> = {
   az: { four: "4 saat", eight: "8 saat" },
   ru: { four: "4 часа", eight: "8 часов" },
@@ -405,19 +407,19 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
 };
 
 export function generateStaticParams() {
-  return [...servicePages.map((service) => ({ slug: service.slug })), ...blogPosts.map((post) => ({ slug: post.slug }))];
+  return servicePages.map((service) => ({ slug: service.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const service = servicePages.find((item) => item.slug === slug);
   const post = blogPosts.find((item) => item.slug === slug);
-  const wpPost = service || post ? null : await getWordPressPost(slug).catch(() => null);
-  const title = service?.title ?? post?.title ?? wpPost?.title;
+  const wpPost = service ? null : await getWordPressPost(slug, "az", { cache: "no-store" }).catch(() => null);
+  const title = service?.title ?? wpPost?.title ?? post?.title;
 
   return {
     title: title ? `${title} - 166 Təmizlik` : "166 Təmizlik",
-    description: post?.excerpt ?? (wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : undefined),
+    description: wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : post?.excerpt,
   };
 }
 
@@ -999,7 +1001,7 @@ function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: 
 
 async function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
   const post = blogPosts.find((item) => item.slug === slug);
-  const wpPost = await getWordPressPost(slug, locale).catch(() => null);
+  const wpPost = await getWordPressPost(slug, locale, { cache: "no-store" }).catch(() => null);
 
   if (!post && !wpPost) {
     notFound();

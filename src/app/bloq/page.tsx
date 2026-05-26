@@ -12,7 +12,7 @@ export const metadata = {
 
 async function getBlogCards(locale: Locale) {
   try {
-    const response = await getWordPressPosts(locale, 1, 100);
+    const response = await getWordPressPosts(locale, 1, 100, { cache: "no-store" });
     if (response.items.length > 0) {
       return response.items.map((post) => ({
         slug: post.slug,

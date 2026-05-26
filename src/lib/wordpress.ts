@@ -57,6 +57,7 @@ type WordPressFetchOptions = {
   searchParams?: Record<string, string | number | boolean | undefined>;
   tags?: string[];
   revalidate?: number;
+  cache?: RequestCache;
 };
 
 function createWordPressUrl(path: string, options: WordPressFetchOptions = {}) {
@@ -80,16 +81,22 @@ function createWordPressUrl(path: string, options: WordPressFetchOptions = {}) {
 export async function wpFetch<T>(path: string, options: WordPressFetchOptions = {}) {
   const url = createWordPressUrl(path, options);
   const tags = ["wordpress", ...(options.lang ? [`wordpress:${options.lang}`] : []), ...(options.tags ?? [])];
-
-  const response = await fetch(url, {
+  const requestOptions: RequestInit & { next?: { revalidate?: number; tags?: string[] } } = {
     headers: {
       Accept: "application/json",
     },
-    next: {
+  };
+
+  if (options.cache) {
+    requestOptions.cache = options.cache;
+  } else {
+    requestOptions.next = {
       revalidate: options.revalidate ?? 300,
       tags,
-    },
-  });
+    };
+  }
+
+  const response = await fetch(url, requestOptions);
 
   if (!response.ok) {
     throw new Error(`WordPress request failed: ${response.status} ${response.statusText} (${url.pathname})`);
@@ -134,18 +141,29 @@ export function getWordPressService(slug: string, lang: WordPressLocale = "az") 
   });
 }
 
-export function getWordPressPosts(lang: WordPressLocale = "az", page = 1, perPage = 20) {
+export function getWordPressPosts(
+  lang: WordPressLocale = "az",
+  page = 1,
+  perPage = 20,
+  options: Pick<WordPressFetchOptions, "cache" | "revalidate"> = {},
+) {
   return wpFetch<WordPressCollection<WordPressContentItem>>("/posts", {
     lang,
     searchParams: { page, per_page: perPage },
     tags: ["wordpress:posts"],
+    ...options,
   });
 }
 
-export function getWordPressPost(slug: string, lang: WordPressLocale = "az") {
+export function getWordPressPost(
+  slug: string,
+  lang: WordPressLocale = "az",
+  options: Pick<WordPressFetchOptions, "cache" | "revalidate"> = {},
+) {
   return wpFetch<WordPressContentItem>(`/posts/${slug}`, {
     lang,
     tags: ["wordpress:posts", `wordpress:post:${slug}`],
+    ...options,
   });
 }
 

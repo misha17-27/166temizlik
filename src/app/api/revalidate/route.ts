@@ -54,7 +54,7 @@ export async function POST(request: Request) {
   const tags = unique([...baseTags, ...(payload.tags ?? [])]);
   const paths = unique((payload.paths ?? []).map(normalizePath));
 
-  tags.forEach((tag) => revalidateTag(tag, "max"));
+  tags.forEach((tag) => revalidateTag(tag, { expire: 0 }));
   paths.forEach((path) => revalidatePath(path));
 
   return Response.json({
