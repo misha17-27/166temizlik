@@ -81,7 +81,17 @@ final class One66_Headless_API
     {
         $lang = self::request_lang($request);
         self::switch_language($lang);
-        $contact = self::contact_page_fields($lang);
+        $contact = array_merge(self::contact_page_fields($lang), array_filter([
+            'phonePrimary' => self::option_text('phone_primary'),
+            'phoneSecondary' => self::option_text('phone_secondary'),
+            'email' => self::option_text('email'),
+            'address' => self::option_text('address'),
+            'locationUrl' => self::option_text('location_url'),
+            'facebook' => self::option_text('social_facebook'),
+            'instagram' => self::option_text('social_instagram'),
+            'whatsapp' => self::option_text('social_whatsapp'),
+            'youtube' => self::option_text('social_youtube'),
+        ], [self::class, 'has_value']));
 
         return self::response([
             'lang' => $lang,
@@ -91,11 +101,11 @@ final class One66_Headless_API
             'logo' => self::option_image('site_logo'),
             'logoDark' => self::option_image('site_logo_dark'),
             'favicon' => self::option_image('favicon'),
-            'phonePrimary' => self::option_text('phone_primary') ?: $contact['phonePrimary'],
-            'phoneSecondary' => self::option_text('phone_secondary') ?: $contact['phoneSecondary'],
-            'email' => self::option_text('email') ?: $contact['email'],
-            'address' => self::option_text('address') ?: $contact['address'],
-            'locationUrl' => self::option_text('location_url') ?: $contact['locationUrl'],
+            'phonePrimary' => $contact['phonePrimary'] ?? null,
+            'phoneSecondary' => $contact['phoneSecondary'] ?? null,
+            'email' => $contact['email'] ?? null,
+            'address' => $contact['address'] ?? null,
+            'locationUrl' => $contact['locationUrl'] ?? null,
             'footer' => [
                 'ctaTitle' => self::option_text('footer_cta_title'),
                 'primaryLabel' => self::option_text('footer_cta_primary_label'),
@@ -107,19 +117,12 @@ final class One66_Headless_API
                 'title' => self::option_text('order_popup_title'),
             ],
             'social' => [
-                'facebook' => self::option_text('social_facebook') ?: $contact['facebook'],
-                'instagram' => self::option_text('social_instagram') ?: $contact['instagram'],
-                'whatsapp' => self::option_text('social_whatsapp') ?: $contact['whatsapp'],
-                'youtube' => self::option_text('social_youtube') ?: $contact['youtube'],
+                'facebook' => $contact['facebook'] ?? null,
+                'instagram' => $contact['instagram'] ?? null,
+                'whatsapp' => $contact['whatsapp'] ?? null,
+                'youtube' => $contact['youtube'] ?? null,
             ],
-            'contact' => [
-                'phonePrimary' => self::option_text('phone_primary') ?: $contact['phonePrimary'],
-                'phoneSecondary' => self::option_text('phone_secondary') ?: $contact['phoneSecondary'],
-                'email' => self::option_text('email') ?: $contact['email'],
-                'address' => self::option_text('address') ?: $contact['address'],
-                'locationUrl' => self::option_text('location_url') ?: $contact['locationUrl'],
-                'whatsapp' => self::option_text('social_whatsapp') ?: $contact['whatsapp'],
-            ],
+            'contact' => $contact,
             'assets' => [
                 'logo' => self::option_image('site_logo'),
                 'logoDark' => self::option_image('site_logo_dark'),
@@ -137,12 +140,16 @@ final class One66_Headless_API
 
         $page = self::static_page_post('home', $lang);
         $normalized = $page ? self::normalize_static_page($page, 'home') : null;
+        $mapped = $normalized['mappedAcf'] ?? [];
+        if (empty($mapped['services'])) {
+            $mapped['services'] = self::home_services($lang);
+        }
 
         return self::response([
             'lang' => $lang,
             'page' => $normalized,
             'acf' => $normalized['acf'] ?? [],
-            'mappedAcf' => $normalized['mappedAcf'] ?? [],
+            'mappedAcf' => $mapped,
         ]);
     }
 
@@ -178,16 +185,8 @@ final class One66_Headless_API
     public static function services(WP_REST_Request $request): WP_REST_Response
     {
         $lang = self::request_lang($request);
-        $items = [];
 
-        foreach (self::SERVICE_SLUGS as $slug) {
-            $post = self::service_post_by_canonical_slug($slug, $lang);
-            if ($post) {
-                $items[] = self::normalize_post($post);
-            }
-        }
-
-        return self::response(['lang' => $lang, 'items' => $items]);
+        return self::response(['lang' => $lang, 'items' => self::service_items($lang)]);
     }
 
     public static function service_by_slug(WP_REST_Request $request): WP_REST_Response
@@ -388,6 +387,10 @@ final class One66_Headless_API
             return ['wordpress:pages', 'wordpress:page:' . $slug, 'wordpress:services', 'wordpress:service:' . $slug];
         }
 
+        if ($post->post_type === 'page' && self::is_home_page($post)) {
+            return ['wordpress:pages', 'wordpress:page:' . $slug, 'wordpress:home', 'wordpress:page:home'];
+        }
+
         return ['wordpress:pages', 'wordpress:page:' . $slug];
     }
 
@@ -413,6 +416,10 @@ final class One66_Headless_API
 
         if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
             return ['/temizlik-xidmetleri', '/' . $slug];
+        }
+
+        if ($post->post_type === 'page' && self::is_home_page($post)) {
+            return ['/', '/ru', '/tr'];
         }
 
         if ($post->post_type === 'page') {
@@ -468,6 +475,51 @@ final class One66_Headless_API
         }
 
         return self::response(self::normalize_post($post));
+    }
+
+    private static function service_items(string $lang): array
+    {
+        $items = [];
+
+        foreach (self::SERVICE_SLUGS as $slug) {
+            $post = self::service_post_by_canonical_slug($slug, $lang);
+            if ($post) {
+                $items[] = self::normalize_post($post);
+            }
+        }
+
+        return $items;
+    }
+
+    private static function home_services(string $lang): array
+    {
+        return array_values(array_filter(array_map(function (array $item): ?array {
+            $acf = is_array($item['acf'] ?? null) ? $item['acf'] : [];
+            $icon = self::acf_image(self::acf_first($acf, ['icon', 'service_icon', 'ikon', 'xidmet_iconu']));
+            if (!$icon && !empty($item['featuredImage'])) {
+                $icon = $item['featuredImage'];
+            }
+
+            if (!$icon) {
+                return null;
+            }
+
+            return [
+                'title' => $item['title'] ?? '',
+                'slug' => $item['slug'] ?? '',
+                'icon' => $icon,
+            ];
+        }, self::service_items($lang))));
+    }
+
+    private static function is_home_page(WP_Post $post): bool
+    {
+        $front_id = (int) get_option('page_on_front');
+        if ($front_id > 0 && (int) $post->ID === $front_id) {
+            return true;
+        }
+
+        return in_array($post->post_name, self::STATIC_PAGE_SLUGS['home'], true);
     }
 
     private static function find_post_by_slug(string $post_type, string $slug, string $lang): ?WP_Post
@@ -614,13 +666,16 @@ final class One66_Headless_API
                 $translated_id = self::translated_object_id($source->ID, 'page', $lang);
                 $translated = $translated_id ? get_post($translated_id) : null;
                 if ($translated instanceof WP_Post && $translated->post_status === 'publish') {
+                    self::switch_language($lang);
                     return $translated;
                 }
 
+                self::switch_language($lang);
                 return $source;
             }
         }
 
+        self::switch_language($lang);
         return null;
     }
 
@@ -662,8 +717,11 @@ final class One66_Headless_API
             'heroSlides' => self::acf_first($fields, ['hero_slides', 'slider', 'slides'], []),
             'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos'])),
             'servicesTitle' => self::acf_text(self::acf_first($fields, ['services_title', 'xidmetler_basliq'])),
+            'packagesTitle' => self::acf_text(self::acf_first($fields, ['packages_title', 'paketler_basliq'])),
             'about' => self::acf_first($fields, ['about', 'haqqinda'], []),
             'beforeAfter' => self::acf_first($fields, ['before_after', 'evvel_sonra'], []),
+            'beforeAfterPartnerTitle' => self::acf_text(self::acf_first($fields, ['before_after_partner_title', 'partners_title', 'partnyorlar_basliq'])),
+            'testimonialsTitle' => self::acf_text(self::acf_first($fields, ['testimonials_title', 'reviews_title', 'reyler_basliq'])),
             'testimonials' => self::acf_first($fields, ['testimonials', 'reviews', 'reyler'], []),
         ];
     }
@@ -896,6 +954,16 @@ final class One66_Headless_API
             ];
         }
 
+        if (is_string($item)) {
+            $logo = self::normalize_partner_logo($item);
+            return [
+                'id' => 'partner-' . $index,
+                'title' => $logo['alt'] ?? '',
+                'url' => '',
+                'logo' => $logo,
+            ];
+        }
+
         if (is_array($item) && isset($item['ID'], $item['url'])) {
             $logo = self::normalize_acf_value($item);
             return [
@@ -947,6 +1015,17 @@ final class One66_Headless_API
     {
         if (is_numeric($value)) {
             return self::media((int) $value);
+        }
+
+        if (is_string($value) && preg_match('#^https?://|^/#', $value)) {
+            return [
+                'id' => md5($value),
+                'url' => esc_url_raw($value),
+                'alt' => '',
+                'width' => null,
+                'height' => null,
+                'sizes' => [],
+            ];
         }
 
         if (is_array($value)) {

@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServicePages, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getWordPressImageUrl, getWordPressServices, stripHtml } from "@/lib/wordpress";
-import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
+import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -273,10 +274,12 @@ async function getServiceCards(locale: Locale) {
 }
 
 export async function ServicesPageContent({ locale = "az" }: { locale?: Locale }) {
+  const page = await getStaticWordPressPage("services", locale);
   const orderedServices = await getServiceCards(locale);
 
   return (
     <SitePage active="services" locale={locale} currentSlug="services">
+      <WordPressSeoSchema seo={page?.seo} />
       <ServicesHero locale={locale} />
       <section className="relative overflow-hidden bg-[#f7f7f7] pb-20 pt-7 max-md:pb-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_7%_38%,rgba(255,236,20,0.22),transparent_34%),radial-gradient(circle_at_94%_48%,rgba(0,116,202,0.16),transparent_36%)]" />

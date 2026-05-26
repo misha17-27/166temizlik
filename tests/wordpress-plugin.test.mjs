@@ -18,3 +18,13 @@ test("Yoast SEO response exposes schema data", () => {
   assert.match(plugin, /'schema' =>/);
   assert.match(plugin, /yoast_schema/);
 });
+
+test("settings endpoint merges contact page ACF fields", () => {
+  assert.match(plugin, /\$contact = array_merge\(self::contact_page_fields\(\$lang\)/);
+  assert.match(plugin, /self::contact_page_fields\(\$lang\)/);
+  assert.match(plugin, /'contact' => \$contact/);
+});
+
+test("static page AZ fallback restores requested WPML language", () => {
+  assert.match(plugin, /self::switch_language\(\$lang\);\s+return \$source;/);
+});

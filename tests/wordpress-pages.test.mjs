@@ -25,7 +25,7 @@ async function importTypeScriptModule(sourcePath) {
   output = output.replaceAll('from "./wordpress"', 'from "./wordpress.mjs"');
   await writeFile(
     wordpressStub,
-    "export async function getWordPressPage() { return null; }\nexport function stripHtml(value) { return value.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim(); }\nexport function buildWordPressMetadata(seo, fallback = {}) { const metadata = { title: seo?.title ?? fallback.title, description: seo?.description ?? fallback.description }; if (seo?.canonical) metadata.alternates = { canonical: seo.canonical }; if (seo?.openGraph) metadata.openGraph = { title: seo.openGraph.title, description: seo.openGraph.description, images: seo.openGraph.image ? [seo.openGraph.image] : undefined }; if (seo?.twitter) metadata.twitter = { title: seo.twitter.title, description: seo.twitter.description, images: seo.twitter.image ? [seo.twitter.image] : undefined }; return metadata; }\n",
+    "export async function getWordPressPage() { return null; }\nexport async function getWordPressHome() { return { page: null }; }\nexport function stripHtml(value) { return value.replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim(); }\nexport function buildWordPressMetadata(seo, fallback = {}) { const metadata = { title: seo?.title ?? fallback.title, description: seo?.description ?? fallback.description }; if (seo?.canonical) metadata.alternates = { canonical: seo.canonical }; if (seo?.openGraph) metadata.openGraph = { title: seo.openGraph.title, description: seo.openGraph.description, images: seo.openGraph.image ? [seo.openGraph.image] : undefined }; if (seo?.twitter) metadata.twitter = { title: seo.twitter.title, description: seo.twitter.description, images: seo.twitter.image ? [seo.twitter.image] : undefined }; return metadata; }\n",
     "utf8",
   );
   await writeFile(tempFile, output, "utf8");
@@ -40,11 +40,45 @@ async function importTypeScriptModule(sourcePath) {
 test("static WordPress route keys resolve to canonical API slugs", async () => {
   const { getWordPressPageSlug } = await importTypeScriptModule("src/lib/wordpress-pages.ts");
 
+  assert.equal(getWordPressPageSlug("home"), "home");
   assert.equal(getWordPressPageSlug("about"), "sirket-haqqinda");
   assert.equal(getWordPressPageSlug("equipment"), "temizlik-xidmeti");
   assert.equal(getWordPressPageSlug("partners"), "partnyorlar");
   assert.equal(getWordPressPageSlug("contact"), "166-temizlik-elaqe");
   assert.equal(getWordPressPageSlug("blog"), "bloq");
+});
+
+test("WordPress home featured image becomes the first hero slide", async () => {
+  const { getWordPressHomeHeroSlides } = await importTypeScriptModule("src/lib/wordpress-pages.ts");
+
+  const slides = getWordPressHomeHeroSlides(
+    {
+      title: "Home title",
+      featuredImage: {
+        url: "https://admin.166temizlik.az/wp-content/uploads/home.webp",
+        alt: "Home hero",
+        width: 1440,
+        height: 640,
+      },
+    },
+    [
+      {
+        title: "Fallback",
+        desktopImage: "https://166temizlik.az/fallback.webp",
+        mobileImage: "https://166temizlik.az/fallback-mobile.webp",
+        desktopBgColor: "#0271C9",
+        desktopWidth: 1200,
+        desktopHeight: 500,
+      },
+    ],
+  );
+
+  assert.equal(slides[0].title, "Home title");
+  assert.equal(slides[0].desktopImage, "https://admin.166temizlik.az/wp-content/uploads/home.webp");
+  assert.equal(slides[0].mobileImage, "https://admin.166temizlik.az/wp-content/uploads/home.webp");
+  assert.equal(slides[0].desktopWidth, 1440);
+  assert.equal(slides[0].desktopHeight, 640);
+  assert.equal(slides[1].desktopImage, "https://166temizlik.az/fallback.webp");
 });
 
 test("WordPress page metadata prefers SEO fields and includes social image", async () => {

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedVacancies, pageHeroAssets, vacancyDetails } from "@/lib/pages-data";
 import { getVacancyHref, type Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
-import { getWordPressPageMetadata, getWordPressVacancies, stripHtml } from "@/lib/wordpress";
+import { getWordPressPage, getWordPressPageMetadata, getWordPressVacancies, stripHtml } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
@@ -44,10 +45,12 @@ async function getVacancyCards(locale: Locale): Promise<VacancyCard[]> {
 export async function VacancyPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale].vacancy;
   const sharedCopy = staticPageCopy[locale];
+  const page = await getWordPressPage("vakansiya", locale).catch(() => null);
   const vacancies = await getVacancyCards(locale);
 
   return (
     <SitePage active="about" locale={locale} currentSlug="vacancy">
+      <WordPressSeoSchema seo={page?.seo} />
       <section className="bg-[#f5f5f5]">
         <div
           className="container-shell grid h-[520px] place-items-center bg-cover bg-center max-md:h-[280px]"

@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedEmployees, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
 import { getWordPressEmployees, getWordPressImageUrl, stripHtml } from "@/lib/wordpress";
-import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
+import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -31,10 +32,12 @@ async function getEmployeeCards(locale: Locale) {
 
 export async function EmployeesPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale].employees;
+  const page = await getStaticWordPressPage("employees", locale);
   const employees = await getEmployeeCards(locale);
 
   return (
     <SitePage active="about" locale={locale} currentSlug="employees">
+      <WordPressSeoSchema seo={page?.seo} />
       <section className="relative h-[410px] bg-white max-md:h-[240px]">
         <Image src={pageHeroAssets.employees} alt={copy.title} fill priority sizes="100vw" className="object-cover opacity-70" />
         <div className="absolute inset-0 bg-white/35" />

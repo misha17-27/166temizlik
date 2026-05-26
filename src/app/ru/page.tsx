@@ -1,9 +1,12 @@
 import { HomePage } from "@/components/HomePage";
+import { getHomePageData } from "@/lib/wordpress-home";
+import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
 
-export const metadata = {
-  title: "Услуги уборки - 166 Təmizlik",
-};
+export async function generateMetadata() {
+  return generateStaticWordPressPageMetadata("home", "ru", "Услуги уборки - 166 Təmizlik");
+}
 
-export default function RussianHomePage() {
-  return <HomePage locale="ru" />;
+export default async function RussianHomePage() {
+  const homeData = await getHomePageData("ru");
+  return <HomePage locale="ru" homeData={homeData} />;
 }

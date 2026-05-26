@@ -6,11 +6,11 @@ export const WORDPRESS_API_URL =
 export type WordPressLocale = "az" | "ru" | "tr";
 
 export type WordPressImage = {
-  id: number;
+  id: number | string;
   url: string;
   alt: string;
-  width: number;
-  height: number;
+  width: number | null;
+  height: number | null;
   sizes?: Record<string, string>;
 };
 
@@ -75,6 +75,13 @@ export type WordPressCollection<T> = {
 export type WordPressListResponse<T> = {
   lang: WordPressLocale | string;
   items: T[];
+};
+
+export type WordPressHomeResponse = {
+  lang: WordPressLocale | string;
+  page: WordPressContentItem | null;
+  acf: Record<string, unknown>;
+  mappedAcf: Record<string, unknown>;
 };
 
 export type WordPressSettings = {
@@ -160,6 +167,13 @@ export function getWordPressPage(slug: string, lang: WordPressLocale = "az") {
   return wpFetch<WordPressContentItem>(`/pages/${slug}`, {
     lang,
     tags: ["wordpress:pages", `wordpress:page:${slug}`],
+  });
+}
+
+export function getWordPressHome(lang: WordPressLocale = "az") {
+  return wpFetch<WordPressHomeResponse>("/home", {
+    lang,
+    tags: ["wordpress:pages", "wordpress:page:home"],
   });
 }
 
@@ -299,6 +313,28 @@ export function buildWordPressMetadata(
   }
 
   return metadata;
+}
+
+export function normalizeWordPressSchema(schema: unknown): string[] {
+  if (!schema) {
+    return [];
+  }
+
+  const schemas = Array.isArray(schema) ? schema : [schema];
+
+  return schemas
+    .map((item) => {
+      if (!item) {
+        return null;
+      }
+
+      if (typeof item === "string") {
+        return item.trim() || null;
+      }
+
+      return JSON.stringify(item);
+    })
+    .filter((item): item is string => Boolean(item));
 }
 
 export async function getWordPressPageMetadata(

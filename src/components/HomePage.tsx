@@ -7,6 +7,7 @@ import { HeroSlider } from "@/components/HeroSlider";
 import { CtaFooter, Header } from "@/components/SiteChrome";
 import { getLocalizedServices, homeCopy, type Locale } from "@/lib/i18n";
 import { partners, site } from "@/lib/site-data";
+import type { HomePageData } from "@/lib/wordpress-home";
 
 const packageTitles: Record<Locale, { four: string; eight: string }> = {
   az: { four: "4 saat", eight: "8 saat" },
@@ -16,8 +17,16 @@ const packageTitles: Record<Locale, { four: string; eight: string }> = {
 
 type HomeCopy = (typeof homeCopy)[Locale];
 
-function ServicesSection({ locale, title }: { locale: Locale; title: string }) {
-  const localizedServices = getLocalizedServices(locale);
+function ServicesSection({
+  locale,
+  title,
+  services,
+}: {
+  locale: Locale;
+  title: string;
+  services?: ReturnType<typeof getLocalizedServices>;
+}) {
+  const localizedServices = services?.length ? services : getLocalizedServices(locale);
 
   return (
     <section id="services" className="bg-[#f5f5f5] py-16 max-md:py-10">
@@ -128,7 +137,7 @@ function NotePanel({ copy }: { copy: HomeCopy }) {
   );
 }
 
-function AboutSection({ copy }: { copy: HomeCopy }) {
+function AboutSection({ copy, image }: { copy: HomeCopy; image?: string }) {
   return (
     <section id="about" className="bg-white">
       <div className="bg-[#eef6ff] py-14">
@@ -144,7 +153,7 @@ function AboutSection({ copy }: { copy: HomeCopy }) {
             ))}
           </div>
           <div className="relative mx-auto h-[280px] w-full max-w-[430px]">
-            <Image src={site.aboutImage} alt={copy.about.alt} fill sizes="430px" className="object-contain" />
+            <Image src={image || site.aboutImage} alt={copy.about.alt} fill sizes="430px" className="object-contain" />
           </div>
         </div>
       </div>
@@ -163,8 +172,23 @@ function AboutSection({ copy }: { copy: HomeCopy }) {
   );
 }
 
-function BeforeAfterSection({ copy }: { copy: HomeCopy }) {
-  return <BeforeAfterGallery partnerLogos={partners} partnerTitle={copy.beforeAfterPartnerTitle} copy={copy.beforeAfter} />;
+function BeforeAfterSection({
+  copy,
+  items,
+  partnerLogos,
+}: {
+  copy: HomeCopy;
+  items?: HomePageData["beforeAfter"];
+  partnerLogos?: string[];
+}) {
+  return (
+    <BeforeAfterGallery
+      items={items}
+      partnerLogos={partnerLogos?.length ? partnerLogos : partners}
+      partnerTitle={copy.beforeAfterPartnerTitle}
+      copy={copy.beforeAfter}
+    />
+  );
 }
 
 function TestimonialsSection({ copy }: { copy: HomeCopy }) {
@@ -190,17 +214,34 @@ function TestimonialsSection({ copy }: { copy: HomeCopy }) {
   );
 }
 
-export function HomePage({ locale = "az" }: { locale?: Locale }) {
-  const copy = homeCopy[locale];
+export function HomePage({
+  locale = "az",
+  homeData,
+}: {
+  locale?: Locale;
+  homeData?: HomePageData;
+}) {
+  const fallbackCopy = homeCopy[locale];
+  const copy = homeData
+    ? {
+        ...fallbackCopy,
+        ...homeData.copy,
+        about: {
+          ...fallbackCopy.about,
+          ...homeData.copy.about,
+        },
+      }
+    : fallbackCopy;
+  const heroSlides = homeData?.copy.heroSlides.length ? homeData.copy.heroSlides : copy.heroSlides;
 
   return (
     <main>
       <Header locale={locale} />
-      <HeroSlider slides={copy.heroSlides} />
-      <ServicesSection locale={locale} title={copy.servicesTitle} />
+      <HeroSlider slides={heroSlides} />
+      <ServicesSection locale={locale} title={copy.servicesTitle} services={homeData?.services} />
       <PricesSection copy={copy} locale={locale} />
-      <AboutSection copy={copy} />
-      <BeforeAfterSection copy={copy} />
+      <AboutSection copy={copy} image={homeData?.aboutImage} />
+      <BeforeAfterSection copy={copy} items={homeData?.beforeAfter} partnerLogos={homeData?.partnerLogos} />
       <TestimonialsSection copy={copy} />
       <CtaFooter locale={locale} />
     </main>

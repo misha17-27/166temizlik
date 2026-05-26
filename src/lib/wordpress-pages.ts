@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import type { Locale, StaticRouteKey } from "./routes";
-import { buildWordPressMetadata, getWordPressPage, stripHtml, type WordPressContentItem } from "./wordpress";
+import type { HeroSlide } from "./site-data";
+import { buildWordPressMetadata, getWordPressHome, getWordPressPage, stripHtml, type WordPressContentItem } from "./wordpress";
 
 const wordpressPageSlugs = {
+  home: "home",
   services: "temizlik-xidmetleri",
   about: "sirket-haqqinda",
   gallery: "qalereya",
@@ -28,6 +30,11 @@ export async function getStaticWordPressPage(routeKey: StaticRouteKey, locale: L
   }
 
   try {
+    if (routeKey === "home") {
+      const response = await getWordPressHome(locale);
+      return response.page;
+    }
+
     return await getWordPressPage(slug, locale);
   } catch {
     return null;
@@ -69,6 +76,29 @@ export async function generateStaticWordPressPageMetadata(
 ) {
   const page = await getStaticWordPressPage(routeKey, locale);
   return buildWordPressPageMetadata(page, fallbackTitle);
+}
+
+export function getWordPressHomeHeroSlides(
+  page: Pick<WordPressContentItem, "title" | "featuredImage"> | null,
+  fallbackSlides: HeroSlide[],
+): HeroSlide[] {
+  if (!page?.featuredImage?.url) {
+    return fallbackSlides;
+  }
+
+  const fallback = fallbackSlides[0];
+
+  return [
+    {
+      title: page.title,
+      desktopImage: page.featuredImage.url,
+      mobileImage: page.featuredImage.url,
+      desktopBgColor: fallback?.desktopBgColor ?? "#0271C9",
+      desktopWidth: page.featuredImage.width || fallback?.desktopWidth || 1200,
+      desktopHeight: page.featuredImage.height || fallback?.desktopHeight || 500,
+    },
+    ...fallbackSlides,
+  ];
 }
 
 export type WordPressEquipmentCard = {

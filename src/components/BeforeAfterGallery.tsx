@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { beforeAfter } from "@/lib/site-data";
+import { beforeAfter as fallbackBeforeAfter } from "@/lib/site-data";
+import type { HomeBeforeAfterItem } from "@/lib/wordpress-home";
 
 type BeforeAfterCopy = {
   title: string;
@@ -23,10 +24,12 @@ function clamp(value: number) {
 }
 
 export function BeforeAfterGallery({
+  items = fallbackBeforeAfter,
   partnerLogos = [],
   partnerTitle = "PARTNYORLAR",
   copy = defaultCopy,
 }: {
+  items?: HomeBeforeAfterItem[];
   partnerLogos?: string[];
   partnerTitle?: string;
   copy?: BeforeAfterCopy;
@@ -35,7 +38,8 @@ export function BeforeAfterGallery({
   const [divider, setDivider] = useState(60);
   const [dragging, setDragging] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
-  const active = beforeAfter[activeIndex];
+  const comparisons = items.length ? items : fallbackBeforeAfter;
+  const active = comparisons[Math.min(activeIndex, comparisons.length - 1)];
   const beforeClip = `inset(0 ${100 - divider}% 0 0)`;
 
   function updateDivider(clientX: number) {
@@ -116,7 +120,7 @@ export function BeforeAfterGallery({
         </div>
 
         <div className="mt-10 flex justify-center gap-2 max-md:mt-7">
-          {beforeAfter.map((item, index) => (
+          {comparisons.map((item, index) => (
             <button
               type="button"
               key={item.title}
@@ -132,7 +136,7 @@ export function BeforeAfterGallery({
         </div>
 
         <div className="mx-auto mt-8 grid max-w-[970px] grid-cols-4 gap-2 max-md:grid-cols-2">
-          {beforeAfter.map((item, index) => (
+          {comparisons.map((item, index) => (
             <button
               type="button"
               key={item.title}

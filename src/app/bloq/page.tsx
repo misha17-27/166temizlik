@@ -1,10 +1,11 @@
 import Image from "next/image";
 import { BlogList } from "@/components/BlogList";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedBlogPosts, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
-import { getWordPressImageUrl, getWordPressPageMetadata, getWordPressPosts, stripHtml } from "@/lib/wordpress";
+import { getWordPressImageUrl, getWordPressPage, getWordPressPageMetadata, getWordPressPosts, stripHtml } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
@@ -39,10 +40,12 @@ async function getBlogCards(locale: Locale) {
 
 export async function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale];
+  const page = await getWordPressPage("bloq", locale).catch(() => null);
   const posts = await getBlogCards(locale);
 
   return (
     <SitePage active="about" locale={locale} currentSlug="blog">
+      <WordPressSeoSchema seo={page?.seo} />
       <section className="bg-[#f5f5f5]">
         <div className="container-shell relative h-[395px] overflow-hidden max-md:h-[260px]">
           <Image src={pageHeroAssets.blog} alt={copy.blog.title} fill priority sizes="100vw" className="object-cover" />

@@ -1,5 +1,6 @@
 import { GalleryTabs, type GalleryTabItem } from "@/components/GalleryTabs";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedGalleryCategories } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
@@ -71,11 +72,13 @@ async function getWordPressGallery(locale: Locale) {
     return {
       items,
       videoUrl,
+      seo: page.seo,
     };
   } catch {
     return {
       items: [],
       videoUrl: undefined,
+      seo: null,
     };
   }
 }
@@ -88,6 +91,7 @@ export async function GalleryPageContent({ locale = "az" }: { locale?: Locale })
 
   return (
     <SitePage active="gallery" locale={locale} currentSlug="gallery">
+      <WordPressSeoSchema seo={gallery.seo} />
       <section className="bg-white pb-20 pt-16 max-md:pb-12 max-md:pt-10">
         <div className="container-shell">
           <div className="text-center">

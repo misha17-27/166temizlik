@@ -6,8 +6,10 @@ test("settings endpoint falls back to contact page fields for contact data", asy
   const source = await readFile("wordpress/166-headless-api/166-headless-api.php", "utf8");
 
   assert.match(source, /contact_page_fields/);
-  assert.match(source, /'phonePrimary'\s*=>\s*self::option_text\('phone_primary'\)\s*\?:\s*\$contact\['phonePrimary'\]/);
-  assert.match(source, /'email'\s*=>\s*self::option_text\('email'\)\s*\?:\s*\$contact\['email'\]/);
-  assert.match(source, /'address'\s*=>\s*self::option_text\('address'\)\s*\?:\s*\$contact\['address'\]/);
-  assert.match(source, /'locationUrl'\s*=>\s*self::option_text\('location_url'\)\s*\?:\s*\$contact\['locationUrl'\]/);
+  assert.match(source, /\$contact = array_merge\(self::contact_page_fields\(\$lang\), array_filter\(/);
+  assert.match(source, /'phonePrimary' => self::option_text\('phone_primary'\)/);
+  assert.match(source, /'email' => self::option_text\('email'\)/);
+  assert.match(source, /'address' => self::option_text\('address'\)/);
+  assert.match(source, /'locationUrl' => self::option_text\('location_url'\)/);
+  assert.match(source, /'contact' => \$contact/);
 });

@@ -1,7 +1,10 @@
 import type { Locale } from "./routes";
 import type { WordPressContentItem, WordPressSettings } from "./wordpress";
 
-type ContactSourcePage = Pick<WordPressContentItem, "title" | "excerpt" | "content" | "acf">;
+type ContactSourcePage = Pick<
+  WordPressContentItem,
+  "title" | "excerpt" | "content" | "acf"
+>;
 
 type ContactLink = {
   value: string;
@@ -24,7 +27,17 @@ export type ContactPageData = {
   };
 };
 
-const fallbackText: Record<Locale, Pick<ContactPageData, "formTitle" | "contactTitle" | "questionsTitle" | "shortText" | "whatsappHref">> = {
+const fallbackText: Record<
+  Locale,
+  Pick<
+    ContactPageData,
+    | "formTitle"
+    | "contactTitle"
+    | "questionsTitle"
+    | "shortText"
+    | "whatsappHref"
+  >
+> = {
   az: {
     formTitle: "Müraciət et, biz əlaqə saxlayaq!",
     contactTitle: "Bizimlə əlaqə",
@@ -58,7 +71,12 @@ function decodeHtml(value: string) {
 }
 
 function cleanText(value: unknown) {
-  return typeof value === "string" ? decodeHtml(value).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+  return typeof value === "string"
+    ? decodeHtml(value)
+        .replace(/<[^>]*>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+    : "";
 }
 
 function acfText(page: ContactSourcePage | null | undefined, key: string) {
@@ -71,13 +89,17 @@ function normalizeTelHref(value: string) {
 }
 
 function normalizePhoneLabel(value: string) {
-  const decoded = decodeURIComponent(decodeHtml(value)).replace(/^tel:/i, "").trim();
+  const decoded = decodeURIComponent(decodeHtml(value))
+    .replace(/^tel:/i, "")
+    .trim();
   return decoded.replace(/\s+/g, " ");
 }
 
 function phoneKey(value: string) {
   const normalized = normalizePhoneLabel(value).replace(/[^\d+]/g, "");
-  return normalized.startsWith("+") ? normalized : normalized.replace(/^\+?/, "");
+  return normalized.startsWith("+")
+    ? normalized
+    : normalized.replace(/^\+?/, "");
 }
 
 function pushUniquePhone(items: ContactLink[], value: string, href?: string) {
@@ -85,7 +107,18 @@ function pushUniquePhone(items: ContactLink[], value: string, href?: string) {
   const link = href ? decodeHtml(href) : normalizeTelHref(label);
   const key = phoneKey(label);
 
-  if (!label || !link || !key || items.some((item) => item.href === link || item.value === label || phoneKey(item.value) === key || phoneKey(item.href) === key)) {
+  if (
+    !label ||
+    !link ||
+    !key ||
+    items.some(
+      (item) =>
+        item.href === link ||
+        item.value === label ||
+        phoneKey(item.value) === key ||
+        phoneKey(item.href) === key,
+    )
+  ) {
     return;
   }
 
@@ -93,15 +126,21 @@ function pushUniquePhone(items: ContactLink[], value: string, href?: string) {
 }
 
 function extractHeadings(content: string) {
-  return Array.from(content.matchAll(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi)).map((match) => cleanText(match[1])).filter(Boolean);
+  return Array.from(content.matchAll(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi))
+    .map((match) => cleanText(match[1]))
+    .filter(Boolean);
 }
 
 function extractTelLinks(content: string) {
-  return Array.from(content.matchAll(/href=["'](tel:[^"']+)["']/gi)).map((match) => decodeHtml(match[1]));
+  return Array.from(content.matchAll(/href=["'](tel:[^"']+)["']/gi)).map(
+    (match) => decodeHtml(match[1]),
+  );
 }
 
 function extractMapHref(content: string) {
-  const match = content.match(/href=["'](https?:\/\/(?:www\.)?google\.com\/maps[^"']+)["']/i);
+  const match = content.match(
+    /href=["'](https?:\/\/(?:www\.)?google\.com\/maps[^"']+)["']/i,
+  );
   return match ? decodeHtml(match[1]) : "";
 }
 
@@ -114,19 +153,39 @@ export function buildContactPageData(
   const headings = extractHeadings(page?.content ?? "");
   const phones: ContactLink[] = [];
 
-  pushUniquePhone(phones, acfText(page, "telefon") || settings?.phonePrimary || "166");
-  extractTelLinks(page?.content ?? "").forEach((href) => pushUniquePhone(phones, href, href));
-  pushUniquePhone(phones, acfText(page, "mobil_telefon") || settings?.phoneSecondary || "", acfText(page, "mobil_telefon_link") || undefined);
+  pushUniquePhone(
+    phones,
+    acfText(page, "telefon") || settings?.phonePrimary || "166",
+  );
+  extractTelLinks(page?.content ?? "").forEach((href) =>
+    pushUniquePhone(phones, href, href),
+  );
+  pushUniquePhone(
+    phones,
+    acfText(page, "mobil_telefon") || settings?.phoneSecondary || "",
+    acfText(page, "mobil_telefon_link") || undefined,
+  );
 
-  const email = acfText(page, "email") || settings?.email || "info@166temizlik.az";
-  const address = acfText(page, "unvan") || settings?.address || "Şəfayət Mehdiyev 134, Baku, Azerbaijan";
-  const mapHref = extractMapHref(page?.content ?? "") || settings?.locationUrl || "";
-  const whatsappHref = acfText(page, "whatsapp_link") || settings?.social?.whatsapp || fallbacks.whatsappHref;
+  const email =
+    acfText(page, "email") || settings?.email || "info@166temizlik.az";
+  const address =
+    acfText(page, "unvan") ||
+    settings?.address ||
+    "Şəfayət Mehdiyev 134, Baku, Azerbaijan";
+  const mapHref =
+    extractMapHref(page?.content ?? "") || settings?.locationUrl || "";
+  const whatsappHref =
+    acfText(page, "whatsapp_link") ||
+    settings?.social?.whatsapp ||
+    fallbacks.whatsappHref;
 
   return {
     formTitle: headings[0] || fallbacks.formTitle,
     contactTitle: headings[1] || page?.title || fallbacks.contactTitle,
-    questionsTitle: headings.find((heading) => /sual|вопрос|soru/i.test(heading)) || headings[2] || fallbacks.questionsTitle,
+    questionsTitle:
+      headings.find((heading) => /sual|вопрос|soru/i.test(heading)) ||
+      headings[2] ||
+      fallbacks.questionsTitle,
     shortText: acfText(page, "qisa_mətn") || fallbacks.shortText,
     whatsappHref,
     phones,
@@ -139,9 +198,18 @@ export function buildContactPageData(
       href: mapHref,
     },
     social: {
-      facebook: acfText(page, "facebook") || settings?.social?.facebook || "https://www.facebook.com/166temizlik",
-      instagram: acfText(page, "instagram") || settings?.social?.instagram || "https://www.instagram.com/166_temizlik/",
-      youtube: acfText(page, "youtube") || settings?.social?.youtube || "https://www.youtube.com/@166tmizlikxidmti9/videos",
+      facebook:
+        acfText(page, "facebook") ||
+        settings?.social?.facebook ||
+        "https://www.facebook.com/166temizlik",
+      instagram:
+        acfText(page, "instagram") ||
+        settings?.social?.instagram ||
+        "https://www.instagram.com/166_temizlik/",
+      youtube:
+        acfText(page, "youtube") ||
+        settings?.social?.youtube ||
+        "https://www.youtube.com/@166tmizlikxidmti9/videos",
     },
   };
 }

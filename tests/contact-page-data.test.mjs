@@ -31,7 +31,9 @@ async function importTypeScriptModule(sourcePath) {
 }
 
 test("buildContactPageData uses WordPress page ACF and content for contact fields", async () => {
-  const { buildContactPageData } = await importTypeScriptModule("src/lib/contact-page-data.ts");
+  const { buildContactPageData } = await importTypeScriptModule(
+    "src/lib/contact-page-data.ts",
+  );
 
   const data = buildContactPageData(
     {
@@ -54,8 +56,9 @@ test("buildContactPageData uses WordPress page ACF and content for contact field
         mobil_telefon_link: "tel:+994502854477",
         unvan: "Şəfayət Mehdiyev 134, Baku, Azerbaijan",
         email: "info@166temizlik.az",
-        whatsapp_link: "https://api.whatsapp.com/send?phone=994502854477&text=Salam",
-        "qisa_mətn": "Xidmətlərimiz haqqında ətraflı öyrənmək istəyirsiniz?",
+        whatsapp_link:
+          "https://api.whatsapp.com/send?phone=994502854477&text=Salam",
+        qisa_mətn: "Xidmətlərimiz haqqında ətraflı öyrənmək istəyirsiniz?",
       },
     },
     null,
@@ -65,10 +68,16 @@ test("buildContactPageData uses WordPress page ACF and content for contact field
   assert.equal(data.formTitle, "Müraciət et, biz əlaqə saxlayaq!");
   assert.equal(data.contactTitle, "Bizimlə əlaqə");
   assert.equal(data.questionsTitle, "Suallarınız var?");
-  assert.equal(data.shortText, "Xidmətlərimiz haqqında ətraflı öyrənmək istəyirsiniz?");
+  assert.equal(
+    data.shortText,
+    "Xidmətlərimiz haqqında ətraflı öyrənmək istəyirsiniz?",
+  );
   assert.equal(data.email.value, "info@166temizlik.az");
   assert.equal(data.address.value, "Şəfayət Mehdiyev 134, Baku, Azerbaijan");
-  assert.equal(data.address.href, "https://www.google.com/maps/place/134+Shafayat+Mehdiyev+St");
+  assert.equal(
+    data.address.href,
+    "https://www.google.com/maps/place/134+Shafayat+Mehdiyev+St",
+  );
   assert.deepEqual(
     data.phones.map((item) => [item.value, item.href]),
     [
@@ -80,7 +89,9 @@ test("buildContactPageData uses WordPress page ACF and content for contact field
 });
 
 test("buildContactPageData falls back to settings when page fields are absent", async () => {
-  const { buildContactPageData } = await importTypeScriptModule("src/lib/contact-page-data.ts");
+  const { buildContactPageData } = await importTypeScriptModule(
+    "src/lib/contact-page-data.ts",
+  );
 
   const data = buildContactPageData(
     {

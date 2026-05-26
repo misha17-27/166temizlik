@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { buildWordPressMetadata } from "./wordpress.ts";
+import { buildWordPressMetadata, normalizeWordPressSchema } from "./wordpress.ts";
 
 test("buildWordPressMetadata maps Yoast SEO fields to Next metadata", () => {
   const metadata = buildWordPressMetadata(
@@ -62,4 +62,19 @@ test("buildWordPressMetadata uses fallbacks and skips empty optional SEO groups"
     title: "Fallback title",
     description: "Fallback description",
   });
+});
+
+test("normalizeWordPressSchema prepares JSON-LD payloads", () => {
+  assert.deepEqual(
+    normalizeWordPressSchema([
+      "",
+      null,
+      { "@type": "WebPage", name: "Gallery" },
+      "{\"@type\":\"BreadcrumbList\"}",
+    ]),
+    [
+      "{\"@type\":\"WebPage\",\"name\":\"Gallery\"}",
+      "{\"@type\":\"BreadcrumbList\"}",
+    ],
+  );
 });

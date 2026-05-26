@@ -1,57 +1,96 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
-import { WordPressPageContent } from "@/components/WordPressPageContent";
-import { buildContactPageData, type ContactPageData } from "@/lib/contact-page-data";
+import {
+  buildContactPageData,
+  type ContactPageData,
+} from "@/lib/contact-page-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
 import { site } from "@/lib/site-data";
-import { getWordPressSettings, type WordPressContentItem } from "@/lib/wordpress";
-import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
+import {
+  getWordPressSettings,
+  type WordPressContentItem,
+} from "@/lib/wordpress";
+import {
+  generateStaticWordPressPageMetadata,
+  getStaticWordPressPage,
+} from "@/lib/wordpress-pages";
 
 function getContactSocialLinks(contact: ContactPageData) {
   return [
-  {
-    label: "Facebook",
-    href: contact.social.facebook,
-    icon: (
-      <path
-        d="M13.2 7.6h1.8V4.7a22 22 0 0 0-2.7-.1c-2.7 0-4.5 1.6-4.5 4.6v2.6h-3v3.2h3v8h3.5v-8h2.9l.4-3.2h-3.3V9.5c0-1 .3-1.9 1.9-1.9Z"
-        fill="currentColor"
-      />
-    ),
-  },
-  {
-    label: "Instagram",
-    href: contact.social.instagram,
-    icon: (
-      <>
-        <rect x="5.4" y="5.4" width="13.2" height="13.2" rx="3.4" stroke="currentColor" strokeWidth="1.8" />
-        <circle cx="12" cy="12" r="3.1" stroke="currentColor" strokeWidth="1.8" />
-        <circle cx="16.2" cy="7.8" r="1" fill="currentColor" />
-      </>
-    ),
-  },
-  {
-    label: "WhatsApp",
-    href: contact.whatsappHref,
-    icon: (
-      <>
-        <path d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
-        <path d="M9.3 8.6c.2-.4.4-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.6v.6c0 .3-.1.5-.4.7-.5.4-1.2.5-1.8.3-3-.8-5.4-3.2-6.2-6.1-.2-.7 0-1.3.3-1.8Z" fill="currentColor" />
-      </>
-    ),
-  },
-  {
-    label: "YouTube",
-    href: contact.social.youtube,
-    icon: (
-      <>
-        <rect x="4" y="7" width="16" height="10" rx="3" stroke="currentColor" strokeWidth="1.8" />
-        <path d="m10.6 9.7 4.4 2.3-4.4 2.3V9.7Z" fill="currentColor" />
-      </>
-    ),
-  },
+    {
+      label: "Facebook",
+      href: contact.social.facebook,
+      icon: (
+        <path
+          d="M13.2 7.6h1.8V4.7a22 22 0 0 0-2.7-.1c-2.7 0-4.5 1.6-4.5 4.6v2.6h-3v3.2h3v8h3.5v-8h2.9l.4-3.2h-3.3V9.5c0-1 .3-1.9 1.9-1.9Z"
+          fill="currentColor"
+        />
+      ),
+    },
+    {
+      label: "Instagram",
+      href: contact.social.instagram,
+      icon: (
+        <>
+          <rect
+            x="5.4"
+            y="5.4"
+            width="13.2"
+            height="13.2"
+            rx="3.4"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <circle
+            cx="12"
+            cy="12"
+            r="3.1"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <circle cx="16.2" cy="7.8" r="1" fill="currentColor" />
+        </>
+      ),
+    },
+    {
+      label: "WhatsApp",
+      href: contact.whatsappHref,
+      icon: (
+        <>
+          <path
+            d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z"
+            fill="none"
+            stroke="currentColor"
+            strokeLinejoin="round"
+            strokeWidth="1.8"
+          />
+          <path
+            d="M9.3 8.6c.2-.4.4-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.6v.6c0 .3-.1.5-.4.7-.5.4-1.2.5-1.8.3-3-.8-5.4-3.2-6.2-6.1-.2-.7 0-1.3.3-1.8Z"
+            fill="currentColor"
+          />
+        </>
+      ),
+    },
+    {
+      label: "YouTube",
+      href: contact.social.youtube,
+      icon: (
+        <>
+          <rect
+            x="4"
+            y="7"
+            width="16"
+            height="10"
+            rx="3"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          />
+          <path d="m10.6 9.7 4.4 2.3-4.4 2.3V9.7Z" fill="currentColor" />
+        </>
+      ),
+    },
   ];
 }
 
@@ -61,7 +100,14 @@ function getSyncedContactCards(locale: Locale, contact: ContactPageData) {
 
   return [
     ...(primaryPhone
-      ? [{ title: copy.phone, value: primaryPhone.value, href: primaryPhone.href, icon: "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png" }]
+      ? [
+          {
+            title: copy.phone,
+            value: primaryPhone.value,
+            href: primaryPhone.href,
+            icon: "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png",
+          },
+        ]
       : []),
     ...mobilePhones.map((phone) => ({
       title: copy.mobile,
@@ -69,13 +115,27 @@ function getSyncedContactCards(locale: Locale, contact: ContactPageData) {
       href: phone.href,
       icon: "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png",
     })),
-    { title: copy.address, value: contact.address.value, href: contact.address.href, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png" },
-    { title: copy.email, value: contact.email.value, href: contact.email.href, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png" },
+    {
+      title: copy.address,
+      value: contact.address.value,
+      href: contact.address.href,
+      icon: "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png",
+    },
+    {
+      title: copy.email,
+      value: contact.email.value,
+      href: contact.email.href,
+      icon: "https://166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png",
+    },
   ];
 }
 
 export async function generateMetadata() {
-  return generateStaticWordPressPageMetadata("contact", "az", "Əlaqə - 166 Təmizlik");
+  return generateStaticWordPressPageMetadata(
+    "contact",
+    "az",
+    "Əlaqə - 166 Təmizlik",
+  );
 }
 
 export async function ContactPageContent({
@@ -85,14 +145,19 @@ export async function ContactPageContent({
   locale?: Locale;
   wordpressPage?: WordPressContentItem | null;
 }) {
-  const wpPage = wordpressPage === undefined ? await getStaticWordPressPage("contact", locale) : wordpressPage;
+  const wpPage =
+    wordpressPage === undefined
+      ? await getStaticWordPressPage("contact", locale)
+      : wordpressPage;
   const settings = await getWordPressSettings(locale).catch(() => null);
   const contact = buildContactPageData(wpPage, settings, locale);
   const copy = staticPageCopy[locale].contact;
   const contactCards = getSyncedContactCards(locale, contact);
   const contactSocialLinks = getContactSocialLinks(contact);
   const title = contact.contactTitle || wpPage?.title || copy.contactTitle;
-  const questionsImage = wpPage?.featuredImage?.url || "https://166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg";
+  const questionsImage =
+    wpPage?.featuredImage?.url ||
+    "https://166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg";
 
   return (
     <SitePage active="contact" locale={locale} currentSlug="contact">
@@ -118,29 +183,58 @@ export async function ContactPageContent({
               />
               <button className="ml-auto inline-flex h-[47px] items-center gap-4 rounded-full bg-brand-yellow px-8 text-[16px] font-medium leading-none text-[#13287e] transition-colors hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white focus-visible:outline-none">
                 {copy.submit}
-                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none">
-                  <path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  className="h-5 w-5"
+                  fill="none"
+                >
+                  <path
+                    d="M5 12h14m-6-6 6 6-6 6"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
             </div>
           </form>
 
           <div className="pt-14 max-lg:pt-0">
-            <h2 className="mb-8 text-[39px] font-bold text-[#6252ee] max-md:text-[30px]">{title}</h2>
+            <h2 className="mb-8 text-[39px] font-bold text-[#6252ee] max-md:text-[30px]">
+              {title}
+            </h2>
             <div className="space-y-7">
               {contactCards.map((item) => (
-                <div key={`${item.title}-${item.value}`} className="flex items-center gap-5">
+                <div
+                  key={`${item.title}-${item.value}`}
+                  className="flex items-center gap-5"
+                >
                   <div className="relative grid h-[46px] w-[46px] shrink-0 place-items-center rounded-full bg-[#f4f0ff]">
-                    <Image src={item.icon} alt="" width={28} height={28} className="object-contain" />
+                    <Image
+                      src={item.icon}
+                      alt=""
+                      width={28}
+                      height={28}
+                      className="object-contain"
+                    />
                   </div>
                   <div className="text-[#20294b]">
-                    <h3 className="text-[20px] font-normal leading-[24px]">{item.title}</h3>
+                    <h3 className="text-[20px] font-normal leading-[24px]">
+                      {item.title}
+                    </h3>
                     {item.href ? (
-                      <Link href={item.href} className="mt-1 block text-[16px] font-normal">
+                      <Link
+                        href={item.href}
+                        className="mt-1 block text-[16px] font-normal"
+                      >
                         {item.value}
                       </Link>
                     ) : (
-                      <p className="mt-1 text-[16px] font-normal">{item.value}</p>
+                      <p className="mt-1 text-[16px] font-normal">
+                        {item.value}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -156,7 +250,12 @@ export async function ContactPageContent({
                   rel="noreferrer"
                   className="grid h-9 w-9 place-items-center rounded-[4px] bg-brand-yellow text-[#5447e8] transition-colors hover:bg-black hover:text-white"
                 >
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none">
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="h-[18px] w-[18px]"
+                    fill="none"
+                  >
                     {item.icon}
                   </svg>
                 </Link>
@@ -166,24 +265,41 @@ export async function ContactPageContent({
         </div>
       </section>
 
-      <WordPressPageContent page={wpPage} />
-
       <section className="relative min-h-[540px] overflow-hidden bg-gradient-to-r from-[#0074ca] via-[#05a9dd] to-[#12d5df] text-white max-md:min-h-0">
         <div className="absolute -top-[98px] left-[-20px] h-[180px] w-[110%] origin-left rotate-[-4deg] bg-white" />
         <div className="absolute left-0 top-[78px] h-[255px] w-[90px] rounded-r-full bg-white/18 max-md:hidden" />
         <div className="absolute bottom-[-105px] right-[-20px] h-[360px] w-[430px] rounded-full bg-white/12 max-md:hidden" />
         <div className="container-shell relative grid min-h-[540px] grid-cols-[0.86fr_1fr] items-center gap-16 pt-[46px] max-lg:grid-cols-1 max-lg:gap-8 max-lg:py-20 max-md:min-h-0">
           <div className="pl-2 max-lg:pl-0">
-            <h2 className="text-[42px] font-normal leading-tight text-white max-md:text-[32px]">{contact.questionsTitle || copy.questionsTitle}</h2>
-            {contact.shortText ? <p className="mt-5 max-w-[420px] text-[18px] leading-7 text-white/90">{contact.shortText}</p> : null}
+            <h2 className="text-[42px] font-normal leading-tight text-white max-md:text-[32px]">
+              {contact.questionsTitle || copy.questionsTitle}
+            </h2>
+            {contact.shortText ? (
+              <p className="mt-5 max-w-[420px] text-[18px] leading-7 text-white/90">
+                {contact.shortText}
+              </p>
+            ) : null}
             <Link
               href={contact.whatsappHref || site.whatsappHref}
               className="mt-12 inline-flex h-[45px] items-center gap-2 rounded-full bg-white px-8 text-[15px] font-bold !text-[#39c75a] shadow-[0_8px_20px_rgb(0_0_0_/_8%)] transition-colors hover:bg-black hover:!text-white"
             >
               <span>{copy.whatsapp}</span>
-              <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
-                <path d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
-                <path d="M9.3 8.6c.2-.4.4-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.6v.6c0 .3-.1.5-.4.7-.5.4-1.2.5-1.8.3-3-.8-5.4-3.2-6.2-6.1-.2-.7 0-1.3.3-1.8Z" fill="currentColor" />
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-[15px] w-[15px]"
+                fill="none"
+              >
+                <path
+                  d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z"
+                  stroke="currentColor"
+                  strokeLinejoin="round"
+                  strokeWidth="1.8"
+                />
+                <path
+                  d="M9.3 8.6c.2-.4.4-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.6c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.6v.6c0 .3-.1.5-.4.7-.5.4-1.2.5-1.8.3-3-.8-5.4-3.2-6.2-6.1-.2-.7 0-1.3.3-1.8Z"
+                  fill="currentColor"
+                />
               </svg>
             </Link>
           </div>
