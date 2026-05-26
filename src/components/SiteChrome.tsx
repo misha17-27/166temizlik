@@ -88,6 +88,17 @@ const contactIcons = {
   ),
 };
 
+type SyncedFooterContact = {
+  phonePrimary?: string;
+  phonePrimaryHref?: string;
+  phoneSecondary?: string;
+  phoneSecondaryHref?: string;
+  address?: string;
+  email?: string;
+  whatsappHref?: string;
+  social?: Partial<Record<"Facebook" | "Instagram" | "WhatsApp" | "YouTube", string>>;
+};
+
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
 const overlayTransitionMs = 260;
@@ -314,6 +325,50 @@ function OrderPopup({
       </div>
     </div>
   );
+}
+
+function normalizePhoneHref(value: string) {
+  const compact = value.replace(/[^\d+]/g, "");
+  return compact ? `tel:${compact}` : "";
+}
+
+function readAcfString(acf: Record<string, unknown> | undefined, key: string) {
+  const value = acf?.[key];
+  return typeof value === "string" ? value : "";
+}
+
+async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact | null> {
+  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/pages/166-temizlik-elaqe?lang=${locale}`, {
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const page = (await response.json()) as { acf?: Record<string, unknown> };
+  const acf = page.acf;
+  const phonePrimary = readAcfString(acf, "telefon");
+  const phoneSecondary = readAcfString(acf, "mobil_telefon");
+  const phoneSecondaryHref = readAcfString(acf, "mobil_telefon_link");
+  const email = readAcfString(acf, "email");
+
+  return {
+    phonePrimary,
+    phonePrimaryHref: phonePrimary ? normalizePhoneHref(phonePrimary) : "",
+    phoneSecondary,
+    phoneSecondaryHref: phoneSecondaryHref || (phoneSecondary ? normalizePhoneHref(phoneSecondary) : ""),
+    address: readAcfString(acf, "unvan"),
+    email,
+    whatsappHref: readAcfString(acf, "whatsapp_link"),
+    social: {
+      Facebook: readAcfString(acf, "facebook"),
+      Instagram: readAcfString(acf, "instagram"),
+      WhatsApp: readAcfString(acf, "whatsapp_link"),
+      YouTube: readAcfString(acf, "youtube"),
+    },
+  };
 }
 
 export function Header({
@@ -589,6 +644,34 @@ export function Header({
 export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const copy = chromeCopy[locale];
   const localizedServices = getLocalizedServices(locale);
+  const [contact, setContact] = useState<SyncedFooterContact | null>(null);
+  const phonePrimaryLabel = contact?.phonePrimary || copy.footer.phone;
+  const phonePrimaryHref = contact?.phonePrimaryHref || site.phoneHref;
+  const phoneSecondaryLabel = contact?.phoneSecondary || site.mobileLabel;
+  const phoneSecondaryHref = contact?.phoneSecondaryHref || site.mobileHref;
+  const address = contact?.address || copy.footer.address;
+  const email = contact?.email || site.email;
+  const whatsappHref = contact?.whatsappHref || site.whatsappHref;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchFooterContact(locale)
+      .then((nextContact) => {
+        if (!cancelled && nextContact) {
+          setContact(nextContact);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setContact(null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
 
   return (
     <>
@@ -599,7 +682,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
             <Link href={getLocalizedHref(locale, "/166-temizlik-elaqe/")} className="rounded-full bg-brand-yellow px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
               {copy.cta.contact}
             </Link>
-            <Link href={site.whatsappHref} className="rounded-full bg-white px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
+            <Link href={whatsappHref} className="rounded-full bg-white px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
               {copy.cta.order}
             </Link>
           </div>
@@ -648,7 +731,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
                     {contactIcons.phone}
                   </svg>
                 </span>
-                <Link href={site.phoneHref}>{copy.footer.phone}</Link>
+                <Link href={phonePrimaryHref}>{phonePrimaryLabel}</Link>
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-[2px] grid h-[15px] w-[15px] shrink-0 place-items-center text-white">
@@ -656,7 +739,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
                     {contactIcons.mobile}
                   </svg>
                 </span>
-                <Link href={site.mobileHref}>{site.mobileLabel}</Link>
+                <Link href={phoneSecondaryHref}>{phoneSecondaryLabel}</Link>
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-[3px] grid h-[15px] w-[15px] shrink-0 place-items-center text-white">
@@ -664,7 +747,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
                     {contactIcons.pin}
                   </svg>
                 </span>
-                <span>{copy.footer.address}</span>
+                <span>{address}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="mt-[3px] grid h-[15px] w-[15px] shrink-0 place-items-center text-white">
@@ -672,21 +755,23 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
                     {contactIcons.mail}
                   </svg>
                 </span>
-                <Link href={`mailto:${site.email}`}>{site.email}</Link>
+                <Link href={`mailto:${email}`}>{email}</Link>
               </li>
             </ul>
             <div className="mt-4 flex gap-2">
               {socialIcons.map((item) => (
-                <span
+                <Link
                   key={item.label}
-                  role="img"
+                  href={contact?.social?.[item.label as keyof NonNullable<SyncedFooterContact["social"]>] || "#"}
                   aria-label={item.label}
+                  target={contact?.social?.[item.label as keyof NonNullable<SyncedFooterContact["social"]>] ? "_blank" : undefined}
+                  rel={contact?.social?.[item.label as keyof NonNullable<SyncedFooterContact["social"]>] ? "noreferrer" : undefined}
                   className="grid h-[27px] w-[27px] place-items-center rounded-full border-2 border-white text-white"
                 >
                   <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
                     {item.icon}
                   </svg>
-                </span>
+                </Link>
               ))}
             </div>
           </div>
