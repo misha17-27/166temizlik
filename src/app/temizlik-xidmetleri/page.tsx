@@ -3,6 +3,9 @@ import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedServicePages, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
+import { getWordPressImageUrl, getWordPressServices, stripHtml } from "@/lib/wordpress";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Təmizlik xidmətləri - 166 Təmizlik",
@@ -227,15 +230,49 @@ function ServiceListCard({
   );
 }
 
-export function ServicesPageContent({ locale = "az" }: { locale?: Locale }) {
+async function getServiceCards(locale: Locale) {
   const localizedServicePages = getLocalizedServicePages(servicePages, locale);
-  const orderedServices = serviceOrder
+  const fallbackServices = serviceOrder
     .map((slug) => localizedServicePages.find((service) => service.slug === slug))
     .filter((service): service is (typeof servicePages)[number] => Boolean(service))
     .map((service) => ({
       ...service,
       description: serviceListDescriptions[locale][service.slug] ?? service.description,
     }));
+
+  try {
+    const response = await getWordPressServices(locale);
+    if (response.items.length > 0) {
+      const fallbackBySlug = new Map(fallbackServices.map((service) => [service.slug, service]));
+      const wordpressBySlug = new Map(response.items.map((service) => [service.slug, service]));
+
+      return serviceOrder
+        .map((slug) => {
+          const wpService = wordpressBySlug.get(slug);
+          const fallback = fallbackBySlug.get(slug);
+
+          if (!fallback) {
+            return null;
+          }
+
+          return {
+            ...fallback,
+            title: wpService?.title ?? fallback.title,
+            image: wpService ? getWordPressImageUrl(wpService) || fallback.image : fallback.image,
+            description: wpService ? stripHtml(wpService.excerpt || wpService.content) || fallback.description : fallback.description,
+          };
+        })
+        .filter((service): service is (typeof fallbackServices)[number] => Boolean(service));
+    }
+  } catch {
+    // Keep the frontend available if WordPress is temporarily unavailable.
+  }
+
+  return fallbackServices;
+}
+
+export async function ServicesPageContent({ locale = "az" }: { locale?: Locale }) {
+  const orderedServices = await getServiceCards(locale);
 
   return (
     <SitePage active="services" locale={locale} currentSlug="services">

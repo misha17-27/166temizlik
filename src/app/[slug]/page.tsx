@@ -8,7 +8,7 @@ import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { site } from "@/lib/site-data";
-import { getWordPressImageUrl, getWordPressPost, stripHtml } from "@/lib/wordpress";
+import { getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
@@ -414,16 +414,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const service = servicePages.find((item) => item.slug === slug);
   const post = blogPosts.find((item) => item.slug === slug);
+  const wpService = service ? await getWordPressService(slug, "az").catch(() => null) : null;
   const wpPost = service ? null : await getWordPressPost(slug, "az", { cache: "no-store" }).catch(() => null);
-  const title = service?.title ?? wpPost?.title ?? post?.title;
+  const title = wpService?.title ?? service?.title ?? wpPost?.title ?? post?.title;
 
   return {
     title: title ? `${title} - 166 Təmizlik` : "166 Təmizlik",
-    description: wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : post?.excerpt,
+    description: wpService ? stripHtml(wpService.excerpt || wpService.content) : wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : post?.excerpt,
   };
 }
 
-export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
+export async function ServiceDetailContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
   const localizedServicePages = getLocalizedServicePages(servicePages, locale);
   const service = localizedServicePages.find((item) => item.slug === slug);
 
@@ -432,17 +433,22 @@ export function ServiceDetailContent({ slug, locale = "az" }: { slug: string; lo
   }
 
   const copy = pageCopy[locale];
+  const wpService = await getWordPressService(slug, locale).catch(() => null);
+  const wpServiceText = wpService ? stripHtml(wpService.excerpt || wpService.content) : "";
+  const wpServiceImage = wpService ? getWordPressImageUrl(wpService) : "";
   const images = detailImageSets[service.slug] ?? [service.image];
   const introImages = introImageSets[service.slug] ?? images;
-  const displayTitle = locale === "az" ? serviceTitleOverrides[service.slug] ?? service.title : service.title;
+  const displayTitle = wpService?.title ?? (locale === "az" ? serviceTitleOverrides[service.slug] ?? service.title : service.title);
   const paragraphs =
-    locale === "az"
+    wpServiceText
+      ? [wpServiceText, service.description]
+      : locale === "az"
       ? serviceLongCopy[service.slug] ?? [
           service.description,
           "166 Təmizlik Xidməti bu istiqamətdə peşəkar komanda, müasir avadanlıq və keyfiyyətli təmizləyici vasitələrlə xidmət göstərir. Sifarişin həcmi, məkanın vəziyyəti və müştərinin istəyinə uyğun olaraq xidmət planı formalaşdırılır.",
         ]
       : [service.description, copy.bottomText];
-  const heroImage = service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog;
+  const heroImage = wpServiceImage || (service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog);
 
   if (service.slug === "korporativ-temizlik-xidmeti" && locale === "az") {
     return <CorporateServiceContent service={service} displayTitle={displayTitle} />;

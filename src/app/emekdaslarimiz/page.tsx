@@ -3,14 +3,34 @@ import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedEmployees, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
+import { getWordPressEmployees, getWordPressImageUrl, stripHtml } from "@/lib/wordpress";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Əməkdaşlarımız - 166 Təmizlik",
 };
 
-export function EmployeesPageContent({ locale = "az" }: { locale?: Locale }) {
+async function getEmployeeCards(locale: Locale) {
+  try {
+    const response = await getWordPressEmployees(locale);
+    if (response.items.length > 0) {
+      return response.items.map((person) => ({
+        name: person.title,
+        role: stripHtml(person.excerpt || person.content),
+        image: getWordPressImageUrl(person),
+      }));
+    }
+  } catch {
+    // Keep the frontend available if WordPress is temporarily unavailable.
+  }
+
+  return getLocalizedEmployees(locale);
+}
+
+export async function EmployeesPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale].employees;
-  const employees = getLocalizedEmployees(locale);
+  const employees = await getEmployeeCards(locale);
 
   return (
     <SitePage active="about" locale={locale} currentSlug="employees">

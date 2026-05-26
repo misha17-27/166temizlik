@@ -128,7 +128,7 @@ export function getWordPressPage(slug: string, lang: WordPressLocale = "az") {
 }
 
 export function getWordPressServices(lang: WordPressLocale = "az") {
-  return wpFetch<WordPressContentItem[]>("/services", {
+  return wpFetch<WordPressCollection<WordPressContentItem>>("/services", {
     lang,
     tags: ["wordpress:services"],
   });
@@ -183,7 +183,7 @@ export function getWordPressVacancy(slug: string, lang: WordPressLocale = "az") 
 }
 
 export function getWordPressEmployees(lang: WordPressLocale = "az") {
-  return wpFetch<WordPressContentItem[]>("/employees", {
+  return wpFetch<WordPressCollection<WordPressContentItem>>("/employees", {
     lang,
     tags: ["wordpress:employees"],
   });
