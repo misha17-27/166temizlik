@@ -4,12 +4,13 @@ import { getLocalizedEmployees, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
 import { getWordPressEmployees, getWordPressImageUrl, stripHtml } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Əməkdaşlarımız - 166 Təmizlik",
-};
+export function generateMetadata() {
+  return generateStaticWordPressPageMetadata("employees", "az", "Əməkdaşlarımız - 166 Təmizlik");
+}
 
 async function getEmployeeCards(locale: Locale) {
   try {

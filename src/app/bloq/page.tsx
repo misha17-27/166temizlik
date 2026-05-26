@@ -4,13 +4,13 @@ import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedBlogPosts, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
-import { getWordPressImageUrl, getWordPressPosts, stripHtml } from "@/lib/wordpress";
+import { getWordPressImageUrl, getWordPressPageMetadata, getWordPressPosts, stripHtml } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Bloq - 166 Təmizlik",
-};
+export function generateMetadata() {
+  return getWordPressPageMetadata("bloq", "az", { title: "Bloq - 166 Təmizlik" });
+}
 
 function getPostTimestamp(date: string) {
   const timestamp = Date.parse(date);
@@ -55,7 +55,7 @@ export async function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
       </section>
 
       <section className="bg-[#f5f5f5] py-8 pb-24">
-        <BlogList posts={posts} readMore={copy.readMore} />
+        <BlogList posts={posts} readMore={copy.readMore} locale={locale} />
       </section>
     </SitePage>
   );

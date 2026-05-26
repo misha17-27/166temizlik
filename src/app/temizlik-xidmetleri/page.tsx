@@ -4,12 +4,13 @@ import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedServicePages, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getWordPressImageUrl, getWordPressServices, stripHtml } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Təmizlik xidmətləri - 166 Təmizlik",
-};
+export function generateMetadata() {
+  return generateStaticWordPressPageMetadata("services", "az", "Təmizlik xidmətləri - 166 Təmizlik");
+}
 
 const serviceListImages: Record<string, string> = {
   "ev-temizliyi-xidmeti": "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyiiii.webp",

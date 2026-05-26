@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { getBlogPostHref, type Locale } from "@/lib/routes";
 
 type BlogPost = {
   slug: string;
@@ -11,7 +12,7 @@ type BlogPost = {
   excerpt: string;
 };
 
-export function BlogList({ posts, readMore }: { posts: BlogPost[]; readMore: string }) {
+export function BlogList({ posts, readMore, locale = "az" }: { posts: BlogPost[]; readMore: string; locale?: Locale }) {
   const perPage = 9;
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(posts.length / perPage);
@@ -22,7 +23,7 @@ export function BlogList({ posts, readMore }: { posts: BlogPost[]; readMore: str
       <div className="container-shell grid grid-cols-3 gap-x-9 gap-y-10 max-lg:grid-cols-2 max-sm:grid-cols-1">
         {visiblePosts.map((post) => (
           <article key={post.slug} className="bg-white">
-            <Link href={`/${post.slug}/`} className="group block">
+            <Link href={getBlogPostHref(post.slug, locale)} className="group block">
               <div className="relative h-[245px] overflow-hidden">
                 <Image src={post.image} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition duration-300 group-hover:scale-[1.03]" />
               </div>

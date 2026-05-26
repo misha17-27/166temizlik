@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { pageHeroAssets, vacancyDetails } from "@/lib/pages-data";
+import { getLocalizedHref, type Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
-import { getWordPressVacancy } from "@/lib/wordpress";
+import { buildWordPressMetadata, getWordPressVacancy, stripHtml } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
@@ -16,17 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ vacancySl
   const vacancy = vacancyDetails.find((item) => item.slug === vacancySlug);
   const wpVacancy = vacancy ? null : await getWordPressVacancy(vacancySlug).catch(() => null);
   const title = wpVacancy?.title ?? vacancy?.title;
+  const description = wpVacancy ? stripHtml(wpVacancy.excerpt || wpVacancy.content) : undefined;
 
-  return {
+  return buildWordPressMetadata(wpVacancy?.seo, {
     title: title ? `${title} - 166 Təmizlik` : "Vakansiya - 166 Təmizlik",
-  };
+    description,
+  });
 }
 
-export default async function VacancyDetailPage({ params }: { params: Promise<{ vacancySlug: string }> }) {
-  const { vacancySlug } = await params;
+export async function VacancyDetailContent({ vacancySlug, locale = "az" }: { vacancySlug: string; locale?: Locale }) {
   const vacancy = vacancyDetails.find((item) => item.slug === vacancySlug);
-  const wpVacancy = await getWordPressVacancy(vacancySlug).catch(() => null);
-  const copy = staticPageCopy.az.vacancy;
+  const wpVacancy = await getWordPressVacancy(vacancySlug, locale).catch(() => null);
+  const copy = staticPageCopy[locale].vacancy;
   const title = wpVacancy?.title ?? vacancy?.title ?? "";
 
   if (!vacancy && !wpVacancy) {
@@ -34,7 +37,8 @@ export default async function VacancyDetailPage({ params }: { params: Promise<{ 
   }
 
   return (
-    <SitePage active="about" locale="az" currentSlug="vacancy">
+    <SitePage active="about" locale={locale} currentSlug={vacancySlug} routeKind="vacancyDetail">
+      <WordPressSeoSchema seo={wpVacancy?.seo} />
       <section className="bg-[#f5f5f5]">
         <div
           className="container-shell grid h-[400px] place-items-center bg-cover bg-center max-md:h-[260px]"
@@ -58,7 +62,7 @@ export default async function VacancyDetailPage({ params }: { params: Promise<{ 
             </div>
           )}
           <Link
-            href="/166-temizlik-elaqe/"
+            href={getLocalizedHref(locale, "/166-temizlik-elaqe/")}
             className="mt-[34px] inline-flex h-[39px] items-center justify-center rounded-full bg-brand-yellow px-[30px] text-[15px] font-medium leading-none text-[#0e0e0e] transition-colors hover:bg-black hover:text-white"
           >
             CV Göndər
@@ -67,4 +71,9 @@ export default async function VacancyDetailPage({ params }: { params: Promise<{ 
       </section>
     </SitePage>
   );
+}
+
+export default async function VacancyDetailPage({ params }: { params: Promise<{ vacancySlug: string }> }) {
+  const { vacancySlug } = await params;
+  return <VacancyDetailContent vacancySlug={vacancySlug} />;
 }

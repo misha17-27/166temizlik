@@ -14,7 +14,7 @@ export type StaticRouteKey =
   | "employees"
   | "vacancy";
 
-export type RouteKind = "static" | "service";
+export type RouteKind = "static" | "service" | "blogPost" | "vacancyDetail";
 
 export const localizedStaticRoutes: Record<StaticRouteKey, Record<Locale, string>> = {
   home: {
@@ -197,6 +197,23 @@ export function getServiceHref(canonicalSlug: string, locale: Locale) {
   return locale === "az" ? `/${localizedSlug}/` : `/${locale}/${localizedSlug}/`;
 }
 
+export function getBlogPostHref(slug: string, locale: Locale) {
+  const normalized = normalizePathToSlug(slug);
+  const collidesWithKnownRoute =
+    staticSlugToRoute.has(normalized) || serviceSlugToCanonical.has(normalized) || isLocale(normalized);
+
+  if (locale === "az") {
+    return collidesWithKnownRoute ? `/bloq/${normalized}/` : `/${normalized}/`;
+  }
+
+  return collidesWithKnownRoute ? `/${locale}/bloq/${normalized}/` : `/${locale}/${normalized}/`;
+}
+
+export function getVacancyHref(slug: string, locale: Locale) {
+  const normalized = normalizePathToSlug(slug);
+  return `${getStaticHref("vacancy", locale)}${normalized}/`;
+}
+
 export function getLocalizedHref(locale: Locale, href: string) {
   if (href.startsWith("#") || href.startsWith("http") || href.startsWith("tel:") || href.startsWith("mailto:")) {
     return href;
@@ -241,6 +258,14 @@ export function resolveLocalizedSlug(locale: Locale, slug: string): { kind: Rout
 export function getHrefForCanonical(locale: Locale, canonicalSlug: string, kind: RouteKind = "static") {
   if (kind === "service") {
     return getServiceHref(canonicalSlug, locale);
+  }
+
+  if (kind === "blogPost") {
+    return getBlogPostHref(canonicalSlug, locale);
+  }
+
+  if (kind === "vacancyDetail") {
+    return getVacancyHref(canonicalSlug, locale);
   }
 
   return getStaticHref(canonicalSlug as StaticRouteKey, locale);

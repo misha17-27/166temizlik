@@ -3,13 +3,13 @@ import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedGalleryCategories } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
-import { getWordPressPage } from "@/lib/wordpress";
+import { getWordPressPage, getWordPressPageMetadata } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Qalereya - 166 Təmizlik",
-};
+export function generateMetadata() {
+  return getWordPressPageMetadata("qalereya", "az", { title: "Qalereya - 166 Təmizlik" });
+}
 
 const galleryAcfFields = [
   ["home-office", "ev_və_ofis_təmizliyi_səkiller"],

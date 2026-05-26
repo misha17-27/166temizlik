@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 export const WORDPRESS_API_URL =
   process.env.WORDPRESS_API_URL ?? "https://admin.166temizlik.az/wp-json/headless/v1";
 
@@ -20,9 +22,20 @@ export type WordPressTranslation = {
 };
 
 export type WordPressSeo = {
-  title?: string;
-  description?: string;
-  canonical?: string;
+  title?: string | null;
+  description?: string | null;
+  canonical?: string | null;
+  schema?: unknown;
+  openGraph?: {
+    title?: string | null;
+    description?: string | null;
+    image?: string | null;
+  } | null;
+  twitter?: {
+    title?: string | null;
+    description?: string | null;
+    image?: string | null;
+  } | null;
 };
 
 export type WordPressContentItem = {
@@ -42,6 +55,13 @@ export type WordPressContentItem = {
   modified: string;
 };
 
+export type WordPressPartner = {
+  id: number | string;
+  title: string;
+  url: string;
+  logo: WordPressImage | null;
+};
+
 export type WordPressCollection<T> = {
   items: T[];
   pagination: {
@@ -50,6 +70,30 @@ export type WordPressCollection<T> = {
     total: number;
     totalPages: number;
   };
+};
+
+export type WordPressListResponse<T> = {
+  lang: WordPressLocale | string;
+  items: T[];
+};
+
+export type WordPressSettings = {
+  lang: WordPressLocale | string;
+  siteName: string;
+  description: string;
+  homeUrl: string;
+  phonePrimary: string | null;
+  phoneSecondary: string | null;
+  email: string | null;
+  address: string | null;
+  locationUrl?: string | null;
+  social: {
+    facebook: string | null;
+    instagram: string | null;
+    whatsapp: string | null;
+    youtube: string | null;
+  };
+  acf: Record<string, unknown>;
 };
 
 type WordPressFetchOptions = {
@@ -106,17 +150,9 @@ export async function wpFetch<T>(path: string, options: WordPressFetchOptions = 
 }
 
 export function getWordPressSettings(lang: WordPressLocale = "az") {
-  return wpFetch<Record<string, unknown>>("/settings", {
+  return wpFetch<WordPressSettings>("/settings", {
     lang,
     tags: ["wordpress:settings"],
-  });
-}
-
-export function getWordPressPages(lang: WordPressLocale = "az", page = 1, perPage = 20) {
-  return wpFetch<WordPressCollection<WordPressContentItem>>("/pages", {
-    lang,
-    searchParams: { page, per_page: perPage },
-    tags: ["wordpress:pages"],
   });
 }
 
@@ -196,6 +232,13 @@ export function getWordPressGallery(lang: WordPressLocale = "az") {
   });
 }
 
+export function getWordPressPartners(lang: WordPressLocale = "az") {
+  return wpFetch<WordPressListResponse<WordPressPartner> | WordPressPartner[]>("/partners", {
+    lang,
+    tags: ["wordpress:partners"],
+  });
+}
+
 export function stripHtml(value: string) {
   return value
     .replace(/<[^>]*>/g, " ")
@@ -205,4 +248,64 @@ export function stripHtml(value: string) {
 
 export function getWordPressImageUrl(item: WordPressContentItem) {
   return item.featuredImage?.url ?? "";
+}
+
+function cleanSeoValue(value: string | null | undefined) {
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+export function buildWordPressMetadata(
+  seo: WordPressSeo | null | undefined,
+  fallback: { title?: string; description?: string } = {},
+): Metadata {
+  const title = cleanSeoValue(seo?.title) ?? cleanSeoValue(fallback.title);
+  const description = cleanSeoValue(seo?.description) ?? cleanSeoValue(fallback.description);
+  const canonical = cleanSeoValue(seo?.canonical);
+  const openGraphTitle = cleanSeoValue(seo?.openGraph?.title);
+  const openGraphDescription = cleanSeoValue(seo?.openGraph?.description);
+  const openGraphImage = cleanSeoValue(seo?.openGraph?.image);
+  const twitterTitle = cleanSeoValue(seo?.twitter?.title);
+  const twitterDescription = cleanSeoValue(seo?.twitter?.description);
+  const twitterImage = cleanSeoValue(seo?.twitter?.image);
+
+  const metadata: Metadata = {};
+
+  if (title) {
+    metadata.title = title;
+  }
+
+  if (description) {
+    metadata.description = description;
+  }
+
+  if (canonical) {
+    metadata.alternates = { canonical };
+  }
+
+  if (openGraphTitle || openGraphDescription || openGraphImage) {
+    metadata.openGraph = {
+      ...(openGraphTitle ? { title: openGraphTitle } : {}),
+      ...(openGraphDescription ? { description: openGraphDescription } : {}),
+      ...(openGraphImage ? { images: [openGraphImage] } : {}),
+    };
+  }
+
+  if (twitterTitle || twitterDescription || twitterImage) {
+    metadata.twitter = {
+      ...(twitterTitle ? { title: twitterTitle } : {}),
+      ...(twitterDescription ? { description: twitterDescription } : {}),
+      ...(twitterImage ? { images: [twitterImage] } : {}),
+    };
+  }
+
+  return metadata;
+}
+
+export async function getWordPressPageMetadata(
+  slug: string,
+  lang: WordPressLocale = "az",
+  fallback: { title?: string; description?: string } = {},
+) {
+  const page = await getWordPressPage(slug, lang).catch(() => null);
+  return buildWordPressMetadata(page?.seo, fallback);
 }

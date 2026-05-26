@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressPageContent } from "@/components/WordPressPageContent";
 import { getLocalizedServices } from "@/lib/i18n";
 import type { Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import { site } from "@/lib/site-data";
+import type { WordPressContentItem } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
-export const metadata = {
-  title: "Şirkət haqqında - 166 Təmizlik",
-};
+export async function generateMetadata() {
+  return generateStaticWordPressPageMetadata("about", "az", "Şirkət haqqında - 166 Təmizlik");
+}
 
 const assets = {
   hero: "https://166temizlik.az/wp-content/uploads/2023/01/10-1.jpg",
@@ -171,19 +174,30 @@ function ImageBox({
   );
 }
 
-export function AboutPageContent({ locale = "az" }: { locale?: Locale }) {
+export async function AboutPageContent({
+  locale = "az",
+  wordpressPage,
+}: {
+  locale?: Locale;
+  wordpressPage?: WordPressContentItem | null;
+}) {
+  const wpPage = wordpressPage === undefined ? await getStaticWordPressPage("about", locale) : wordpressPage;
   const copy = staticPageCopy[locale].about;
   const body = aboutBodyCopy[locale];
   const localizedServicesList = getLocalizedServices(locale).map((service) => service.title);
+  const title = wpPage?.title || copy.title;
+  const heroImage = wpPage?.featuredImage?.url || assets.hero;
 
   return (
     <SitePage active="about" locale={locale} currentSlug="about">
       <section className="relative h-[400px] bg-[#eaf8ff] max-md:h-[270px]">
-        <Image src={assets.hero} alt={copy.title} fill priority sizes="100vw" className="object-cover object-center" />
+        <Image src={heroImage} alt={wpPage?.featuredImage?.alt || title} fill priority sizes="100vw" className="object-cover object-center" />
         <div className="container-shell relative flex h-full items-center">
-          <h1 className="mb-20 text-[30px] font-medium text-[#15257e] max-md:mb-8 max-md:text-[24px]">{copy.title}</h1>
+          <h1 className="mb-20 text-[30px] font-medium text-[#15257e] max-md:mb-8 max-md:text-[24px]">{title}</h1>
         </div>
       </section>
+
+      <WordPressPageContent page={wpPage} />
 
       <section className="relative bg-white pb-10">
         <div className="container-shell relative grid grid-cols-[1.02fr_1fr] items-start gap-12 max-lg:grid-cols-1">
@@ -287,6 +301,6 @@ export function AboutPageContent({ locale = "az" }: { locale?: Locale }) {
   );
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
   return <AboutPageContent />;
 }

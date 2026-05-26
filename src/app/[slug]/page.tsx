@@ -5,10 +5,13 @@ import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
 import { ServiceImageGallery } from "@/components/ServiceImageGallery";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
+import { getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
-import { getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
+import { buildWordPressMetadata, getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
+import { getWordPressServiceContent, type WordPressServiceContent } from "@/lib/wordpress-service";
 
 export const dynamic = "force-dynamic";
 
@@ -407,21 +410,23 @@ const serviceDetailSections: Record<string, { title: string; items?: string[]; l
 };
 
 export function generateStaticParams() {
-  return servicePages.map((service) => ({ slug: service.slug }));
+  return [...servicePages.map((service) => ({ slug: service.slug })), ...blogPosts.map((post) => ({ slug: post.slug }))];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const service = servicePages.find((item) => item.slug === slug);
   const post = blogPosts.find((item) => item.slug === slug);
-  const wpService = service ? await getWordPressService(slug, "az").catch(() => null) : null;
-  const wpPost = service ? null : await getWordPressPost(slug, "az", { cache: "no-store" }).catch(() => null);
-  const title = wpService?.title ?? service?.title ?? wpPost?.title ?? post?.title;
+  const wpService = service ? await getWordPressService(slug).catch(() => null) : null;
+  const wpPost = service || post ? null : await getWordPressPost(slug).catch(() => null);
+  const title = wpService?.title ?? service?.title ?? post?.title ?? wpPost?.title;
+  const fallbackTitle = title ? `${title} - 166 TÉ™mizlik` : "166 TÉ™mizlik";
+  const fallbackDescription = post?.excerpt ?? (wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : undefined);
 
-  return {
-    title: title ? `${title} - 166 Təmizlik` : "166 Təmizlik",
-    description: wpService ? stripHtml(wpService.excerpt || wpService.content) : wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : post?.excerpt,
-  };
+  return buildWordPressMetadata(wpService?.seo ?? wpPost?.seo, {
+    title: fallbackTitle,
+    description: fallbackDescription,
+  });
 }
 
 export async function ServiceDetailContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
@@ -433,35 +438,41 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
   }
 
   const copy = pageCopy[locale];
-  const wpService = await getWordPressService(slug, locale).catch(() => null);
-  const wpServiceText = wpService ? stripHtml(wpService.excerpt || wpService.content) : "";
-  const wpServiceImage = wpService ? getWordPressImageUrl(wpService) : "";
-  const images = detailImageSets[service.slug] ?? [service.image];
-  const introImages = introImageSets[service.slug] ?? images;
-  const displayTitle = wpService?.title ?? (locale === "az" ? serviceTitleOverrides[service.slug] ?? service.title : service.title);
+  const wpService = await getWordPressService(service.slug, locale).catch(() => null);
+  const wpContent = wpService ? getWordPressServiceContent(wpService, service.slug) : null;
+  const fallbackImages = detailImageSets[service.slug] ?? [service.image];
+  const images = wpContent?.includedImages.length ? wpContent.includedImages : fallbackImages;
+  const introImages = wpContent?.introImages.length ? wpContent.introImages : introImageSets[service.slug] ?? fallbackImages;
+  const displayTitle = wpContent?.title ?? (locale === "az" ? serviceTitleOverrides[service.slug] ?? service.title : service.title);
   const paragraphs =
-    wpServiceText
-      ? [wpServiceText, service.description]
+    wpContent?.introParagraphs.length
+      ? wpContent.introParagraphs
       : locale === "az"
-      ? serviceLongCopy[service.slug] ?? [
+        ? serviceLongCopy[service.slug] ?? [
           service.description,
           "166 Təmizlik Xidməti bu istiqamətdə peşəkar komanda, müasir avadanlıq və keyfiyyətli təmizləyici vasitələrlə xidmət göstərir. Sifarişin həcmi, məkanın vəziyyəti və müştərinin istəyinə uyğun olaraq xidmət planı formalaşdırılır.",
-        ]
-      : [service.description, copy.bottomText];
-  const heroImage = wpServiceImage || (service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog);
+          ]
+        : [service.description, copy.bottomText];
+  const heroImage = service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog;
 
   if (service.slug === "korporativ-temizlik-xidmeti" && locale === "az") {
-    return <CorporateServiceContent service={service} displayTitle={displayTitle} />;
+    return (
+      <>
+        <WordPressSeoSchema seo={wpService?.seo} />
+        <CorporateServiceContent service={service} displayTitle={displayTitle} />
+      </>
+    );
   }
 
   return (
     <SitePage active="services" locale={locale} currentSlug={service.slug} routeKind="service">
+      <WordPressSeoSchema seo={wpService?.seo} />
       <DetailHero title={displayTitle} heroImage={heroImage} subtitle={copy.subtitle} />
-      <IntroBlocks service={service} title={displayTitle} images={introImages} paragraphs={paragraphs} />
-      <IncludedSection service={service} title={displayTitle} images={images} locale={locale} />
+      <IntroBlocks service={service} title={displayTitle} images={introImages} paragraphs={paragraphs} isWordPressContent={Boolean(wpContent)} />
+      <IncludedSection service={service} title={displayTitle} images={images} locale={locale} detailOverride={wpContent ?? undefined} />
       {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} serviceSlug={service.slug} /> : null}
       <OrderFormSection serviceTitle={displayTitle} locale={locale} />
-      <BottomImageCta locale={locale} serviceSlug={service.slug} />
+      <BottomImageCta locale={locale} serviceSlug={service.slug} text={wpContent?.bottomText} />
     </SitePage>
   );
 }
@@ -529,7 +540,19 @@ function IntroTextCard({
   );
 }
 
-function IntroBlocks({ service, title, images, paragraphs }: { service: ServicePageItem; title: string; images: string[]; paragraphs: string[] }) {
+function IntroBlocks({
+  service,
+  title,
+  images,
+  paragraphs,
+  isWordPressContent = false,
+}: {
+  service: ServicePageItem;
+  title: string;
+  images: string[];
+  paragraphs: string[];
+  isWordPressContent?: boolean;
+}) {
   const skipSecondIntro =
     service.slug === "cilciraq-temizliyi" ||
     service.slug === "etirlendirme" ||
@@ -570,7 +593,7 @@ function IntroBlocks({ service, title, images, paragraphs }: { service: ServiceP
         <div className={`grid grid-cols-[396px_1fr] items-start gap-0 max-lg:grid-cols-1 ${useStackedMobileIntro ? "max-md:hidden" : ""}`}>
           <FramedImage src={images[0]} alt={title} />
           <IntroTextCard>
-            {service.slug === "cilciraq-temizliyi" ? <ChandelierIntroText /> : <p>{paragraphs[0]}</p>}
+            {service.slug === "cilciraq-temizliyi" && !isWordPressContent ? <ChandelierIntroText /> : <p>{paragraphs[0]}</p>}
           </IntroTextCard>
         </div>
         {skipSecondIntro ? null : (
@@ -748,15 +771,30 @@ function ChandelierIntroText() {
   );
 }
 
-function IncludedSection({ service, title: serviceTitle, images, locale }: { service: ServicePageItem; title: string; images: string[]; locale: Locale }) {
+function IncludedSection({
+  service,
+  title: serviceTitle,
+  images,
+  locale,
+  detailOverride,
+}: {
+  service: ServicePageItem;
+  title: string;
+  images: string[];
+  locale: Locale;
+  detailOverride?: WordPressServiceContent;
+}) {
   const copy = pageCopy[locale];
   const detail = serviceDetailSections[service.slug];
   const isMosaic = detail?.layout === "mosaic" || service.slug === "ev-temizliyi-xidmeti";
   const layout = detail?.layout ?? "row";
-  const title = detail?.title ?? serviceTitle;
-  const items = detail?.items;
+  const title = detailOverride?.includedTitle ?? detail?.title ?? serviceTitle;
+  const items = detailOverride?.includedItems.length ? detailOverride.includedItems : detail?.items;
+  const gallerySourceImages = detailOverride?.includedImages.length ? detailOverride.includedImages : images;
   const galleryImages =
-    service.slug === "pencere-temizliyi"
+    detailOverride?.includedImages.length
+      ? getGalleryImages(gallerySourceImages).slice(0, Math.min(Math.max(gallerySourceImages.length, 4), 8))
+      : service.slug === "pencere-temizliyi"
       ? images.slice(2, 6)
       : service.slug === "perde-yuma"
         ? images.slice(2, 6)
@@ -772,14 +810,15 @@ function IncludedSection({ service, title: serviceTitle, images, locale }: { ser
           ? getGalleryImages(images).slice(0, 4)
           : getGalleryImages(images).slice(0, 5);
   const sectionNote =
-    detail?.note &&
+    detailOverride?.includedNote ??
+    (detail?.note &&
     (service.slug === "ofis-temizliyi" ||
       service.slug === "bag-evlerinin-temizliyi" ||
       service.slug === "erazi-temizliyi" ||
       service.slug === "perde-yuma" ||
       service.slug === "hovuz-temizlenmesi-xidmeti")
       ? detail.note
-      : copy.serviceCare;
+      : copy.serviceCare);
   const shouldShowSectionNote =
     service.slug !== "fasad-temizliyi" &&
     service.slug !== "pencere-temizliyi" &&
@@ -989,7 +1028,7 @@ const bottomCtaImages: Record<string, string> = {
   "hovuz-temizlenmesi-xidmeti": "https://166temizlik.az/wp-content/uploads/2024/02/image-88-1.webp",
 };
 
-function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
+function BottomImageCta({ locale, serviceSlug, text }: { locale: Locale; serviceSlug: string; text?: string }) {
   const copy = pageCopy[locale];
   const image = bottomCtaImages[serviceSlug] ?? "https://166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg";
 
@@ -998,16 +1037,16 @@ function BottomImageCta({ locale, serviceSlug }: { locale: Locale; serviceSlug: 
       <Image src={image} alt="" fill sizes="100vw" className="object-cover opacity-55" />
       <div className="relative mx-auto flex min-h-[600px] w-[min(1140px,calc(100%-40px))] items-center justify-end max-md:min-h-[430px] max-md:justify-center">
         <p className="w-[470px] max-w-full text-[18px] font-medium leading-[27px] text-white">
-          {copy.bottomText}
+          {text ?? copy.bottomText}
         </p>
       </div>
     </section>
   );
 }
 
-async function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
+export async function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?: Locale }) {
   const post = blogPosts.find((item) => item.slug === slug);
-  const wpPost = await getWordPressPost(slug, locale, { cache: "no-store" }).catch(() => null);
+  const wpPost = await getWordPressPost(slug, locale).catch(() => null);
 
   if (!post && !wpPost) {
     notFound();
@@ -1019,6 +1058,7 @@ async function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?:
 
   return (
     <SitePage active="about" locale={locale} currentSlug="blog">
+      <WordPressSeoSchema seo={wpPost?.seo} />
       <section className="bg-[#f5f5f5] pb-16">
         <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
           <div className="relative h-[430px] overflow-hidden max-md:h-[270px]">
@@ -1028,7 +1068,7 @@ async function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?:
               <h1 className="max-w-[850px] text-[36px] font-bold leading-tight max-md:text-[26px]">{title}</h1>
             </div>
           </div>
-          <article className="mx-auto mt-10 w-full max-w-[1140px] rounded-[18px] bg-white px-10 py-10 shadow-[0_12px_30px_rgb(0_0_0_/_6%)] max-md:px-6 max-md:py-7">
+          <article className="mt-10 w-full rounded-[18px] bg-white px-10 py-10 shadow-[0_12px_30px_rgb(0_0_0_/_6%)] max-md:px-6 max-md:py-7">
             <p className="text-[18px] font-medium leading-[1.7] text-[#30313a] max-md:text-[16px]">{excerpt}</p>
             <div className="mt-8 space-y-5 text-[16px] font-normal leading-[1.85] text-[#3f4652]">
               {wpPost ? (
@@ -1037,7 +1077,7 @@ async function BlogPostContent({ slug, locale = "az" }: { slug: string; locale?:
                 post?.content.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
               )}
             </div>
-            <Link href="/bloq/" className="mt-10 inline-flex rounded-full bg-brand-yellow px-7 py-3 text-[13px] font-bold text-black">
+            <Link href={getLocalizedHref(locale, "/bloq/")} className="mt-10 inline-flex rounded-full bg-brand-yellow px-7 py-3 text-[13px] font-bold text-black">
               Bloqa qayıt
             </Link>
           </article>

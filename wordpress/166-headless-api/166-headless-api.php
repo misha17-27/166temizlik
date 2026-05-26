@@ -16,6 +16,15 @@ final class One66_Headless_API
 
     private const LANGUAGES = ['az', 'ru', 'tr'];
 
+    private const STATIC_PAGE_SLUGS = [
+        'home' => ['home', 'ana-sehife', 'ana-sehife-2', '166-temizlik'],
+        'gallery' => ['qalereya'],
+        'partners' => ['partnyorlar'],
+        'about' => ['sirket-haqqinda'],
+        'equipment' => ['temizlik-xidmeti'],
+        'contact' => ['166-temizlik-elaqe'],
+    ];
+
     private const SERVICE_SLUGS = [
         'ev-temizliyi-xidmeti',
         'ofis-temizliyi',
@@ -47,6 +56,7 @@ final class One66_Headless_API
     public static function register_routes(): void
     {
         self::read_route('/settings', 'settings');
+        self::read_route('/home', 'home');
         self::read_route('/menus', 'menus');
         self::read_route('/pages', 'pages', self::pagination_args());
         self::read_route('/pages/(?P<slug>[a-zA-Z0-9_%-]+)', 'page_by_slug', self::slug_args());
@@ -57,6 +67,7 @@ final class One66_Headless_API
         self::read_route('/vacancies', 'vacancies', self::pagination_args());
         self::read_route('/vacancies/(?P<slug>[a-zA-Z0-9_%-]+)', 'vacancy_by_slug', self::slug_args());
         self::read_route('/employees', 'employees');
+        self::read_route('/partners', 'partners');
         self::read_route('/gallery', 'gallery');
 
         register_rest_route(self::NAMESPACE, '/revalidate', [
@@ -70,6 +81,7 @@ final class One66_Headless_API
     {
         $lang = self::request_lang($request);
         self::switch_language($lang);
+        $contact = self::contact_page_fields($lang);
 
         return self::response([
             'lang' => $lang,
@@ -79,10 +91,11 @@ final class One66_Headless_API
             'logo' => self::option_image('site_logo'),
             'logoDark' => self::option_image('site_logo_dark'),
             'favicon' => self::option_image('favicon'),
-            'phonePrimary' => self::option_text('phone_primary'),
-            'phoneSecondary' => self::option_text('phone_secondary'),
-            'email' => self::option_text('email'),
-            'address' => self::option_text('address'),
+            'phonePrimary' => self::option_text('phone_primary') ?: $contact['phonePrimary'],
+            'phoneSecondary' => self::option_text('phone_secondary') ?: $contact['phoneSecondary'],
+            'email' => self::option_text('email') ?: $contact['email'],
+            'address' => self::option_text('address') ?: $contact['address'],
+            'locationUrl' => self::option_text('location_url') ?: $contact['locationUrl'],
             'footer' => [
                 'ctaTitle' => self::option_text('footer_cta_title'),
                 'primaryLabel' => self::option_text('footer_cta_primary_label'),
@@ -94,12 +107,42 @@ final class One66_Headless_API
                 'title' => self::option_text('order_popup_title'),
             ],
             'social' => [
-                'facebook' => self::option_text('social_facebook'),
-                'instagram' => self::option_text('social_instagram'),
-                'whatsapp' => self::option_text('social_whatsapp'),
-                'youtube' => self::option_text('social_youtube'),
+                'facebook' => self::option_text('social_facebook') ?: $contact['facebook'],
+                'instagram' => self::option_text('social_instagram') ?: $contact['instagram'],
+                'whatsapp' => self::option_text('social_whatsapp') ?: $contact['whatsapp'],
+                'youtube' => self::option_text('social_youtube') ?: $contact['youtube'],
             ],
+            'contact' => [
+                'phonePrimary' => self::option_text('phone_primary') ?: $contact['phonePrimary'],
+                'phoneSecondary' => self::option_text('phone_secondary') ?: $contact['phoneSecondary'],
+                'email' => self::option_text('email') ?: $contact['email'],
+                'address' => self::option_text('address') ?: $contact['address'],
+                'locationUrl' => self::option_text('location_url') ?: $contact['locationUrl'],
+                'whatsapp' => self::option_text('social_whatsapp') ?: $contact['whatsapp'],
+            ],
+            'assets' => [
+                'logo' => self::option_image('site_logo'),
+                'logoDark' => self::option_image('site_logo_dark'),
+                'favicon' => self::option_image('favicon'),
+            ],
+            'staticPages' => self::static_pages($lang),
             'acf' => self::option_fields(),
+        ]);
+    }
+
+    public static function home(WP_REST_Request $request): WP_REST_Response
+    {
+        $lang = self::request_lang($request);
+        self::switch_language($lang);
+
+        $page = self::static_page_post('home', $lang);
+        $normalized = $page ? self::normalize_static_page($page, 'home') : null;
+
+        return self::response([
+            'lang' => $lang,
+            'page' => $normalized,
+            'acf' => $normalized['acf'] ?? [],
+            'mappedAcf' => $normalized['mappedAcf'] ?? [],
         ]);
     }
 
@@ -189,16 +232,44 @@ final class One66_Headless_API
         return self::collection('emakdaslar', $request, ['posts_per_page' => 100]);
     }
 
-    public static function gallery(WP_REST_Request $request): WP_REST_Response
+    public static function partners(WP_REST_Request $request): WP_REST_Response
     {
         $lang = self::request_lang($request);
         self::switch_language($lang);
 
+        $items = self::partners_from_options();
+        if (!$items) {
+            $items = self::partners_from_page($lang);
+        }
+        if (!$items) {
+            $items = self::partners_from_posts();
+        }
+        $page = self::static_page_post('partners', $lang);
+        $normalized = $page ? self::normalize_static_page($page, 'partners') : null;
+
         return self::response([
             'lang' => $lang,
-            'categories' => self::option_value('gallery_categories', []),
-            'items' => self::option_value('gallery_items', []),
-            'videoUrl' => self::option_text('gallery_video_url') ?: 'https://www.youtube.com/watch?v=BXwEEGgWVO0',
+            'page' => $normalized,
+            'items' => array_values($items),
+        ]);
+    }
+
+    public static function gallery(WP_REST_Request $request): WP_REST_Response
+    {
+        $lang = self::request_lang($request);
+        self::switch_language($lang);
+        $page = self::static_page_post('gallery', $lang);
+        $normalized = $page ? self::normalize_static_page($page, 'gallery') : null;
+        $mapped = $normalized['mappedAcf'] ?? [];
+
+        return self::response([
+            'lang' => $lang,
+            'page' => $normalized,
+            'acf' => $normalized['acf'] ?? [],
+            'mappedAcf' => $mapped,
+            'categories' => self::first_non_empty([self::option_value('gallery_categories', []), $mapped['categories'] ?? []], []),
+            'items' => self::first_non_empty([self::option_value('gallery_items', []), $mapped['items'] ?? []], []),
+            'videoUrl' => self::first_non_empty([self::option_text('gallery_video_url'), $mapped['videoUrl'] ?? null], 'https://www.youtube.com/watch?v=BXwEEGgWVO0'),
         ]);
     }
 
@@ -264,7 +335,7 @@ final class One66_Headless_API
             return;
         }
 
-        if (!in_array($post->post_type, ['page', 'post', 'vakansiya', 'emakdaslar'], true)) {
+        if (!in_array($post->post_type, ['page', 'post', 'vakansiya', 'emakdaslar', 'partners', 'partner', 'partnyorlar'], true)) {
             return;
         }
 
@@ -309,6 +380,10 @@ final class One66_Headless_API
             return ['wordpress:employees', 'wordpress:employee:' . $slug];
         }
 
+        if (in_array($post->post_type, ['partners', 'partner', 'partnyorlar'], true)) {
+            return ['wordpress:partners', 'wordpress:partner:' . $slug];
+        }
+
         if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
             return ['wordpress:pages', 'wordpress:page:' . $slug, 'wordpress:services', 'wordpress:service:' . $slug];
         }
@@ -330,6 +405,10 @@ final class One66_Headless_API
 
         if ($post->post_type === 'emakdaslar') {
             return ['/emekdaslarimiz'];
+        }
+
+        if (in_array($post->post_type, ['partners', 'partner', 'partnyorlar'], true)) {
+            return ['/partnyorlar'];
         }
 
         if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
@@ -458,6 +537,432 @@ final class One66_Headless_API
         ];
     }
 
+    private static function static_pages(string $lang): array
+    {
+        $items = [];
+        foreach (array_keys(self::STATIC_PAGE_SLUGS) as $key) {
+            $post = self::static_page_post($key, $lang);
+            if (!$post) {
+                $items[$key] = null;
+                continue;
+            }
+
+            $acf = self::acf_fields($post->ID);
+            $items[$key] = [
+                'id' => (int) $post->ID,
+                'slug' => $post->post_name,
+                'title' => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
+                'link' => get_permalink($post),
+                'acf' => $acf,
+                'mappedAcf' => self::map_static_page_fields($key, $acf),
+                'seo' => self::seo($post->ID),
+            ];
+        }
+
+        return $items;
+    }
+
+    private static function contact_page_fields(string $lang): array
+    {
+        $post = self::static_page_post('contact', $lang);
+        $fields = $post ? self::acf_fields($post->ID) : [];
+        $content = $post ? apply_filters('the_content', $post->post_content) : '';
+
+        return [
+            'phonePrimary' => self::acf_text(self::acf_first($fields, ['telefon', 'phone', 'phone_primary'])),
+            'phoneSecondary' => self::acf_text(self::acf_first($fields, ['mobil_telefon', 'mobile_phone', 'phone_secondary'])),
+            'email' => self::acf_text(self::acf_first($fields, ['email', 'mail'])),
+            'address' => self::acf_text(self::acf_first($fields, ['unvan', 'address'])),
+            'locationUrl' => self::first_map_url($content),
+            'facebook' => self::acf_text(self::acf_first($fields, ['facebook', 'social_facebook'])),
+            'instagram' => self::acf_text(self::acf_first($fields, ['instagram', 'social_instagram'])),
+            'whatsapp' => self::acf_text(self::acf_first($fields, ['whatsapp_link', 'whatsapp', 'social_whatsapp'])),
+            'youtube' => self::acf_text(self::acf_first($fields, ['youtube', 'social_youtube'])),
+        ];
+    }
+
+    private static function first_map_url(string $content): ?string
+    {
+        if (preg_match('/href=["\'](https?:\/\/(?:www\.)?google\.com\/maps[^"\']+)["\']/i', $content, $matches)) {
+            return html_entity_decode($matches[1], ENT_QUOTES, 'UTF-8');
+        }
+
+        return null;
+    }
+
+    private static function static_page_post(string $key, string $lang): ?WP_Post
+    {
+        if ($key === 'home') {
+            $front_id = (int) get_option('page_on_front');
+            if ($front_id > 0) {
+                $translated_id = self::translated_object_id($front_id, 'page', $lang) ?: $front_id;
+                $front_page = get_post($translated_id);
+                if ($front_page instanceof WP_Post && $front_page->post_status === 'publish') {
+                    return $front_page;
+                }
+            }
+        }
+
+        foreach (self::STATIC_PAGE_SLUGS[$key] ?? [] as $slug) {
+            $post = self::find_post_by_slug('page', $slug, $lang);
+            if ($post) {
+                return $post;
+            }
+
+            $source = self::find_post_by_slug('page', $slug, 'az');
+            if ($source) {
+                $translated_id = self::translated_object_id($source->ID, 'page', $lang);
+                $translated = $translated_id ? get_post($translated_id) : null;
+                if ($translated instanceof WP_Post && $translated->post_status === 'publish') {
+                    return $translated;
+                }
+
+                return $source;
+            }
+        }
+
+        return null;
+    }
+
+    private static function normalize_static_page(WP_Post $post, string $key): array
+    {
+        $page = self::normalize_post($post);
+        $page['mappedAcf'] = self::map_static_page_fields($key, $page['acf']);
+        return $page;
+    }
+
+    private static function map_static_page_fields(string $key, array $fields): array
+    {
+        if ($key === 'gallery') {
+            return self::map_gallery_fields($fields);
+        }
+
+        if ($key === 'home') {
+            return self::map_home_fields($fields);
+        }
+
+        if ($key === 'partners') {
+            return [
+                'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos'])),
+                'heroImage' => self::acf_image(self::acf_first($fields, ['hero_image', 'banner_image', 'sekil'])),
+            ];
+        }
+
+        return [
+            'heroTitle' => self::acf_text(self::acf_first($fields, ['hero_title', 'title', 'basliq'])),
+            'heroSubtitle' => self::acf_text(self::acf_first($fields, ['hero_subtitle', 'subtitle', 'alt_basliq'])),
+            'heroImage' => self::acf_image(self::acf_first($fields, ['hero_image', 'banner_image', 'sekil'])),
+            'sections' => self::acf_first($fields, ['sections', 'blocks', 'content_blocks'], []),
+        ];
+    }
+
+    private static function map_home_fields(array $fields): array
+    {
+        return [
+            'heroSlides' => self::acf_first($fields, ['hero_slides', 'slider', 'slides'], []),
+            'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos'])),
+            'servicesTitle' => self::acf_text(self::acf_first($fields, ['services_title', 'xidmetler_basliq'])),
+            'about' => self::acf_first($fields, ['about', 'haqqinda'], []),
+            'beforeAfter' => self::acf_first($fields, ['before_after', 'evvel_sonra'], []),
+            'testimonials' => self::acf_first($fields, ['testimonials', 'reviews', 'reyler'], []),
+        ];
+    }
+
+    private static function map_gallery_fields(array $fields): array
+    {
+        return [
+            'title' => self::acf_text(self::acf_first($fields, ['title', 'gallery_title', 'qalereya_basliq'])),
+            'subtitle' => self::acf_text(self::acf_first($fields, ['subtitle', 'gallery_subtitle', 'qalereya_alt_basliq'])),
+            'categories' => self::acf_text_list(self::acf_first($fields, ['gallery_categories', 'categories', 'kateqoriyalar'])),
+            'items' => self::acf_gallery_items(self::acf_first($fields, ['gallery_items', 'gallery', 'qalereya', 'sekiller', 'images'])),
+            'videoUrl' => self::acf_text(self::acf_first($fields, ['gallery_video_url', 'video_url', 'youtube_url'])),
+        ];
+    }
+
+    private static function acf_first(array $fields, array $keys, $fallback = null)
+    {
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $fields) && self::has_value($fields[$key])) {
+                return $fields[$key];
+            }
+        }
+
+        return $fallback;
+    }
+
+    private static function first_non_empty(array $values, $fallback = null)
+    {
+        foreach ($values as $value) {
+            if (self::has_value($value)) {
+                return $value;
+            }
+        }
+
+        return $fallback;
+    }
+
+    private static function has_value($value): bool
+    {
+        if ($value === null || $value === false || $value === '') {
+            return false;
+        }
+
+        return !is_array($value) || count(array_filter($value, [self::class, 'has_value'])) > 0;
+    }
+
+    private static function acf_text($value): ?string
+    {
+        if (is_scalar($value)) {
+            return self::clean_text((string) $value) ?: null;
+        }
+
+        return null;
+    }
+
+    private static function acf_text_list($value): array
+    {
+        if (!is_array($value)) {
+            $text = self::acf_text($value);
+            return $text ? [$text] : [];
+        }
+
+        $items = [];
+        foreach ($value as $item) {
+            $text = is_array($item) ? self::acf_text(self::first_non_empty($item)) : self::acf_text($item);
+            if ($text) {
+                $items[] = $text;
+            }
+        }
+
+        return array_values(array_unique($items));
+    }
+
+    private static function acf_image($value): ?array
+    {
+        if (is_numeric($value)) {
+            return self::media((int) $value);
+        }
+
+        if (is_array($value) && isset($value['url'])) {
+            return [
+                'id' => (int) ($value['id'] ?? $value['ID'] ?? 0),
+                'url' => esc_url_raw((string) $value['url']),
+                'alt' => (string) ($value['alt'] ?? ''),
+                'width' => $value['width'] ?? null,
+                'height' => $value['height'] ?? null,
+                'sizes' => $value['sizes'] ?? [],
+            ];
+        }
+
+        if (is_string($value) && preg_match('/^https?:\/\//', $value)) {
+            return [
+                'id' => 0,
+                'url' => esc_url_raw($value),
+                'alt' => '',
+                'width' => null,
+                'height' => null,
+                'sizes' => [],
+            ];
+        }
+
+        return null;
+    }
+
+    private static function acf_gallery_items($value): array
+    {
+        if (!$value) {
+            return [];
+        }
+
+        $source = is_array($value) ? array_values($value) : [$value];
+        $items = [];
+        foreach ($source as $index => $item) {
+            $image = self::acf_image($item);
+            $categories = [];
+            $title = null;
+
+            if (is_array($item) && !$image) {
+                $image = self::acf_image($item['image'] ?? $item['sekil'] ?? $item['photo'] ?? $item['url'] ?? null);
+                $categories = self::acf_text_list($item['categories'] ?? $item['category'] ?? $item['kateqoriya'] ?? []);
+                $title = self::acf_text($item['title'] ?? $item['name'] ?? '');
+            }
+
+            if ($image) {
+                $items[] = [
+                    'id' => $image['id'] ?: 'gallery-' . $index,
+                    'title' => $title,
+                    'image' => $image,
+                    'url' => $image['url'],
+                    'categories' => $categories,
+                ];
+            }
+        }
+
+        return $items;
+    }
+
+    private static function partners_from_options(): array
+    {
+        if (!function_exists('get_field')) {
+            return [];
+        }
+
+        foreach (['partners', 'partnyorlar', 'partner_logos'] as $field) {
+            $partners = self::normalize_partners_value(get_field($field, 'option'));
+            if ($partners) {
+                return $partners;
+            }
+        }
+
+        return [];
+    }
+
+    private static function partners_from_page(string $lang): array
+    {
+        $page = self::static_page_post('partners', $lang);
+        if (!$page || !function_exists('get_field')) {
+            return [];
+        }
+
+        foreach (['partners', 'partnyorlar', 'partner_logos'] as $field) {
+            $partners = self::normalize_partners_value(get_field($field, $page->ID));
+            if ($partners) {
+                return $partners;
+            }
+        }
+
+        $fields = self::acf_fields($page->ID);
+        return self::normalize_partners_value($fields['partners'] ?? $fields['partnyorlar'] ?? $fields['partner_logos'] ?? []);
+    }
+
+    private static function partners_from_posts(): array
+    {
+        foreach (['partners', 'partner', 'partnyorlar'] as $post_type) {
+            if (!post_type_exists($post_type)) {
+                continue;
+            }
+
+            $query = new WP_Query([
+                'post_type' => $post_type,
+                'post_status' => 'publish',
+                'posts_per_page' => 100,
+                'orderby' => 'menu_order date',
+                'order' => 'ASC',
+                'suppress_filters' => false,
+            ]);
+
+            if ($query->posts) {
+                return array_map([self::class, 'normalize_partner_post'], $query->posts);
+            }
+        }
+
+        return [];
+    }
+
+    private static function normalize_partners_value($value): array
+    {
+        if (!$value) {
+            return [];
+        }
+
+        if (is_array($value) && isset($value['ID'], $value['url'])) {
+            return [self::normalize_partner_item($value, 0)];
+        }
+
+        if (!is_array($value)) {
+            return [];
+        }
+
+        $items = [];
+        foreach (array_values($value) as $index => $item) {
+            $partner = self::normalize_partner_item($item, $index);
+            if ($partner['logo']) {
+                $items[] = $partner;
+            }
+        }
+
+        return $items;
+    }
+
+    private static function normalize_partner_item($item, int $index): array
+    {
+        if (is_numeric($item)) {
+            $logo = self::media((int) $item);
+            return [
+                'id' => (int) $item,
+                'title' => $logo['alt'] ?? '',
+                'url' => '',
+                'logo' => $logo,
+            ];
+        }
+
+        if (is_array($item) && isset($item['ID'], $item['url'])) {
+            $logo = self::normalize_acf_value($item);
+            return [
+                'id' => (int) $item['ID'],
+                'title' => $logo['alt'] ?? '',
+                'url' => '',
+                'logo' => $logo,
+            ];
+        }
+
+        if (!is_array($item)) {
+            return [
+                'id' => 'partner-' . $index,
+                'title' => '',
+                'url' => '',
+                'logo' => null,
+            ];
+        }
+
+        $logo_value = $item['logo'] ?? $item['image'] ?? $item['sekil'] ?? $item['partner_logo'] ?? null;
+        $logo = self::normalize_partner_logo($logo_value);
+
+        return [
+            'id' => isset($item['id']) ? (int) $item['id'] : 'partner-' . $index,
+            'title' => self::clean_text((string) ($item['name'] ?? $item['title'] ?? $item['label'] ?? ($logo['alt'] ?? ''))),
+            'url' => isset($item['url']) ? esc_url_raw((string) $item['url']) : '',
+            'logo' => $logo,
+        ];
+    }
+
+    private static function normalize_partner_post(WP_Post $post): array
+    {
+        $fields = self::acf_fields($post->ID);
+        $logo = self::normalize_partner_logo($fields['logo'] ?? $fields['image'] ?? null);
+        if (!$logo) {
+            $thumbnail_id = get_post_thumbnail_id($post);
+            $logo = $thumbnail_id ? self::media($thumbnail_id) : null;
+        }
+
+        return [
+            'id' => (int) $post->ID,
+            'title' => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
+            'url' => isset($fields['url']) ? esc_url_raw((string) $fields['url']) : '',
+            'logo' => $logo,
+        ];
+    }
+
+    private static function normalize_partner_logo($value): ?array
+    {
+        if (is_numeric($value)) {
+            return self::media((int) $value);
+        }
+
+        if (is_array($value)) {
+            if (isset($value['ID'], $value['url'])) {
+                return self::normalize_acf_value($value);
+            }
+
+            if (isset($value['id'], $value['url'])) {
+                $value['ID'] = $value['id'];
+                return self::normalize_acf_value($value);
+            }
+        }
+
+        return null;
+    }
+
     private static function media(int $attachment_id): ?array
     {
         $url = wp_get_attachment_url($attachment_id);
@@ -542,15 +1047,152 @@ final class One66_Headless_API
 
     private static function seo(int $post_id): array
     {
-        $title = get_post_meta($post_id, '_yoast_wpseo_title', true);
-        $description = get_post_meta($post_id, '_yoast_wpseo_metadesc', true);
-        $canonical = get_post_meta($post_id, '_yoast_wpseo_canonical', true);
+        $post = get_post($post_id);
+        $title = self::yoast_text($post_id, '_yoast_wpseo_title');
+        $description = self::yoast_text($post_id, '_yoast_wpseo_metadesc');
+        $canonical = self::yoast_text($post_id, '_yoast_wpseo_canonical');
+        $og_title = self::yoast_text($post_id, '_yoast_wpseo_opengraph-title');
+        $og_description = self::yoast_text($post_id, '_yoast_wpseo_opengraph-description');
+        $twitter_title = self::yoast_text($post_id, '_yoast_wpseo_twitter-title');
+        $twitter_description = self::yoast_text($post_id, '_yoast_wpseo_twitter-description');
+        $focus_keyphrase = self::yoast_text($post_id, '_yoast_wpseo_focuskw');
+        $breadcrumbs_title = self::yoast_text($post_id, '_yoast_wpseo_bctitle');
+        $schema_page_type = self::yoast_text($post_id, '_yoast_wpseo_schema_page_type');
+        $schema_article_type = self::yoast_text($post_id, '_yoast_wpseo_schema_article_type');
+        $presentation = null;
+
+        if (function_exists('YoastSEO')) {
+            try {
+                $presentation = YoastSEO()->meta->for_post($post_id);
+                $title = $title ?: self::presentation_text($presentation, 'title');
+                $description = $description ?: self::presentation_text($presentation, 'description');
+                $canonical = $canonical ?: self::presentation_text($presentation, 'canonical');
+                $og_title = $og_title ?: self::presentation_text($presentation, 'open_graph_title');
+                $og_description = $og_description ?: self::presentation_text($presentation, 'open_graph_description');
+                $twitter_title = $twitter_title ?: self::presentation_text($presentation, 'twitter_title');
+                $twitter_description = $twitter_description ?: self::presentation_text($presentation, 'twitter_description');
+            } catch (Throwable $error) {
+                // Fall back to saved Yoast post meta if the presentation API is unavailable.
+            }
+        }
+
+        $robots_noindex = get_post_meta($post_id, '_yoast_wpseo_meta-robots-noindex', true);
+        $robots_nofollow = get_post_meta($post_id, '_yoast_wpseo_meta-robots-nofollow', true);
+        $robots_advanced = get_post_meta($post_id, '_yoast_wpseo_meta-robots-adv', true);
 
         return [
             'title' => $title ?: null,
             'description' => $description ?: null,
             'canonical' => $canonical ?: null,
+            'focusKeyphrase' => $focus_keyphrase ?: null,
+            'breadcrumbsTitle' => $breadcrumbs_title ?: null,
+            'schemaPageType' => $schema_page_type ?: null,
+            'schemaArticleType' => $schema_article_type ?: null,
+            'schema' => self::yoast_schema($post_id, $presentation),
+            'robots' => [
+                'index' => $robots_noindex === '1' ? false : null,
+                'follow' => $robots_nofollow === '1' ? false : null,
+                'advanced' => $robots_advanced ? array_values(array_filter(array_map('trim', explode(',', $robots_advanced)))) : [],
+            ],
+            'openGraph' => [
+                'title' => $og_title ?: null,
+                'description' => $og_description ?: null,
+                'image' => self::yoast_image($post_id, '_yoast_wpseo_opengraph-image', '_yoast_wpseo_opengraph-image-id'),
+            ],
+            'twitter' => [
+                'title' => $twitter_title ?: null,
+                'description' => $twitter_description ?: null,
+                'image' => self::yoast_image($post_id, '_yoast_wpseo_twitter-image', '_yoast_wpseo_twitter-image-id'),
+            ],
         ];
+    }
+
+    private static function yoast_text(int $post_id, string $meta_key): ?string
+    {
+        $value = get_post_meta($post_id, $meta_key, true);
+        if (!$value) {
+            return null;
+        }
+
+        $post = get_post($post_id);
+        if ($post instanceof WP_Post && function_exists('wpseo_replace_vars')) {
+            $value = wpseo_replace_vars((string) $value, $post);
+        }
+
+        return self::clean_text((string) $value) ?: null;
+    }
+
+    private static function presentation_text($presentation, string $property): ?string
+    {
+        if (!is_object($presentation) || !isset($presentation->{$property})) {
+            return null;
+        }
+
+        return self::clean_text((string) $presentation->{$property}) ?: null;
+    }
+
+    private static function yoast_schema(int $post_id, $presentation = null)
+    {
+        $saved = get_post_meta($post_id, '_yoast_wpseo_schema_graph', true);
+        $schema = self::decode_schema_value($saved);
+        if ($schema !== null) {
+            return $schema;
+        }
+
+        if ($presentation === null && function_exists('YoastSEO')) {
+            try {
+                $presentation = YoastSEO()->meta->for_post($post_id);
+            } catch (Throwable $error) {
+                $presentation = null;
+            }
+        }
+
+        if (is_object($presentation)) {
+            foreach (['schema', 'schema_graph', 'json_ld'] as $property) {
+                if (isset($presentation->{$property})) {
+                    $schema = self::decode_schema_value($presentation->{$property});
+                    if ($schema !== null) {
+                        return $schema;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static function decode_schema_value($value)
+    {
+        if (is_array($value) && $value) {
+            return self::normalize_acf_value($value);
+        }
+
+        if (is_object($value)) {
+            return self::normalize_acf_value(json_decode(wp_json_encode($value), true));
+        }
+
+        if (is_string($value) && trim($value) !== '') {
+            $decoded = json_decode($value, true);
+            return is_array($decoded) ? self::normalize_acf_value($decoded) : null;
+        }
+
+        return null;
+    }
+
+    private static function yoast_image(int $post_id, string $url_key, string $id_key): ?string
+    {
+        $url = get_post_meta($post_id, $url_key, true);
+        if ($url) {
+            return esc_url_raw((string) $url);
+        }
+
+        $attachment_id = (int) get_post_meta($post_id, $id_key, true);
+        if ($attachment_id > 0) {
+            $attachment_url = wp_get_attachment_url($attachment_id);
+            return $attachment_url ? esc_url_raw($attachment_url) : null;
+        }
+
+        return null;
     }
 
     private static function translations(WP_Post $post): array

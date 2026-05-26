@@ -58,6 +58,57 @@ button.bg-brand-yellow:focus-visible svg {
   color: #fff;
 }
 
+.wp-content {
+  overflow-wrap: anywhere;
+}
+
+.wp-content > * + * {
+  margin-top: 1rem;
+}
+
+.wp-content h1,
+.wp-content h2,
+.wp-content h3 {
+  color: #111827;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.wp-content h1 {
+  font-size: 2rem;
+}
+
+.wp-content h2 {
+  font-size: 1.65rem;
+}
+
+.wp-content h3 {
+  font-size: 1.3rem;
+}
+
+.wp-content ul,
+.wp-content ol {
+  padding-left: 1.4rem;
+}
+
+.wp-content ul {
+  list-style: disc;
+}
+
+.wp-content ol {
+  list-style: decimal;
+}
+
+.wp-content a {
+  color: var(--brand-blue);
+  text-decoration: underline;
+}
+
+.wp-content img {
+  height: auto;
+  max-width: 100%;
+}
+
 .section-title {
   font-family: var(--font-montserrat), sans-serif;
   font-size: clamp(1.55rem, 1.85vw, 1.95rem);

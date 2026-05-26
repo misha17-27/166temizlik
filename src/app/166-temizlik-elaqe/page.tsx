@@ -1,14 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressPageContent } from "@/components/WordPressPageContent";
+import { buildContactPageData, type ContactPageData } from "@/lib/contact-page-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
 import { site } from "@/lib/site-data";
+import { getWordPressSettings, type WordPressContentItem } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
-const contactSocialLinks = [
+function getContactSocialLinks(contact: ContactPageData) {
+  return [
   {
     label: "Facebook",
-    href: "https://www.facebook.com/166temizlik",
+    href: contact.social.facebook,
     icon: (
       <path
         d="M13.2 7.6h1.8V4.7a22 22 0 0 0-2.7-.1c-2.7 0-4.5 1.6-4.5 4.6v2.6h-3v3.2h3v8h3.5v-8h2.9l.4-3.2h-3.3V9.5c0-1 .3-1.9 1.9-1.9Z"
@@ -18,7 +23,7 @@ const contactSocialLinks = [
   },
   {
     label: "Instagram",
-    href: "https://www.instagram.com/166_temizlik/",
+    href: contact.social.instagram,
     icon: (
       <>
         <rect x="5.4" y="5.4" width="13.2" height="13.2" rx="3.4" stroke="currentColor" strokeWidth="1.8" />
@@ -29,7 +34,7 @@ const contactSocialLinks = [
   },
   {
     label: "WhatsApp",
-    href: site.whatsappHref,
+    href: contact.whatsappHref,
     icon: (
       <>
         <path d="M5.7 18.4 6.8 15a6.6 6.6 0 1 1 2.3 2.3l-3.4 1.1Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
@@ -39,7 +44,7 @@ const contactSocialLinks = [
   },
   {
     label: "YouTube",
-    href: "https://www.youtube.com/@166tmizlikxidmti9/videos",
+    href: contact.social.youtube,
     icon: (
       <>
         <rect x="4" y="7" width="16" height="10" rx="3" stroke="currentColor" strokeWidth="1.8" />
@@ -47,33 +52,47 @@ const contactSocialLinks = [
       </>
     ),
   },
-];
-
-function getContactCards(locale: Locale) {
-  const copy = staticPageCopy[locale].contact;
-  const address =
-    locale === "ru"
-      ? "ул. Шафает Мехтиев 134, Баку, Азербайджан"
-      : locale === "tr"
-        ? "Şafayet Mehdiyev 134, Bakü, Azerbaycan"
-        : site.address;
-
-  return [
-    { title: copy.phone, value: "166", href: site.phoneHref, icon: "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png" },
-    { title: copy.mobile, value: "+994 10 123 01 66", href: "tel:+994101230166", icon: "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png" },
-    { title: copy.mobile, value: site.mobileLabel, href: site.mobileHref, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png" },
-    { title: copy.address, value: address, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png" },
-    { title: copy.email, value: site.email, href: `mailto:${site.email}`, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png" },
   ];
 }
 
-export const metadata = {
-  title: "Əlaqə - 166 Təmizlik",
-};
-
-export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
+function getSyncedContactCards(locale: Locale, contact: ContactPageData) {
   const copy = staticPageCopy[locale].contact;
-  const contactCards = getContactCards(locale);
+  const [primaryPhone, ...mobilePhones] = contact.phones;
+
+  return [
+    ...(primaryPhone
+      ? [{ title: copy.phone, value: primaryPhone.value, href: primaryPhone.href, icon: "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png" }]
+      : []),
+    ...mobilePhones.map((phone) => ({
+      title: copy.mobile,
+      value: phone.value,
+      href: phone.href,
+      icon: "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png",
+    })),
+    { title: copy.address, value: contact.address.value, href: contact.address.href, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png" },
+    { title: copy.email, value: contact.email.value, href: contact.email.href, icon: "https://166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png" },
+  ];
+}
+
+export async function generateMetadata() {
+  return generateStaticWordPressPageMetadata("contact", "az", "Əlaqə - 166 Təmizlik");
+}
+
+export async function ContactPageContent({
+  locale = "az",
+  wordpressPage,
+}: {
+  locale?: Locale;
+  wordpressPage?: WordPressContentItem | null;
+}) {
+  const wpPage = wordpressPage === undefined ? await getStaticWordPressPage("contact", locale) : wordpressPage;
+  const settings = await getWordPressSettings(locale).catch(() => null);
+  const contact = buildContactPageData(wpPage, settings, locale);
+  const copy = staticPageCopy[locale].contact;
+  const contactCards = getSyncedContactCards(locale, contact);
+  const contactSocialLinks = getContactSocialLinks(contact);
+  const title = contact.contactTitle || wpPage?.title || copy.contactTitle;
+  const questionsImage = wpPage?.featuredImage?.url || "https://166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg";
 
   return (
     <SitePage active="contact" locale={locale} currentSlug="contact">
@@ -83,7 +102,7 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
         <div className="container-shell relative grid grid-cols-2 items-start gap-20 max-lg:grid-cols-1 max-lg:gap-12">
           <form className="rounded-[10px] bg-white p-[72px] shadow-[0_12px_42px_rgb(25_34_70_/_8%)] max-md:p-7">
             <h1 className="mb-8 text-[32px] font-semibold leading-none text-[#5947de] max-md:text-[26px]">
-              {copy.formTitle}
+              {contact.formTitle || copy.formTitle}
             </h1>
             <div className="grid gap-7">
               {[copy.name, copy.phone, copy.email].map((placeholder) => (
@@ -107,7 +126,7 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
           </form>
 
           <div className="pt-14 max-lg:pt-0">
-            <h2 className="mb-8 text-[39px] font-bold text-[#6252ee] max-md:text-[30px]">{copy.contactTitle}</h2>
+            <h2 className="mb-8 text-[39px] font-bold text-[#6252ee] max-md:text-[30px]">{title}</h2>
             <div className="space-y-7">
               {contactCards.map((item) => (
                 <div key={`${item.title}-${item.value}`} className="flex items-center gap-5">
@@ -147,15 +166,18 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
         </div>
       </section>
 
+      <WordPressPageContent page={wpPage} />
+
       <section className="relative min-h-[540px] overflow-hidden bg-gradient-to-r from-[#0074ca] via-[#05a9dd] to-[#12d5df] text-white max-md:min-h-0">
         <div className="absolute -top-[98px] left-[-20px] h-[180px] w-[110%] origin-left rotate-[-4deg] bg-white" />
         <div className="absolute left-0 top-[78px] h-[255px] w-[90px] rounded-r-full bg-white/18 max-md:hidden" />
         <div className="absolute bottom-[-105px] right-[-20px] h-[360px] w-[430px] rounded-full bg-white/12 max-md:hidden" />
         <div className="container-shell relative grid min-h-[540px] grid-cols-[0.86fr_1fr] items-center gap-16 pt-[46px] max-lg:grid-cols-1 max-lg:gap-8 max-lg:py-20 max-md:min-h-0">
           <div className="pl-2 max-lg:pl-0">
-            <h2 className="text-[42px] font-normal leading-tight text-white max-md:text-[32px]">{copy.questionsTitle}</h2>
+            <h2 className="text-[42px] font-normal leading-tight text-white max-md:text-[32px]">{contact.questionsTitle || copy.questionsTitle}</h2>
+            {contact.shortText ? <p className="mt-5 max-w-[420px] text-[18px] leading-7 text-white/90">{contact.shortText}</p> : null}
             <Link
-              href={site.whatsappHref}
+              href={contact.whatsappHref || site.whatsappHref}
               className="mt-12 inline-flex h-[45px] items-center gap-2 rounded-full bg-white px-8 text-[15px] font-bold !text-[#39c75a] shadow-[0_8px_20px_rgb(0_0_0_/_8%)] transition-colors hover:bg-black hover:!text-white"
             >
               <span>{copy.whatsapp}</span>
@@ -167,8 +189,8 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
           </div>
           <div className="relative ml-auto h-[480px] w-[480px] overflow-hidden rounded-[48px] max-lg:mx-auto max-md:h-[300px] max-md:w-full max-md:rounded-[28px]">
             <Image
-              src="https://166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg"
-              alt="166 Təmizlik suallar"
+              src={questionsImage}
+              alt={wpPage?.featuredImage?.alt || "166 Təmizlik suallar"}
               fill
               sizes="(max-width: 768px) 100vw, 480px"
               className="object-cover grayscale"
@@ -180,6 +202,6 @@ export function ContactPageContent({ locale = "az" }: { locale?: Locale }) {
   );
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
   return <ContactPageContent />;
 }

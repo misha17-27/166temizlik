@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedVacancies, pageHeroAssets, vacancyDetails } from "@/lib/pages-data";
-import type { Locale } from "@/lib/routes";
+import { getVacancyHref, type Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
-import { getWordPressVacancies, stripHtml } from "@/lib/wordpress";
+import { getWordPressPageMetadata, getWordPressVacancies, stripHtml } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Vakansiya - 166 Təmizlik",
-};
+export function generateMetadata() {
+  return getWordPressPageMetadata("vakansiya", "az", { title: "Vakansiya - 166 Təmizlik" });
+}
 
 type VacancyCard = {
   slug: string;
@@ -61,7 +61,7 @@ export async function VacancyPageContent({ locale = "az" }: { locale?: Locale })
         <div className="container-shell rounded-[20px] bg-white p-8 max-md:p-4">
           <div className="grid grid-cols-2 gap-8 max-lg:grid-cols-1">
             {vacancies.map((vacancy) => {
-              const href = `/vakansiya/${vacancy.slug}/`;
+              const href = getVacancyHref(vacancy.slug, locale);
 
               return (
                 <article key={vacancy.slug || vacancy.title} className="bg-[#f7f7fb] px-8 py-7">

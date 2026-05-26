@@ -3,33 +3,47 @@ import { SitePage } from "@/components/SiteChrome";
 import { getLocalizedEquipment, getLocalizedMaterialCards, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
+import type { WordPressContentItem } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata, getStaticWordPressPage, getWordPressEquipmentPageContent } from "@/lib/wordpress-pages";
 
-export const metadata = {
-  title: "Avadanlıq və maddələr - 166 Təmizlik",
-};
+export async function generateMetadata() {
+  return generateStaticWordPressPageMetadata("equipment", "az", "Avadanlıq və maddələr - 166 Təmizlik");
+}
 
-export function EquipmentPageContent({ locale = "az" }: { locale?: Locale }) {
+export async function EquipmentPageContent({
+  locale = "az",
+  wordpressPage,
+}: {
+  locale?: Locale;
+  wordpressPage?: WordPressContentItem | null;
+}) {
+  const wpPage = wordpressPage === undefined ? await getStaticWordPressPage("equipment", locale) : wordpressPage;
+  const wpContent = getWordPressEquipmentPageContent(wpPage);
   const copy = staticPageCopy[locale].equipment;
-  const equipment = getLocalizedEquipment(locale);
-  const materialCards = getLocalizedMaterialCards(locale);
+  const equipment = wpContent?.equipmentCards.length ? wpContent.equipmentCards : getLocalizedEquipment(locale);
+  const materialCards = wpContent?.materialCards.length ? wpContent.materialCards : getLocalizedMaterialCards(locale);
+  const title = wpContent?.title || copy.title;
+  const heroImage = wpContent?.heroImage || pageHeroAssets.equipment;
+  const equipmentTitle = wpContent?.equipmentTitle || copy.equipmentTitle;
+  const materialsTitle = wpContent?.materialsTitle || copy.materialsTitle;
 
   return (
     <SitePage active="about" locale={locale} currentSlug="equipment">
       <section className="relative h-[400px] bg-white max-md:h-[240px]">
-        <Image src={pageHeroAssets.equipment} alt={copy.title} fill priority sizes="100vw" className="object-cover" />
+        <Image src={heroImage} alt={wpPage?.featuredImage?.alt || title} fill preload sizes="100vw" className="object-cover" />
         <div className="container-shell relative flex h-full items-center">
-          <h1 className="text-[32px] font-normal leading-[32px] text-[#13287e] max-md:text-[24px]">{copy.title}</h1>
+          <h1 className="text-[32px] font-normal leading-[32px] text-[#13287e] max-md:text-[24px]">{title}</h1>
         </div>
       </section>
 
       <section className="bg-white py-10 pb-20">
         <div className="container-shell">
-          <h2 className="mb-14 text-center text-[35px] font-semibold leading-[42px] text-black max-md:text-[26px]">{copy.equipmentTitle}</h2>
+          <h2 className="mb-14 text-center text-[35px] font-semibold leading-[42px] text-black max-md:text-[26px]">{equipmentTitle}</h2>
           <div className="space-y-20">
             {equipment.map((item, index) => {
               const reverse = index % 2 === 1;
               return (
-                <article key={item.title} className={`grid grid-cols-2 items-center gap-16 max-lg:grid-cols-1 ${reverse ? "lg:[&>div:first-child]:order-2" : ""}`}>
+                <article key={`${item.title}-${index}`} className={`grid grid-cols-2 items-center gap-16 max-lg:grid-cols-1 ${reverse ? "lg:[&>div:first-child]:order-2" : ""}`}>
                   <div>
                     <h3 className="mb-8 text-[35px] font-normal leading-[42px] text-black max-md:text-[25px]">{item.title}</h3>
                     <p className="text-[18px] font-normal leading-[28.8px] text-black/70 max-md:text-[15px] max-md:leading-[24px]">{item.text}</p>
@@ -45,10 +59,10 @@ export function EquipmentPageContent({ locale = "az" }: { locale?: Locale }) {
             })}
           </div>
 
-          <h2 className="mb-8 mt-24 text-center text-[35px] font-semibold leading-[42px] text-black max-md:text-[26px]">{copy.materialsTitle}</h2>
+          <h2 className="mb-8 mt-24 text-center text-[35px] font-semibold leading-[42px] text-black max-md:text-[26px]">{materialsTitle}</h2>
           <div className="grid grid-cols-2 gap-5 max-md:grid-cols-1">
-            {materialCards.map((item) => (
-              <article key={item.title} className="rounded-[10px] bg-white p-5 shadow-[0_3px_16px_rgb(15_23_42_/_10%)]">
+            {materialCards.map((item, index) => (
+              <article key={`${item.title}-${index}`} className="rounded-[10px] bg-white p-5 shadow-[0_3px_16px_rgb(15_23_42_/_10%)]">
                 <p className="text-[18px] font-normal leading-[28.8px] text-black/70 max-md:text-[15px] max-md:leading-[24px]">
                   <strong className="font-bold">{item.title}</strong> – {item.text}
                 </p>
@@ -61,6 +75,6 @@ export function EquipmentPageContent({ locale = "az" }: { locale?: Locale }) {
   );
 }
 
-export default function EquipmentPage() {
+export default async function EquipmentPage() {
   return <EquipmentPageContent />;
 }

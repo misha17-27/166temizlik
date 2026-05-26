@@ -233,7 +233,7 @@ korporativ-temizlik-xidmeti
 ```txt
 WORDPRESS_API_URL=https://admin.166temizlik.az/wp-json/headless/v1
 NEXT_PUBLIC_SITE_URL=https://166temizlik.az
-REVALIDATE_SECRET=<long-random-secret>
+ONE66_REVALIDATE_SECRET=<long-random-secret>
 ```
 
 Добавить `admin.166temizlik.az` в `next.config.ts` для remote images.
@@ -257,6 +257,15 @@ define('ONE66_REVALIDATE_SECRET', 'same-secret-as-vercel');
 ```
 
 Плагин будет отправлять POST при сохранении `page`, `post`, `vakansiya`, `emakdaslar`.
+
+Current Vercel preview/production endpoint:
+
+```php
+define('ONE66_REVALIDATE_URL', 'https://166temizlik.vercel.app/api/revalidate');
+define('ONE66_REVALIDATE_SECRET', 'same-secret-as-vercel');
+```
+
+Vercel must have the same `ONE66_REVALIDATE_SECRET` value in the target environment. After adding or changing the Vercel env variable, trigger a new deployment so `/api/revalidate` receives the updated secret.
 
 ## Security
 

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ContactPageContent } from "@/app/166-temizlik-elaqe/page";
-import { ServiceDetailContent } from "@/app/[slug]/page";
+import { BlogPostContent, ServiceDetailContent } from "@/app/[slug]/page";
 import { BlogPageContent } from "@/app/bloq/page";
 import { EmployeesPageContent } from "@/app/emekdaslarimiz/page";
 import { PartnersPageContent } from "@/app/partnyorlar/page";
@@ -19,6 +19,8 @@ import {
   type StaticRouteKey,
 } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
+import { buildWordPressMetadata, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata, getWordPressPageSlug } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,8 @@ type PageParams = {
   slug: string;
   localizedSlug: string;
 };
+
+const siteTitle = "166 TÉ™mizlik";
 
 const staticTitleKeys: Partial<Record<StaticRouteKey, (locale: Locale) => string>> = {
   services: (locale) => pageCopy[locale].servicesTitle,
@@ -50,24 +54,41 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const { slug: localeParam, localizedSlug } = await params;
 
   if (!isLocale(localeParam) || localeParam === "az") {
-    return { title: "166 Təmizlik" };
+    return { title: siteTitle };
   }
 
   const match = resolveLocalizedSlug(localeParam, localizedSlug);
 
-  if (!match) {
-    return { title: "166 Təmizlik" };
+  if (match?.kind === "service") {
+    const service = getLocalizedServicePages(servicePages, localeParam).find((item) => item.slug === match.canonicalSlug);
+    const wpService = await getWordPressService(match.canonicalSlug, localeParam).catch(() => null);
+
+    return buildWordPressMetadata(wpService?.seo, {
+      title: service ? `${service.title} - ${siteTitle}` : siteTitle,
+    });
   }
 
-  if (match.kind === "service") {
-    const service = getLocalizedServicePages(servicePages, localeParam).find((item) => item.slug === match.canonicalSlug);
-    return {
-      title: service ? `${service.title} - 166 Təmizlik` : "166 Təmizlik",
-    };
+  const wpPost = await getWordPressPost(localizedSlug, localeParam).catch(() => null);
+  if (wpPost) {
+    return buildWordPressMetadata(wpPost.seo, {
+      title: wpPost.title ? `${wpPost.title} - ${siteTitle}` : siteTitle,
+      description: stripHtml(wpPost.excerpt || wpPost.content),
+    });
+  }
+
+  if (!match) {
+    return { title: siteTitle };
+  }
+
+  const routeKey = match.routeKey ?? "home";
+  const fallbackTitle = `${staticTitleKeys[routeKey]?.(localeParam) ?? siteTitle} - ${siteTitle}`;
+
+  if (getWordPressPageSlug(routeKey)) {
+    return generateStaticWordPressPageMetadata(routeKey, localeParam, fallbackTitle);
   }
 
   return {
-    title: `${staticTitleKeys[match.routeKey ?? "home"]?.(localeParam) ?? "166 Təmizlik"} - 166 Təmizlik`,
+    title: fallbackTitle,
   };
 }
 
@@ -81,7 +102,7 @@ export default async function LocalizedSlugPage({ params }: { params: Promise<Pa
   const match = resolveLocalizedSlug(localeParam, localizedSlug);
 
   if (!match) {
-    notFound();
+    return <BlogPostContent slug={localizedSlug} locale={localeParam} />;
   }
 
   if (match.kind === "service") {

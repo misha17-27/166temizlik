@@ -20,7 +20,7 @@ function normalizePath(path: string) {
 }
 
 export async function POST(request: Request) {
-  const configuredSecret = process.env.ONE66_REVALIDATE_SECRET ?? process.env.REVALIDATE_SECRET;
+  const configuredSecret = process.env.ONE66_REVALIDATE_SECRET;
 
   if (!configuredSecret) {
     return Response.json({ error: "Revalidation secret is not configured" }, { status: 500 });
