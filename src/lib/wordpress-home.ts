@@ -271,6 +271,22 @@ function buildLegacyHomePayload(acf: Record<string, unknown>, content: string): 
   };
 }
 
+function mergeHomePayload(primary: HomePayload | null | undefined, fallback: HomePayload | null | undefined): HomePayload | null {
+  if (!primary && !fallback) {
+    return null;
+  }
+
+  return {
+    heroSlides: primary?.heroSlides?.length ? primary.heroSlides : fallback?.heroSlides,
+    services: primary?.services?.length ? primary.services : fallback?.services,
+    beforeAfter: primary?.beforeAfter?.length ? primary.beforeAfter : fallback?.beforeAfter,
+    partners: primary?.partners?.length ? primary.partners : fallback?.partners,
+    testimonials: primary?.testimonials?.length ? primary.testimonials : fallback?.testimonials,
+    about: primary?.about && Object.keys(primary.about).length ? primary.about : fallback?.about,
+    mapImage: primary?.mapImage ?? fallback?.mapImage,
+  };
+}
+
 export function buildHomePageData(locale: Locale, payload: HomePayload | null | undefined): HomePageData {
   const fallback = fallbackCopy[locale] ?? fallbackCopy.az;
   const heroSlides: HeroSlide[] = payload?.heroSlides?.length
@@ -366,20 +382,22 @@ export async function getHomePageData(locale: Locale) {
   const { getWordPressCanonicalSlug, getWordPressHome, getWordPressPage, getWordPressServices } = await import("@/lib/wordpress");
   const response = await getWordPressHome(locale as WordPressLocale).catch(() => null);
   const legacyPage = response ? null : await getWordPressPage("ana-sehife", locale as WordPressLocale).catch(() => null);
-  const pageData = buildHomePageData(locale, response?.mappedAcf ?? (legacyPage ? buildLegacyHomePayload(legacyPage.acf, legacyPage.content) : null));
+  const sourcePage = response?.page ?? legacyPage;
+  const legacyPayload = sourcePage ? buildLegacyHomePayload(sourcePage.acf, sourcePage.content) : null;
+  const pageData = buildHomePageData(locale, mergeHomePayload(response?.mappedAcf, legacyPayload));
   const wordpressServices = await getWordPressServices(locale as WordPressLocale).catch(() => null);
   const wordpressTitles = new Map(wordpressServices?.items.map((service) => [getWordPressCanonicalSlug(service), service.title]) ?? []);
   const mappedServiceIcons = new Map(pageData.services.map((service) => [service.slug, service.icon]));
-  const legacyServiceIcons = legacyPage ? getLegacyHomeServiceIcons(legacyPage.content) : new Map<string, string>();
+  const legacyServiceIcons = sourcePage ? getLegacyHomeServiceIcons(sourcePage.content) : new Map<string, string>();
   const services = getLocalizedServices(locale).map((service) => ({
     ...service,
     title: wordpressTitles.get(service.slug) || service.title,
-    icon: mappedServiceIcons.get(service.slug) || legacyServiceIcons.get(service.slug) || service.icon,
+    icon: legacyServiceIcons.get(service.slug) || mappedServiceIcons.get(service.slug) || service.icon,
   }));
 
   return {
     ...pageData,
     services,
-    packages: legacyPage ? buildLegacyHomePackages(legacyPage.acf) : undefined,
+    packages: sourcePage ? buildLegacyHomePackages(sourcePage.acf) : undefined,
   };
 }
