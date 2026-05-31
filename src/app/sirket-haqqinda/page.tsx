@@ -180,6 +180,10 @@ function getAboutAcfHtml(page: WordPressContentItem | null | undefined, key: str
   return typeof value === "string" && value.trim() ? value : "";
 }
 
+function getAboutContentImages(page: WordPressContentItem | null | undefined) {
+  return Array.from(page?.content?.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi) ?? [], (match) => match[1]);
+}
+
 function SyncedHtml({ html }: { html: string }) {
   return <div className="space-y-4" dangerouslySetInnerHTML={{ __html: html }} />;
 }
@@ -198,6 +202,15 @@ export async function AboutPageContent({
   const localizedServicesList = getLocalizedServices(locale).map((service) => service.title);
   const title = wpPage?.title || copy.title;
   const heroImage = wpPage?.featuredImage?.url || assets.hero;
+  const contentImages = getAboutContentImages(wpPage);
+  const syncedImages = {
+    illustration: contentImages[0] || assets.illustration,
+    price: contentImages[1] || assets.price,
+    team: contentImages[2] || assets.team,
+    devices: contentImages[3] || assets.devices,
+    spray: contentImages[4] || assets.spray,
+    services: contentImages[5] || assets.services,
+  };
   const synced = {
     intro: getAboutAcfHtml(wpPage, "sirkət_mətn"),
     prices: getAboutAcfHtml(wpPage, "təmizlik_xidməti_qiymətləri"),
@@ -221,7 +234,7 @@ export async function AboutPageContent({
         <div className="container-shell relative grid grid-cols-[1.02fr_1fr] items-start gap-12 max-lg:grid-cols-1">
           <div className="relative -mt-[170px] max-lg:-mt-20">
             <div className="relative z-10 h-[610px] overflow-hidden rounded-[14px] bg-white max-md:h-[390px]">
-              <Image src={assets.illustration} alt="166 Təmizlik xidməti" fill priority sizes="(max-width: 1024px) 100vw, 560px" className="object-contain p-8 max-md:p-2" />
+              <Image src={syncedImages.illustration} alt="166 Təmizlik xidməti" fill priority sizes="(max-width: 1024px) 100vw, 560px" className="object-contain p-8 max-md:p-2" />
             </div>
             <Dots className="bottom-[-125px] left-0 h-[260px] w-[390px] max-md:hidden" />
           </div>
@@ -245,13 +258,13 @@ export async function AboutPageContent({
           <TextBlock title={copy.pricesTitle}>
             {synced.prices ? <SyncedHtml html={synced.prices} /> : <p>{body.pricesParagraph}</p>}
           </TextBlock>
-          <ImageBox src={assets.price} alt={copy.pricesTitle} className="ml-auto h-[330px] w-[430px] max-lg:mx-auto max-md:h-[260px] max-md:w-full" />
+          <ImageBox src={syncedImages.price} alt={copy.pricesTitle} className="ml-auto h-[330px] w-[430px] max-lg:mx-auto max-md:h-[260px] max-md:w-full" />
         </div>
       </section>
 
       <section className="bg-white py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
-          <ImageBox src={assets.team} alt={copy.teamTitle} className="h-[380px] w-[520px] max-lg:mx-auto max-md:h-[300px] max-md:w-full" />
+          <ImageBox src={syncedImages.team} alt={copy.teamTitle} className="h-[380px] w-[520px] max-lg:mx-auto max-md:h-[300px] max-md:w-full" />
           <TextBlock title={copy.teamTitle}>
             {synced.team ? (
               <SyncedHtml html={synced.team} />
@@ -273,14 +286,14 @@ export async function AboutPageContent({
           </TextBlock>
           <div className="relative">
             <Dots className="bottom-[-55px] left-[-55px] h-[210px] w-[260px] max-md:hidden" />
-            <ImageBox src={assets.devices} alt={copy.devicesTitle} className="relative h-[360px] w-[560px] max-lg:mx-auto max-md:h-[280px] max-md:w-full" />
+            <ImageBox src={syncedImages.devices} alt={copy.devicesTitle} className="relative h-[360px] w-[560px] max-lg:mx-auto max-md:h-[280px] max-md:w-full" />
           </div>
         </div>
       </section>
 
       <section className="bg-white py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
-          <ImageBox src={assets.spray} alt={body.materialsAlt} className="h-[520px] w-[420px] overflow-hidden rounded-[20px] max-lg:mx-auto max-md:h-[360px] max-md:w-full" contain={false} />
+          <ImageBox src={syncedImages.spray} alt={body.materialsAlt} className="h-[520px] w-[420px] overflow-hidden rounded-[20px] max-lg:mx-auto max-md:h-[360px] max-md:w-full" contain={false} />
           <TextBlock title={copy.featuresTitle}>
             {synced.features ? (
               <SyncedHtml html={synced.features} />
@@ -311,7 +324,7 @@ export async function AboutPageContent({
               </ul>
             )}
           </TextBlock>
-          <ImageBox src={assets.services} alt={body.servicesAlt} className="h-[420px] w-[520px] max-lg:mx-auto max-md:h-[320px] max-md:w-full" />
+          <ImageBox src={syncedImages.services} alt={body.servicesAlt} className="h-[420px] w-[520px] max-lg:mx-auto max-md:h-[320px] max-md:w-full" />
         </div>
       </section>
 
