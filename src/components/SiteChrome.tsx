@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { WhatsAppLeadForm } from "@/components/WhatsAppLeadForm";
 import { chromeCopy, getLanguageSwitcherOptions, getLocalizedHref, getLocalizedServices, type Locale } from "@/lib/i18n";
 import type { RouteKind } from "@/lib/routes";
 import { site } from "@/lib/site-data";
@@ -232,11 +233,13 @@ function OrderPopup({
   services,
   open,
   onClose,
+  whatsappHref,
 }: {
   locale: Locale;
   services: Array<{ title: string; href: string; slug: string }>;
   open: boolean;
   onClose: () => void;
+  whatsappHref: string;
 }) {
   const presence = useAnimatedPresence(open);
 
@@ -301,27 +304,20 @@ function OrderPopup({
           </svg>
         </button>
 
-        <h2 className="mb-7 text-center text-[29px] font-normal leading-tight text-black max-md:text-[25px]">{labels.title}</h2>
-        <form className="grid gap-3">
-          <div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
-            <input className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-black outline-none placeholder:text-[#a9a9a9]" placeholder={labels.name} />
-            <input className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-black outline-none placeholder:text-[#a9a9a9]" placeholder={labels.phone} />
-          </div>
-          <label className="mt-1 text-[18px] font-normal text-black">{labels.service}</label>
-          <select className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-[#777] outline-none">
-            {services.map((service) => (
-              <option key={service.slug}>{service.title}</option>
-            ))}
-          </select>
-          <input className="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-black outline-none placeholder:text-[#b9b9b9]" placeholder={labels.address} />
-          <textarea className="min-h-[110px] rounded-[4px] bg-white px-4 py-3 text-[16px] text-black outline-none placeholder:text-[#b9b9b9]" placeholder={labels.note} />
-          <button
-            type="submit"
-            className="mt-2 inline-flex h-[50px] w-[168px] items-center justify-center rounded-full bg-brand-yellow text-[18px] font-bold text-black transition-colors hover:bg-black hover:text-white"
-          >
-            {labels.submit}
-          </button>
-        </form>
+        <WhatsAppLeadForm
+          whatsappHref={whatsappHref}
+          title={labels.title}
+          labels={labels}
+          serviceOptions={services.map((service) => service.title)}
+          defaultService={services[0]?.title}
+          className="grid gap-3"
+          headingClassName="mb-7 text-center text-[29px] font-normal leading-tight text-black max-md:text-[25px]"
+          inputClassName="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-black outline-none placeholder:text-[#a9a9a9]"
+          selectClassName="h-[41px] rounded-[4px] bg-white px-4 text-[16px] text-[#777] outline-none"
+          textareaClassName="min-h-[110px] rounded-[4px] bg-white px-4 py-3 text-[16px] text-black outline-none placeholder:text-[#b9b9b9]"
+          labelClassName="mt-1 text-[18px] font-normal text-black"
+          buttonClassName="mt-2 inline-flex h-[50px] w-[168px] items-center justify-center rounded-full bg-brand-yellow text-[18px] font-bold text-black transition-colors hover:bg-black hover:text-white"
+        />
       </div>
     </div>
   );
@@ -385,6 +381,7 @@ export function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
+  const [contact, setContact] = useState<SyncedFooterContact | null>(null);
   const mobileMenuPresence = useAnimatedPresence(mobileMenuOpen);
   const copy = chromeCopy[locale];
   const localizedServices = getLocalizedServices(locale);
@@ -409,6 +406,26 @@ export function Header({
   function closeMobileMenu() {
     setMobileMenuOpen(false);
   }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchFooterContact(locale)
+      .then((nextContact) => {
+        if (!cancelled && nextContact) {
+          setContact(nextContact);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setContact(null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
 
   useEffect(() => {
     if (!mobileMenuPresence.mounted && !orderOpen) {
@@ -636,7 +653,7 @@ export function Header({
           </div>
         </div>
       ) : null}
-      <OrderPopup locale={locale} services={popupServices} open={orderOpen} onClose={() => setOrderOpen(false)} />
+      <OrderPopup locale={locale} services={popupServices} open={orderOpen} onClose={() => setOrderOpen(false)} whatsappHref={contact?.whatsappHref || site.whatsappHref} />
     </header>
   );
 }

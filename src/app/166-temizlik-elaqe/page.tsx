@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
+import { WhatsAppLeadForm } from "@/components/WhatsAppLeadForm";
 import {
   buildContactPageData,
   type ContactPageData,
@@ -165,41 +166,24 @@ export async function ContactPageContent({
         <div className="absolute -left-28 bottom-10 h-[380px] w-[520px] rounded-[55%] bg-[#f8f8ff]" />
         <div className="absolute -right-20 top-[300px] h-[360px] w-[170px] rounded-[55%] bg-[#e8fbff]" />
         <div className="container-shell relative grid grid-cols-2 items-start gap-20 max-lg:grid-cols-1 max-lg:gap-12">
-          <form className="rounded-[10px] bg-white p-[72px] shadow-[0_12px_42px_rgb(25_34_70_/_8%)] max-md:p-7">
-            <h1 className="mb-8 text-[32px] font-semibold leading-none text-[#5947de] max-md:text-[26px]">
-              {contact.formTitle || copy.formTitle}
-            </h1>
-            <div className="grid gap-7">
-              {[copy.name, copy.phone, copy.email].map((placeholder) => (
-                <input
-                  key={placeholder}
-                  placeholder={placeholder}
-                  className="h-[47px] rounded-[5px] bg-[#fafafa] px-4 text-[15px] font-normal leading-[21px] text-[#3d4459] outline-none placeholder:text-[#9aa0ad]"
-                />
-              ))}
-              <textarea
-                placeholder={copy.message}
-                className="min-h-[100px] rounded-[5px] bg-[#fafafa] px-4 py-3 text-[15px] font-normal leading-[21px] text-[#3d4459] outline-none placeholder:text-[#9aa0ad]"
-              />
-              <button className="ml-auto inline-flex h-[47px] items-center gap-4 rounded-full bg-brand-yellow px-8 text-[16px] font-medium leading-none text-[#13287e] transition-colors hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white focus-visible:outline-none">
-                {copy.submit}
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  className="h-5 w-5"
-                  fill="none"
-                >
-                  <path
-                    d="M5 12h14m-6-6 6 6-6 6"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-            </div>
-          </form>
+          <WhatsAppLeadForm
+            whatsappHref={contact.whatsappHref || site.whatsappHref}
+            title={contact.formTitle || copy.formTitle}
+            labels={{
+              name: copy.name,
+              phone: copy.phone,
+              email: copy.email,
+              note: copy.message,
+              submit: copy.submit,
+            }}
+            showEmail
+            className="rounded-[10px] bg-white p-[72px] shadow-[0_12px_42px_rgb(25_34_70_/_8%)] max-md:p-7"
+            headingClassName="mb-8 text-[32px] font-semibold leading-none text-[#5947de] max-md:text-[26px]"
+            fieldsClassName="grid gap-7"
+            inputClassName="h-[47px] rounded-[5px] bg-[#fafafa] px-4 text-[15px] font-normal leading-[21px] text-[#3d4459] outline-none placeholder:text-[#9aa0ad]"
+            textareaClassName="min-h-[100px] rounded-[5px] bg-[#fafafa] px-4 py-3 text-[15px] font-normal leading-[21px] text-[#3d4459] outline-none placeholder:text-[#9aa0ad]"
+            buttonClassName="ml-auto inline-flex h-[47px] items-center gap-4 rounded-full bg-brand-yellow px-8 text-[16px] font-medium leading-none text-[#13287e] transition-colors hover:bg-black hover:text-white focus-visible:bg-black focus-visible:text-white focus-visible:outline-none"
+          />
 
           <div className="pt-14 max-lg:pt-0">
             <h2 className="mb-8 text-[39px] font-bold text-[#6252ee] max-md:text-[30px]">

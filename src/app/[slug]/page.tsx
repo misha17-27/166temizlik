@@ -5,6 +5,7 @@ import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
 import { ServiceImageGallery } from "@/components/ServiceImageGallery";
 import { SitePage } from "@/components/SiteChrome";
+import { WhatsAppLeadForm } from "@/components/WhatsAppLeadForm";
 import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
@@ -984,27 +985,30 @@ function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; loca
     <section className="relative overflow-hidden bg-[#eaf7ff] pb-[95px] pt-[130px] max-md:py-[70px]">
       <div className="absolute -right-16 bottom-[-90px] h-[420px] w-[520px] rotate-[-18deg] border-[42px] border-brand-blue max-md:hidden" />
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-        <form className="ml-[160px] max-w-[541px] max-lg:mx-auto max-lg:ml-auto">
-          <h2 className="text-[24px] font-medium leading-[24px] text-black">{copy.packagesTitle}</h2>
-          <p className="mt-3 text-[16px] font-normal leading-[16px] text-black/75">{copy.packagesIntro}</p>
-          <div className="mt-5 grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-            <input className="h-10 rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formName} />
-            <input className="h-10 rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formPhone} />
-          </div>
-          <label className="mt-4 block text-[16px] font-light leading-[24px] text-black">{serviceTypeLabel}</label>
-          <select className="mt-2 h-10 w-full rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] text-black/70 outline-none" defaultValue={serviceTitle}>
-            {orderedServiceOptions.map((title) => (
-              <option key={title} value={title}>
-                {title}
-              </option>
-            ))}
-          </select>
-          <input className="mt-3 h-10 w-full rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] outline-none" placeholder={copy.formAddress} />
-          <textarea className="mt-3 h-[94px] w-full resize-none rounded-[3px] border-0 bg-white px-5 py-3 text-[15px] leading-[21px] outline-none" placeholder={copy.formMessage} />
-          <button type="button" className="mt-4 h-10 w-[155px] rounded-[15px] bg-brand-yellow text-[15px] font-bold text-black">
-            {copy.order}
-          </button>
-        </form>
+        <WhatsAppLeadForm
+          whatsappHref={site.whatsappHref}
+          title={copy.packagesTitle}
+          intro={copy.packagesIntro}
+          labels={{
+            name: copy.formName,
+            phone: copy.formPhone,
+            service: serviceTypeLabel,
+            address: copy.formAddress,
+            note: copy.formMessage,
+            submit: copy.order,
+          }}
+          defaultService={serviceTitle}
+          serviceOptions={orderedServiceOptions}
+          className="ml-[160px] max-w-[541px] max-lg:mx-auto max-lg:ml-auto"
+          headingClassName="text-[24px] font-medium leading-[24px] text-black"
+          introClassName="mt-3 text-[16px] font-normal leading-[16px] text-black/75"
+          fieldsClassName="mt-5 grid gap-3"
+          inputClassName="h-10 rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] outline-none"
+          selectClassName="h-10 w-full rounded-[3px] border-0 bg-white px-5 text-[15px] leading-[21px] text-black/70 outline-none"
+          textareaClassName="h-[94px] w-full resize-none rounded-[3px] border-0 bg-white px-5 py-3 text-[15px] leading-[21px] outline-none"
+          labelClassName="block text-[16px] font-light leading-[24px] text-black"
+          buttonClassName="mt-1 h-10 w-[155px] rounded-[15px] bg-brand-yellow text-[15px] font-bold text-black"
+        />
       </div>
     </section>
   );
