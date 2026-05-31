@@ -4,7 +4,7 @@ import { SitePage } from "@/components/SiteChrome";
 import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServicePages, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { getWordPressImageUrl, getWordPressServices, stripHtml } from "@/lib/wordpress";
+import { getWordPressImageUrl, getWordPressServices, stripHtml, type WordPressContentItem } from "@/lib/wordpress";
 import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
@@ -54,6 +54,60 @@ const serviceOrder = [
   "hovuz-temizlenmesi-xidmeti",
   "korporativ-temizlik-xidmeti",
 ];
+
+const serviceListAcfFields: Record<string, { text: string; image: string }> = {
+  "ev-temizliyi-xidmeti": { text: "ev_təmizliyi_xidmet", image: "ev_təmizliyi_xidmet_səkil" },
+  "ofis-temizliyi": { text: "ofis_təmizliyi", image: "ofis_təmizliyi_səkil" },
+  "bag-evlerinin-temizliyi": { text: "bag_evlərinin_təmizliyi_xidmət", image: "bag_evlərinin_təmizliyi_səkil" },
+  "erazi-temizliyi": { text: "ərazi_təmizliyi_xidmət", image: "ərazi_təmizliyi_səkil" },
+  "fasad-temizliyi": { text: "fasad_təmizliyi_xidmət", image: "fasad_təmizliyi_səkil" },
+  "pencere-temizliyi": { text: "pəncərə_təmizliyi_xidmət", image: "pəncərə_təmizliyi_səkil" },
+  "cilciraq-temizliyi": { text: "cilciraq_təmizliyi_xidmət", image: "cilciraq_təmizliyi_səkil" },
+  "perde-yuma": { text: "pərdə_və_jaluz_yuma_xidmət", image: "pərdə_və_jaluz_yuma_səkil" },
+  "yumsaq-mebel-temizlenmesi": { text: "yumsaq_mebellərin_kimyəvi_təmizliyi_xidmət", image: "yumsaq_mebellərin_kimyəvi_təmizliyi_səkil" },
+  etirlendirme: { text: "ətirləndirmə_xidməti", image: "ətirləndirmə_xidməti_səkil" },
+  "baximsiz-ev-temizliyi": { text: "“gozəl_ev”_təmizliyi_xidmət", image: "“gozəl_ev”_təmizliyi_səkil" },
+  "yangindan-sonra-ev-temizliyi": { text: "yangin_və_subasma_təmizlik_xidmət", image: "yangin_və_subasma_sonrasi_təmizlik_səkil" },
+  "temir-sonrasi-temizlik": { text: "təmir_sonrasi_təmizlik_xi", image: "təmir_sonrasi_təmizlik_xidmət_səkil" },
+  "otel-temizlenmesi": { text: "otel_təmizlənməsi_xidməti", image: "otel_təmizlənməsi_xidməti_səkil" },
+  "restoran-temizlenmesi": { text: "restoran_təmizlənməsi_xidməti", image: "restoran_təmizlənməsi_xidməti_səkil" },
+  "kristallasdirma-xidmeti": { text: "kristallasdirma_xidməti", image: "kristallasdirma_xidməti_səkil" },
+  "hovuz-temizlenmesi-xidmeti": { text: "hovuz_təmizlənməsi", image: "hovuz_təmizlənməsi_səkil" },
+};
+
+function getAcfCardText(page: WordPressContentItem | null, key: string) {
+  const value = page?.acf?.[key];
+
+  return typeof value === "string"
+    ? stripHtml(value)
+        .replace(/&#8211;/g, "-")
+        .replace(/&nbsp;/g, " ")
+        .trim()
+    : "";
+}
+
+function getAcfCardImage(page: WordPressContentItem | null, key: string) {
+  const value = page?.acf?.[key];
+
+  if (!value || typeof value !== "object") {
+    return "";
+  }
+
+  const url = (value as Record<string, unknown>).url;
+  return typeof url === "string" ? url : "";
+}
+
+function getServiceListAcfOverrides(page: WordPressContentItem | null) {
+  return new Map(
+    Object.entries(serviceListAcfFields).map(([slug, fields]) => [
+      slug,
+      {
+        description: getAcfCardText(page, fields.text),
+        image: getAcfCardImage(page, fields.image),
+      },
+    ]),
+  );
+}
 
 const serviceListDescriptions: Record<Locale, Record<string, string>> = {
   az: {
@@ -218,7 +272,7 @@ function ServiceListCard({
     >
       <div className={`relative min-h-[271px] max-md:min-h-[220px] ${reverse ? "md:order-2" : ""}`}>
         <Image
-          src={serviceListImages[service.slug] ?? service.image}
+          src={service.image || serviceListImages[service.slug]}
           alt={service.title}
           fill
           sizes="(max-width: 768px) 100vw, 380px"
@@ -240,15 +294,21 @@ function ServiceListCard({
   );
 }
 
-async function getServiceCards(locale: Locale) {
+async function getServiceCards(locale: Locale, page: WordPressContentItem | null) {
   const localizedServicePages = getLocalizedServicePages(servicePages, locale);
+  const acfOverrides = getServiceListAcfOverrides(page);
   const fallbackServices = serviceOrder
     .map((slug) => localizedServicePages.find((service) => service.slug === slug))
     .filter((service): service is (typeof servicePages)[number] => Boolean(service))
-    .map((service) => ({
-      ...service,
-      description: serviceListDescriptions[locale][service.slug] ?? service.description,
-    }));
+    .map((service) => {
+      const acfOverride = acfOverrides.get(service.slug);
+
+      return {
+        ...service,
+        image: acfOverride?.image || serviceListImages[service.slug] || service.image,
+        description: acfOverride?.description || serviceListDescriptions[locale][service.slug] || service.description,
+      };
+    });
 
   try {
     const response = await getWordPressServices(locale);
@@ -260,6 +320,7 @@ async function getServiceCards(locale: Locale) {
         .map((slug) => {
           const wpService = wordpressBySlug.get(slug);
           const fallback = fallbackBySlug.get(slug);
+          const acfOverride = acfOverrides.get(slug);
 
           if (!fallback) {
             return null;
@@ -268,8 +329,8 @@ async function getServiceCards(locale: Locale) {
           return {
             ...fallback,
             title: wpService?.title ?? fallback.title,
-            image: wpService ? getWordPressImageUrl(wpService) || fallback.image : fallback.image,
-            description: wpService ? stripHtml(wpService.excerpt || wpService.content) || fallback.description : fallback.description,
+            image: acfOverride?.image || (wpService ? getWordPressImageUrl(wpService) : "") || fallback.image,
+            description: acfOverride?.description || (wpService ? stripHtml(wpService.excerpt || wpService.content) : "") || fallback.description,
           };
         })
         .filter((service): service is (typeof fallbackServices)[number] => Boolean(service));
@@ -283,7 +344,7 @@ async function getServiceCards(locale: Locale) {
 
 export async function ServicesPageContent({ locale = "az" }: { locale?: Locale }) {
   const page = await getStaticWordPressPage("services", locale);
-  const orderedServices = await getServiceCards(locale);
+  const orderedServices = await getServiceCards(locale, page);
 
   return (
     <SitePage active="services" locale={locale} currentSlug="services">
