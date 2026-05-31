@@ -698,7 +698,7 @@ final class One66_Headless_API
 
         if ($key === 'partners') {
             return [
-                'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos'])),
+                'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos', 'loqolar250x150px'])),
                 'heroImage' => self::acf_image(self::acf_first($fields, ['hero_image', 'banner_image', 'sekil'])),
             ];
         }
@@ -715,7 +715,7 @@ final class One66_Headless_API
     {
         return [
             'heroSlides' => self::acf_first($fields, ['hero_slides', 'slider', 'slides'], []),
-            'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos'])),
+            'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos', 'loqolar250x150px'])),
             'servicesTitle' => self::acf_text(self::acf_first($fields, ['services_title', 'xidmetler_basliq'])),
             'packagesTitle' => self::acf_text(self::acf_first($fields, ['packages_title', 'paketler_basliq'])),
             'about' => self::acf_first($fields, ['about', 'haqqinda'], []),
@@ -728,13 +728,37 @@ final class One66_Headless_API
 
     private static function map_gallery_fields(array $fields): array
     {
+        $legacy_items = array_merge(
+            self::acf_gallery_items_with_category($fields, 'home-office', ['ev_və_ofis_təmizliyi_səkiller']),
+            self::acf_gallery_items_with_category($fields, 'garden', ['bag_evlərinin_təmizlənməsi_səkillər']),
+            self::acf_gallery_items_with_category($fields, 'area', ['ərazi_təmizliyi_səkillər']),
+            self::acf_gallery_items_with_category($fields, 'facade', ['fasad_təmizliyi_səkillər']),
+            self::acf_gallery_items_with_category($fields, 'curtains', ['pərdə_və_jaluz_yuma_səkillər']),
+            self::acf_gallery_items_with_category($fields, 'furniture', ['yumsaq_mebellərin_kimyəvi_təmizliyi_səkillər']),
+            self::acf_gallery_items_with_category($fields, 'fragrance', ['ətirləndirmə_xidməti_səkillər']),
+            self::acf_gallery_items_with_category($fields, 'restaurant-hotel', ['restoran_və_hotel_təmizliyi'])
+        );
+
         return [
             'title' => self::acf_text(self::acf_first($fields, ['title', 'gallery_title', 'qalereya_basliq'])),
             'subtitle' => self::acf_text(self::acf_first($fields, ['subtitle', 'gallery_subtitle', 'qalereya_alt_basliq'])),
             'categories' => self::acf_text_list(self::acf_first($fields, ['gallery_categories', 'categories', 'kateqoriyalar'])),
-            'items' => self::acf_gallery_items(self::acf_first($fields, ['gallery_items', 'gallery', 'qalereya', 'sekiller', 'images'])),
-            'videoUrl' => self::acf_text(self::acf_first($fields, ['gallery_video_url', 'video_url', 'youtube_url'])),
+            'items' => self::first_non_empty([
+                self::acf_gallery_items(self::acf_first($fields, ['gallery_items', 'gallery', 'qalereya', 'sekiller', 'images'])),
+                $legacy_items,
+            ], []),
+            'videoUrl' => self::acf_text(self::acf_first($fields, ['gallery_video_url', 'video_url', 'youtube_url', 'youtube_link'])),
         ];
+    }
+
+    private static function acf_gallery_items_with_category(array $fields, string $category, array $keys): array
+    {
+        $items = self::acf_gallery_items(self::acf_first($fields, $keys, []));
+
+        return array_map(static function (array $item) use ($category): array {
+            $item['categories'] = [$category];
+            return $item;
+        }, $items);
     }
 
     private static function acf_first(array $fields, array $keys, $fallback = null)
@@ -865,7 +889,7 @@ final class One66_Headless_API
             return [];
         }
 
-        foreach (['partners', 'partnyorlar', 'partner_logos'] as $field) {
+        foreach (['partners', 'partnyorlar', 'partner_logos', 'loqolar250x150px'] as $field) {
             $partners = self::normalize_partners_value(get_field($field, 'option'));
             if ($partners) {
                 return $partners;
@@ -882,7 +906,7 @@ final class One66_Headless_API
             return [];
         }
 
-        foreach (['partners', 'partnyorlar', 'partner_logos'] as $field) {
+        foreach (['partners', 'partnyorlar', 'partner_logos', 'loqolar250x150px'] as $field) {
             $partners = self::normalize_partners_value(get_field($field, $page->ID));
             if ($partners) {
                 return $partners;
@@ -890,7 +914,7 @@ final class One66_Headless_API
         }
 
         $fields = self::acf_fields($page->ID);
-        return self::normalize_partners_value($fields['partners'] ?? $fields['partnyorlar'] ?? $fields['partner_logos'] ?? []);
+        return self::normalize_partners_value($fields['partners'] ?? $fields['partnyorlar'] ?? $fields['partner_logos'] ?? $fields['loqolar250x150px'] ?? []);
     }
 
     private static function partners_from_posts(): array
