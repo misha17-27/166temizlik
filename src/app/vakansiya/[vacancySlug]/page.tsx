@@ -16,7 +16,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ vacancySlug: string }> }) {
   const { vacancySlug } = await params;
   const vacancy = vacancyDetails.find((item) => item.slug === vacancySlug);
-  const wpVacancy = vacancy ? null : await getWordPressVacancy(vacancySlug).catch(() => null);
+  const wpVacancy = await getWordPressVacancy(vacancySlug).catch(() => null);
   const title = wpVacancy?.title ?? vacancy?.title;
   const description = wpVacancy ? stripHtml(wpVacancy.excerpt || wpVacancy.content) : undefined;
 

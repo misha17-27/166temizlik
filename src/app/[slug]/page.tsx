@@ -454,13 +454,15 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
           "166 Təmizlik Xidməti bu istiqamətdə peşəkar komanda, müasir avadanlıq və keyfiyyətli təmizləyici vasitələrlə xidmət göstərir. Sifarişin həcmi, məkanın vəziyyəti və müştərinin istəyinə uyğun olaraq xidmət planı formalaşdırılır.",
           ]
         : [service.description, copy.bottomText];
-  const heroImage = service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog;
+  const heroImage =
+    wpService?.featuredImage?.url ||
+    (service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog);
 
   if (service.slug === "korporativ-temizlik-xidmeti" && locale === "az") {
     return (
       <>
         <WordPressSeoSchema seo={wpService?.seo} />
-        <CorporateServiceContent service={service} displayTitle={displayTitle} />
+        <CorporateServiceContent service={service} displayTitle={displayTitle} heroImage={heroImage} />
       </>
     );
   }
@@ -633,10 +635,10 @@ function MobileIntroBlock({
   );
 }
 
-function CorporateServiceContent({ service, displayTitle }: { service: ServicePageItem; displayTitle: string }) {
+function CorporateServiceContent({ service, displayTitle, heroImage }: { service: ServicePageItem; displayTitle: string; heroImage: string }) {
   return (
     <SitePage active="services" locale="az" currentSlug={service.slug} routeKind="service">
-      <DetailHero title={displayTitle} heroImage={pageHeroAssets.partners} subtitle={pageCopy.az.subtitle} />
+      <DetailHero title={displayTitle} heroImage={heroImage} subtitle={pageCopy.az.subtitle} />
       <section className="bg-[#f7f7f7] pb-16 pt-[60px]">
         <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
           <CorporateTextImageRow

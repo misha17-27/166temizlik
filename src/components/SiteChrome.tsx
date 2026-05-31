@@ -382,11 +382,17 @@ async function fetchServices(locale: Locale): Promise<SyncedService[]> {
     return [];
   }
 
-  const payload = (await response.json()) as { items?: Array<{ slug?: unknown; title?: unknown }> };
+  const payload = (await response.json()) as {
+    items?: Array<{
+      slug?: unknown;
+      title?: unknown;
+      translations?: { az?: { slug?: unknown } };
+    }>;
+  };
 
   return (payload.items ?? []).flatMap((item) =>
     typeof item.slug === "string" && typeof item.title === "string" && item.slug && item.title
-      ? [{ slug: item.slug, title: item.title }]
+      ? [{ slug: typeof item.translations?.az?.slug === "string" ? item.translations.az.slug : item.slug, title: item.title }]
       : [],
   );
 }

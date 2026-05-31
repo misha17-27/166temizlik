@@ -210,11 +210,18 @@ function buildLegacyHomePayload(acf: Record<string, unknown>): HomePayload {
     };
   });
   const about = plainText(readAcf(acf, "sirkət_haqqinda"));
+  const partners = Array.isArray(readAcf(acf, "partnyorlar"))
+    ? (readAcf(acf, "partnyorlar") as WordPressImageLike[]).map((logo, index) => ({
+        name: `Partner ${index + 1}`,
+        logo,
+      }))
+    : [];
 
   return {
     beforeAfter,
     testimonials,
     about: about ? { paragraphs: [about] } : undefined,
+    partners,
   };
 }
 
@@ -309,12 +316,12 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
 }
 
 export async function getHomePageData(locale: Locale) {
-  const { getWordPressHome, getWordPressPage, getWordPressServices } = await import("@/lib/wordpress");
+  const { getWordPressCanonicalSlug, getWordPressHome, getWordPressPage, getWordPressServices } = await import("@/lib/wordpress");
   const response = await getWordPressHome(locale as WordPressLocale).catch(() => null);
   const legacyPage = response ? null : await getWordPressPage("ana-sehife", locale as WordPressLocale).catch(() => null);
   const pageData = buildHomePageData(locale, response?.mappedAcf ?? (legacyPage ? buildLegacyHomePayload(legacyPage.acf) : null));
   const wordpressServices = await getWordPressServices(locale as WordPressLocale).catch(() => null);
-  const wordpressTitles = new Map(wordpressServices?.items.map((service) => [service.slug, service.title]) ?? []);
+  const wordpressTitles = new Map(wordpressServices?.items.map((service) => [getWordPressCanonicalSlug(service), service.title]) ?? []);
   const services = getLocalizedServices(locale).map((service) => ({
     ...service,
     title: wordpressTitles.get(service.slug) || service.title,

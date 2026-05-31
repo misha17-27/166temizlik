@@ -15,7 +15,7 @@ export type WordPressImage = {
 };
 
 export type WordPressTranslation = {
-  language: WordPressLocale | string;
+  language?: WordPressLocale | string;
   id: number;
   slug: string;
   link: string;
@@ -43,7 +43,7 @@ export type WordPressContentItem = {
   type: string;
   slug: string;
   language: WordPressLocale | string;
-  translations: WordPressTranslation[];
+  translations: WordPressTranslation[] | Record<string, WordPressTranslation>;
   title: string;
   excerpt: string;
   content: string;
@@ -262,6 +262,14 @@ export function stripHtml(value: string) {
 
 export function getWordPressImageUrl(item: WordPressContentItem) {
   return item.featuredImage?.url ?? "";
+}
+
+export function getWordPressCanonicalSlug(item: Pick<WordPressContentItem, "slug" | "translations">) {
+  if (!Array.isArray(item.translations)) {
+    return item.translations.az?.slug || item.slug;
+  }
+
+  return item.translations.find((translation) => translation.language === "az")?.slug || item.slug;
 }
 
 function cleanSeoValue(value: string | null | undefined) {
