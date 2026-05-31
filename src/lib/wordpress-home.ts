@@ -190,10 +190,41 @@ function buildLegacyHomePackages(acf: Record<string, unknown>): HomePageData["pa
   };
 }
 
-function getLegacyHomeSectionImages(content: string) {
-  const images = Array.from(content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi), (match) => match[1]).filter(
+const legacyHomeServiceSlugs = [
+  "ev-temizliyi-xidmeti",
+  "ofis-temizliyi",
+  "bag-evlerinin-temizliyi",
+  "erazi-temizliyi",
+  "fasad-temizliyi",
+  "pencere-temizliyi",
+  "cilciraq-temizliyi",
+  "perde-yuma",
+  "yumsaq-mebel-temizlenmesi",
+  "etirlendirme",
+  "baximsiz-ev-temizliyi",
+  "yangindan-sonra-ev-temizliyi",
+  "otel-temizlenmesi",
+  "restoran-temizlenmesi",
+  "temir-sonrasi-temizlik",
+  "kristallasdirma-xidmeti",
+  "hovuz-temizlenmesi-xidmeti",
+  "korporativ-temizlik-xidmeti",
+] as const;
+
+function getLegacyHomeImages(content: string) {
+  return Array.from(content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi), (match) => match[1]).filter(
     (image) => !image.includes("/revslider-2/public/assets/assets/dummy.png"),
   );
+}
+
+function getLegacyHomeServiceIcons(content: string) {
+  const images = getLegacyHomeImages(content);
+
+  return new Map(legacyHomeServiceSlugs.map((slug, index) => [slug, images[index] ?? ""]));
+}
+
+function getLegacyHomeSectionImages(content: string) {
+  const images = getLegacyHomeImages(content);
 
   return {
     about: images.at(-8) ?? "",
@@ -338,9 +369,12 @@ export async function getHomePageData(locale: Locale) {
   const pageData = buildHomePageData(locale, response?.mappedAcf ?? (legacyPage ? buildLegacyHomePayload(legacyPage.acf, legacyPage.content) : null));
   const wordpressServices = await getWordPressServices(locale as WordPressLocale).catch(() => null);
   const wordpressTitles = new Map(wordpressServices?.items.map((service) => [getWordPressCanonicalSlug(service), service.title]) ?? []);
+  const mappedServiceIcons = new Map(pageData.services.map((service) => [service.slug, service.icon]));
+  const legacyServiceIcons = legacyPage ? getLegacyHomeServiceIcons(legacyPage.content) : new Map<string, string>();
   const services = getLocalizedServices(locale).map((service) => ({
     ...service,
     title: wordpressTitles.get(service.slug) || service.title,
+    icon: mappedServiceIcons.get(service.slug) || legacyServiceIcons.get(service.slug) || service.icon,
   }));
 
   return {
