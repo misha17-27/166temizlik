@@ -5,7 +5,7 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { pageHeroAssets, vacancyDetails } from "@/lib/pages-data";
 import { getLocalizedHref, type Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
-import { buildWordPressMetadata, getWordPressVacancy, stripHtml } from "@/lib/wordpress";
+import { buildWordPressMetadata, getWordPressPage, getWordPressVacancy, stripHtml } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
@@ -29,8 +29,10 @@ export async function generateMetadata({ params }: { params: Promise<{ vacancySl
 export async function VacancyDetailContent({ vacancySlug, locale = "az" }: { vacancySlug: string; locale?: Locale }) {
   const vacancy = vacancyDetails.find((item) => item.slug === vacancySlug);
   const wpVacancy = await getWordPressVacancy(vacancySlug, locale).catch(() => null);
+  const vacancyPage = await getWordPressPage("vakansiya", locale).catch(() => null);
   const copy = staticPageCopy[locale].vacancy;
   const title = wpVacancy?.title ?? vacancy?.title ?? "";
+  const heroImage = vacancyPage?.featuredImage?.url || pageHeroAssets.partners;
 
   if (!vacancy && !wpVacancy) {
     notFound();
@@ -42,7 +44,7 @@ export async function VacancyDetailContent({ vacancySlug, locale = "az" }: { vac
       <section className="bg-[#f5f5f5]">
         <div
           className="container-shell grid h-[400px] place-items-center bg-cover bg-center max-md:h-[260px]"
-          style={{ backgroundImage: `linear-gradient(rgb(0 0 0 / 35%), rgb(0 0 0 / 35%)), url(${pageHeroAssets.partners})` }}
+          style={{ backgroundImage: `linear-gradient(rgb(0 0 0 / 35%), rgb(0 0 0 / 35%)), url(${heroImage})` }}
         >
           <h1 className="max-w-[850px] px-5 text-center text-[32px] font-medium leading-none text-white max-md:text-[24px]">{title}</h1>
         </div>
