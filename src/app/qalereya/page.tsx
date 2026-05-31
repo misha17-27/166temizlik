@@ -4,7 +4,7 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedGalleryCategories } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
-import { getWordPressPage, getWordPressPageMetadata } from "@/lib/wordpress";
+import { getWordPressGallery, getWordPressPage, getWordPressPageMetadata } from "@/lib/wordpress";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +28,14 @@ type GalleryAcfImage = {
   width?: unknown;
   height?: unknown;
 };
+
+type GalleryCategory = GalleryTabItem["categories"][number];
+
+const galleryCategoryKeys = new Set<GalleryCategory>(galleryAcfFields.map(([category]) => category));
+
+function isGalleryCategory(category: unknown): category is GalleryCategory {
+  return typeof category === "string" && galleryCategoryKeys.has(category as GalleryCategory);
+}
 
 function getImageHeight(image: GalleryAcfImage) {
   const width = typeof image.width === "number" ? image.width : 360;
@@ -63,11 +71,41 @@ function getGalleryItemsFromAcf(acf: Record<string, unknown>): GalleryTabItem[] 
   });
 }
 
-async function getWordPressGallery(locale: Locale) {
+function getGalleryItemsFromApi(response: Record<string, unknown> | null): GalleryTabItem[] {
+  const items = response?.items;
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items.flatMap((item): GalleryTabItem[] => {
+    if (!item || typeof item !== "object") {
+      return [];
+    }
+
+    const record = item as Record<string, unknown>;
+    const image = record.image && typeof record.image === "object" ? (record.image as GalleryAcfImage) : record;
+    const src = typeof record.url === "string" ? record.url : image.url;
+    const categories = Array.isArray(record.categories)
+      ? record.categories.filter(isGalleryCategory)
+      : [];
+
+    return typeof src === "string" && src
+      ? [{ src, categories, height: getImageHeight(image) }]
+      : [];
+  });
+}
+
+async function getGalleryPageData(locale: Locale) {
   try {
-    const page = await getWordPressPage("qalereya", locale);
-    const items = getGalleryItemsFromAcf(page.acf);
-    const videoUrl = typeof page.acf.youtube_link === "string" ? page.acf.youtube_link : undefined;
+    const [response, page] = await Promise.all([
+      getWordPressGallery(locale).catch(() => null),
+      getWordPressPage("qalereya", locale),
+    ]);
+    const apiItems = getGalleryItemsFromApi(response);
+    const items = apiItems.length ? apiItems : getGalleryItemsFromAcf(page.acf);
+    const videoUrl =
+      (typeof response?.videoUrl === "string" ? response.videoUrl : "") ||
+      (typeof page.acf.youtube_link === "string" ? page.acf.youtube_link : undefined);
 
     return {
       items,
@@ -89,7 +127,7 @@ export async function GalleryPageContent({ locale = "az" }: { locale?: Locale })
   const copy = staticPageCopy[locale];
   const categories = getLocalizedGalleryCategories(locale);
   const allLabel = locale === "ru" ? "Смотреть все" : locale === "tr" ? "Tümünü göster" : "Hamısına bax";
-  const gallery = await getWordPressGallery(locale);
+  const gallery = await getGalleryPageData(locale);
 
   return (
     <SitePage active="gallery" locale={locale} currentSlug="gallery">
