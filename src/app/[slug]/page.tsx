@@ -7,11 +7,13 @@ import { ServiceImageGallery } from "@/components/ServiceImageGallery";
 import { SitePage } from "@/components/SiteChrome";
 import { WhatsAppLeadForm } from "@/components/WhatsAppLeadForm";
 import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
+import { buildContactPageData } from "@/lib/contact-page-data";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 import { buildWordPressMetadata, getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
+import { getStaticWordPressPage } from "@/lib/wordpress-pages";
 import {
   getWordPressCorporateContent,
   getWordPressServiceContent,
@@ -1013,18 +1015,19 @@ function PackagesAndNote({ locale, serviceSlug, pricing }: { locale: Locale; ser
   );
 }
 
-function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; locale: Locale }) {
+async function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string; locale: Locale }) {
   const copy = pageCopy[locale];
   const serviceTypeLabel = serviceTypeLabels[locale];
   const serviceOptions = getLocalizedServicePages(servicePages, locale).map((service) => service.title);
   const orderedServiceOptions = [serviceTitle, ...serviceOptions.filter((title) => title !== serviceTitle)];
+  const contact = buildContactPageData(await getStaticWordPressPage("contact", locale), null, locale);
 
   return (
     <section className="relative overflow-hidden bg-[#eaf7ff] pb-[95px] pt-[130px] max-md:py-[70px]">
       <div className="absolute -right-16 bottom-[-90px] h-[420px] w-[520px] rotate-[-18deg] border-[42px] border-brand-blue max-md:hidden" />
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <WhatsAppLeadForm
-          whatsappHref={site.whatsappHref}
+          whatsappHref={contact.whatsappHref || site.whatsappHref}
           title={copy.packagesTitle}
           intro={copy.packagesIntro}
           labels={{

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
 import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
+import { buildContactPageData } from "@/lib/contact-page-data";
 import { getLocalizedServices } from "@/lib/i18n";
 import type { Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
@@ -191,6 +192,7 @@ export async function AboutPageContent({
   wordpressPage?: WordPressContentItem | null;
 }) {
   const wpPage = wordpressPage === undefined ? await getStaticWordPressPage("about", locale) : wordpressPage;
+  const contact = buildContactPageData(await getStaticWordPressPage("contact", locale), null, locale);
   const copy = staticPageCopy[locale].about;
   const body = aboutBodyCopy[locale];
   const localizedServicesList = getLocalizedServices(locale).map((service) => service.title);
@@ -322,7 +324,7 @@ export async function AboutPageContent({
                 {copy.cta}
               </h2>
               <Link
-                href={site.whatsappHref}
+                href={contact.whatsappHref || site.whatsappHref}
                 className="inline-flex shrink-0 items-center gap-7 rounded-[5px] bg-black px-8 py-4 text-[13px] font-bold !text-white transition-colors hover:bg-black hover:!text-white"
               >
                 {copy.order} <span className="text-xl">→</span>
