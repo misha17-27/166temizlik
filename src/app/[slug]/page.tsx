@@ -12,7 +12,13 @@ import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 import { buildWordPressMetadata, getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
-import { getWordPressServiceContent, type WordPressServiceContent, type WordPressServicePricing } from "@/lib/wordpress-service";
+import {
+  getWordPressCorporateContent,
+  getWordPressServiceContent,
+  type WordPressCorporateContent,
+  type WordPressServiceContent,
+  type WordPressServicePricing,
+} from "@/lib/wordpress-service";
 
 export const dynamic = "force-dynamic";
 
@@ -458,11 +464,17 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
     wpService?.featuredImage?.url ||
     (service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog);
 
-  if (service.slug === "korporativ-temizlik-xidmeti" && locale === "az") {
+  if (service.slug === "korporativ-temizlik-xidmeti") {
     return (
       <>
         <WordPressSeoSchema seo={wpService?.seo} />
-        <CorporateServiceContent service={service} displayTitle={displayTitle} heroImage={heroImage} />
+        <CorporateServiceContent
+          service={service}
+          displayTitle={displayTitle}
+          heroImage={heroImage}
+          locale={locale}
+          content={wpService ? getWordPressCorporateContent(wpService) : undefined}
+        />
       </>
     );
   }
@@ -635,37 +647,51 @@ function MobileIntroBlock({
   );
 }
 
-function CorporateServiceContent({ service, displayTitle, heroImage }: { service: ServicePageItem; displayTitle: string; heroImage: string }) {
+function CorporateServiceContent({
+  service,
+  displayTitle,
+  heroImage,
+  locale,
+  content,
+}: {
+  service: ServicePageItem;
+  displayTitle: string;
+  heroImage: string;
+  locale: Locale;
+  content?: WordPressCorporateContent;
+}) {
+  const sections = content?.sections ?? [];
+
   return (
-    <SitePage active="services" locale="az" currentSlug={service.slug} routeKind="service">
-      <DetailHero title={displayTitle} heroImage={heroImage} subtitle={pageCopy.az.subtitle} />
+    <SitePage active="services" locale={locale} currentSlug={service.slug} routeKind="service">
+      <DetailHero title={displayTitle} heroImage={heroImage} subtitle={pageCopy[locale].subtitle} />
       <section className="bg-[#f7f7f7] pb-16 pt-[60px]">
         <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
           <CorporateTextImageRow
-            title="Korporativ əməkdaşlıq"
-            text="Korporativ əməkdaşlıq şirkətimizin əsas prioritetlərindən biridir. Korporativ müştərilərimiz üçün nəzərdə tutduğumuz güzəştlər həm iş prosesinin asanlaşmasına həm də biznes partnyorlarımızın məmnunluguna səbəb olur."
-            image="https://166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg"
+            title={sections[0]?.title || "Korporativ əməkdaşlıq"}
+            text={sections[0]?.text || "Korporativ əməkdaşlıq şirkətimizin əsas prioritetlərindən biridir. Korporativ müştərilərimiz üçün nəzərdə tutduğumuz güzəştlər həm iş prosesinin asanlaşmasına həm də biznes partnyorlarımızın məmnunluguna səbəb olur."}
+            image={sections[0]?.image || "https://166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg"}
             imageAlt="Korporativ təmizlik xidməti"
             imageHeight="h-[600px]"
             imageFirst={false}
           />
           <CorporateTextImageRow
-            title="Niyə 166 təmizlik?"
-            items={[
+            title={sections[1]?.title || "Niyə 166 təmizlik?"}
+            items={sections[1]?.items.length ? sections[1].items : [
               "Təmizlik xidmətləri üzrə korporativ təkliflər",
               "Sifarişlərin xüsusi proqramda izlənilməsi",
               "Müştərilərin təklif və iradlarını öyrənən müştəri məmnuniyyəti zəngləri",
               "Peşəkar işçi heyəti",
               "Köçürmə vasitəsi ilə asan ödəmə imkanı",
             ]}
-            image="https://166temizlik.az/wp-content/uploads/2024/09/DSCF2761.webp"
+            image={sections[1]?.image || "https://166temizlik.az/wp-content/uploads/2024/09/DSCF2761.webp"}
             imageAlt="Korporativ əməkdaşlıq"
             imageHeight="h-[500px]"
             imageFirst
           />
           <CorporateTextImageRow
-            title="166 Təmizlik xidmətinin başlıca xüsusiyyətləri:"
-            items={[
+            title={sections[2]?.title || "166 Təmizlik xidmətinin başlıca xüsusiyyətləri:"}
+            items={sections[2]?.items.length ? sections[2].items : [
               "İşçi heyətinin etibarlılığı",
               "İşçi heyətin peşəkarlığı",
               "Gigiyenik təmizliyi qorumaq",
@@ -673,15 +699,15 @@ function CorporateServiceContent({ service, displayTitle, heroImage }: { service
               "Yuyucu vasitələrin keyfiyyətli olması",
               "İstifadə olunan təmizlik vasitələrinin mebelə və s. zədələnməməsi.",
             ]}
-            image="https://166temizlik.az/wp-content/uploads/2024/09/DSCF3391-Edit.webp"
+            image={sections[2]?.image || "https://166temizlik.az/wp-content/uploads/2024/09/DSCF3391-Edit.webp"}
             imageAlt="166 Təmizlik korporativ xidmət"
             imageHeight="h-[500px]"
             imageFirst={false}
           />
         </div>
       </section>
-      <CorporatePartnersSection />
-      <OrderFormSection serviceTitle={displayTitle} locale="az" />
+      <CorporatePartnersSection title={content?.partnersTitle} />
+      <OrderFormSection serviceTitle={displayTitle} locale={locale} />
     </SitePage>
   );
 }
@@ -737,11 +763,11 @@ function CorporateTextImageRow({
   );
 }
 
-function CorporatePartnersSection() {
+function CorporatePartnersSection({ title }: { title?: string }) {
   return (
     <section className="bg-[#f7f7f7] pb-20 pt-2">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
-        <h2 className="text-center text-[32px] font-medium leading-[42px] text-black max-md:text-[24px]">Korporativ Əməkdaşlarımız</h2>
+        <h2 className="text-center text-[32px] font-medium leading-[42px] text-black max-md:text-[24px]">{title || "Korporativ Əməkdaşlarımız"}</h2>
         <div className="mx-auto mt-12 grid max-w-[1060px] grid-cols-5 justify-center gap-x-[30px] gap-y-[30px] max-lg:grid-cols-3 max-sm:grid-cols-2">
           {corporatePartnerLogos.map((logo) => (
             <div

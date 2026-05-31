@@ -21,6 +21,18 @@ export type WordPressServicePricing = {
   noteHtml?: string;
 };
 
+export type WordPressCorporateSection = {
+  title: string;
+  text?: string;
+  items: string[];
+  image: string;
+};
+
+export type WordPressCorporateContent = {
+  sections: WordPressCorporateSection[];
+  partnersTitle?: string;
+};
+
 const serviceAcfPrefixes: Record<string, string[]> = {
   "ev-temizliyi-xidmeti": ["ev_temizliyi"],
   "ofis-temizliyi": ["ofis_temizliyi"],
@@ -162,6 +174,38 @@ function listTexts(value: unknown) {
   return typeof value === "string"
     ? Array.from(value.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi), (match) => toText(match[1])).filter(Boolean)
     : [];
+}
+
+function getCorporateBlocks(content: string) {
+  return content
+    .split(/(?=<h2\b)/i)
+    .map((block) => {
+      const title = toText(block.match(/<h2\b[^>]*>([\s\S]*?)<\/h2>/i)?.[1] ?? "");
+      const text = toText(block.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] ?? "");
+      const items = listTexts(block);
+      const image = block.match(/<img\b[^>]*\bsrc=["']([^"']+)["']/i)?.[1] ?? "";
+
+      return { title, text: text || undefined, items, image };
+    })
+    .filter((block) => block.title);
+}
+
+export function getWordPressCorporateContent(item: WordPressContentItem): WordPressCorporateContent | undefined {
+  const blocks = getCorporateBlocks(item.content);
+  const images = Array.from(item.content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi), (match) => match[1]);
+  const sections = blocks.slice(0, 3).map((block, index) => ({
+    ...block,
+    image: images[index] ?? block.image,
+  }));
+
+  if (sections.length !== 3 || sections.some((section) => !section.image)) {
+    return undefined;
+  }
+
+  return {
+    sections,
+    partnersTitle: blocks[3]?.title,
+  };
 }
 
 function getPricing(entries: AcfEntry[]): WordPressServicePricing | undefined {
