@@ -1,6 +1,7 @@
 import type { Locale } from "./routes";
 import type { HeroSlide } from "./site-data";
 import type { WordPressLocale } from "./wordpress";
+import { getLocalizedServices } from "./i18n";
 
 type WordPressImageLike = {
   url?: string | null;
@@ -122,6 +123,44 @@ function normalizeSlug(slug: string | undefined) {
   return typeof slug === "string" ? slug.replace(/^\/+|\/+$/g, "") : "";
 }
 
+function readAcf(acf: Record<string, unknown>, key: string) {
+  return acf[key];
+}
+
+function plainText(value: unknown) {
+  return typeof value === "string" ? value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+}
+
+function buildLegacyHomePayload(acf: Record<string, unknown>): HomePayload {
+  const beforeAfter = [
+    {
+      title: "1",
+      before: readAcf(acf, "əvvəl_1") as WordPressImageLike,
+      after: readAcf(acf, "sonra_1__867x640") as WordPressImageLike,
+    },
+    {
+      title: "2",
+      before: readAcf(acf, "əvvəl_2") as WordPressImageLike,
+      after: readAcf(acf, "sonra_2__867x640") as WordPressImageLike,
+    },
+  ];
+  const testimonials = Array.from({ length: 5 }, (_, index) => {
+    const number = index + 1;
+    return {
+      name: plainText(readAcf(acf, `ad_${number}`)),
+      text: plainText(readAcf(acf, `mustəri_mətn_${number}`)),
+      image: readAcf(acf, `mustəri_səkil_${number}`) as WordPressImageLike,
+    };
+  });
+  const about = plainText(readAcf(acf, "sirkət_haqqinda"));
+
+  return {
+    beforeAfter,
+    testimonials,
+    about: about ? { paragraphs: [about] } : undefined,
+  };
+}
+
 export function buildHomePageData(locale: Locale, payload: HomePayload | null | undefined): HomePageData {
   const fallback = fallbackCopy[locale] ?? fallbackCopy.az;
   const heroSlides: HeroSlide[] = payload?.heroSlides?.length
@@ -213,7 +252,19 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
 }
 
 export async function getHomePageData(locale: Locale) {
-  const { getWordPressHome } = await import("@/lib/wordpress");
+  const { getWordPressHome, getWordPressPage, getWordPressServices } = await import("@/lib/wordpress");
   const response = await getWordPressHome(locale as WordPressLocale).catch(() => null);
-  return buildHomePageData(locale, response?.mappedAcf);
+  const legacyPage = response ? null : await getWordPressPage("ana-sehife", locale as WordPressLocale).catch(() => null);
+  const pageData = buildHomePageData(locale, response?.mappedAcf ?? (legacyPage ? buildLegacyHomePayload(legacyPage.acf) : null));
+  const wordpressServices = await getWordPressServices(locale as WordPressLocale).catch(() => null);
+  const wordpressTitles = new Map(wordpressServices?.items.map((service) => [service.slug, service.title]) ?? []);
+  const services = getLocalizedServices(locale).map((service) => ({
+    ...service,
+    title: wordpressTitles.get(service.slug) || service.title,
+  }));
+
+  return {
+    ...pageData,
+    services,
+  };
 }

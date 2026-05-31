@@ -31,8 +31,8 @@ export async function getStaticWordPressPage(routeKey: StaticRouteKey, locale: L
 
   try {
     if (routeKey === "home") {
-      const response = await getWordPressHome(locale);
-      return response.page;
+      const response = await getWordPressHome(locale).catch(() => null);
+      return response?.page ?? (await getWordPressPage("ana-sehife", locale));
     }
 
     return await getWordPressPage(slug, locale);

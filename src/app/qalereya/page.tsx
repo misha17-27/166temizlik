@@ -73,12 +73,14 @@ async function getWordPressGallery(locale: Locale) {
       items,
       videoUrl,
       seo: page.seo,
+      title: page.title,
     };
   } catch {
     return {
       items: [],
       videoUrl: undefined,
       seo: null,
+      title: "",
     };
   }
 }
@@ -95,7 +97,7 @@ export async function GalleryPageContent({ locale = "az" }: { locale?: Locale })
       <section className="bg-white pb-20 pt-16 max-md:pb-12 max-md:pt-10">
         <div className="container-shell">
           <div className="text-center">
-            <h1 className="text-[42px] font-extrabold leading-tight text-black max-md:text-[32px]">{copy.gallery.title}</h1>
+            <h1 className="text-[42px] font-extrabold leading-tight text-black max-md:text-[32px]">{gallery.title || copy.gallery.title}</h1>
             <p className="mt-3 text-[19px] font-bold text-[#8c8c8c] max-md:text-[16px]">{copy.gallery.subtitle}</p>
           </div>
 

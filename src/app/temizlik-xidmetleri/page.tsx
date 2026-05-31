@@ -172,17 +172,25 @@ const serviceListDescriptions: Record<Locale, Record<string, string>> = {
   },
 };
 
-function ServicesHero({ locale }: { locale: Locale }) {
+function ServicesHero({
+  locale,
+  title,
+  image,
+}: {
+  locale: Locale;
+  title?: string;
+  image?: string;
+}) {
   const copy = pageCopy[locale];
 
   return (
     <section className="bg-[#f7f7f7] pb-8">
       <div className="mx-auto w-[min(var(--site-container),calc(100%-40px))] max-sm:w-full">
         <div className="relative h-[400px] overflow-hidden max-md:h-[260px] max-sm:h-[210px]">
-          <Image src={pageHeroAssets.blog} alt="" fill priority sizes="1140px" className="object-cover" />
+          <Image src={image || pageHeroAssets.blog} alt="" fill priority sizes="1140px" className="object-cover" />
           <div className="absolute inset-0 bg-black/38" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center text-white">
-            <h1 className="text-[29px] font-bold leading-tight max-md:text-[25px]">{copy.servicesTitle}</h1>
+            <h1 className="text-[29px] font-bold leading-tight max-md:text-[25px]">{title || copy.servicesTitle}</h1>
             <p className="mt-3 text-[17px] font-semibold max-md:text-[14px]">{copy.subtitle}</p>
           </div>
         </div>
@@ -280,7 +288,7 @@ export async function ServicesPageContent({ locale = "az" }: { locale?: Locale }
   return (
     <SitePage active="services" locale={locale} currentSlug="services">
       <WordPressSeoSchema seo={page?.seo} />
-      <ServicesHero locale={locale} />
+      <ServicesHero locale={locale} title={page?.title} image={page?.featuredImage?.url} />
       <section className="relative overflow-hidden bg-[#f7f7f7] pb-20 pt-7 max-md:pb-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_7%_38%,rgba(255,236,20,0.22),transparent_34%),radial-gradient(circle_at_94%_48%,rgba(0,116,202,0.16),transparent_36%)]" />
         <div className="relative mx-auto flex w-[min(var(--site-container),calc(100%-40px))] flex-col gap-6">

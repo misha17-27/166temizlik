@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
-import { WordPressPageContent } from "@/components/WordPressPageContent";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServices } from "@/lib/i18n";
 import type { Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
@@ -174,6 +174,15 @@ function ImageBox({
   );
 }
 
+function getAboutAcfHtml(page: WordPressContentItem | null | undefined, key: string) {
+  const value = page?.acf?.[key];
+  return typeof value === "string" && value.trim() ? value : "";
+}
+
+function SyncedHtml({ html }: { html: string }) {
+  return <div className="space-y-4" dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
 export async function AboutPageContent({
   locale = "az",
   wordpressPage,
@@ -187,17 +196,24 @@ export async function AboutPageContent({
   const localizedServicesList = getLocalizedServices(locale).map((service) => service.title);
   const title = wpPage?.title || copy.title;
   const heroImage = wpPage?.featuredImage?.url || assets.hero;
+  const synced = {
+    intro: getAboutAcfHtml(wpPage, "sirkət_mətn"),
+    prices: getAboutAcfHtml(wpPage, "təmizlik_xidməti_qiymətləri"),
+    team: getAboutAcfHtml(wpPage, "pesəkar_isci_heyəti"),
+    devices: getAboutAcfHtml(wpPage, "ən_son_təmizlik_cihazlari_ilə"),
+    features: getAboutAcfHtml(wpPage, "təmizlik_xidmətləri_təklif_edən_sirkətlərin_baslica_xususiyyətləri:"),
+    services: getAboutAcfHtml(wpPage, "sizə_asagidaki_təmizlik_xidmətlərini_təklif_edirik:"),
+  };
 
   return (
     <SitePage active="about" locale={locale} currentSlug="about">
+      <WordPressSeoSchema seo={wpPage?.seo} />
       <section className="relative h-[400px] bg-[#eaf8ff] max-md:h-[270px]">
         <Image src={heroImage} alt={wpPage?.featuredImage?.alt || title} fill priority sizes="100vw" className="object-cover object-center" />
         <div className="container-shell relative flex h-full items-center">
           <h1 className="mb-20 text-[30px] font-medium text-[#15257e] max-md:mb-8 max-md:text-[24px]">{title}</h1>
         </div>
       </section>
-
-      <WordPressPageContent page={wpPage} />
 
       <section className="relative bg-white pb-10">
         <div className="container-shell relative grid grid-cols-[1.02fr_1fr] items-start gap-12 max-lg:grid-cols-1">
@@ -209,11 +225,15 @@ export async function AboutPageContent({
           </div>
 
           <article className="mt-[30px] rounded-[16px] bg-white p-12 text-[15px] font-normal leading-[1.85] text-black shadow-[0_6px_28px_rgb(17_24_39_/_10%)] max-lg:mt-0 max-md:p-6 max-md:text-[13px]">
-            {body.introParagraphs.map((paragraph, index) => (
-              <p key={paragraph} className={index === 0 ? undefined : "mt-6"}>
-                {paragraph}
-              </p>
-            ))}
+            {synced.intro ? (
+              <SyncedHtml html={synced.intro} />
+            ) : (
+              body.introParagraphs.map((paragraph, index) => (
+                <p key={paragraph} className={index === 0 ? undefined : "mt-6"}>
+                  {paragraph}
+                </p>
+              ))
+            )}
           </article>
         </div>
       </section>
@@ -221,7 +241,7 @@ export async function AboutPageContent({
       <section className="bg-white py-16 max-md:py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
           <TextBlock title={copy.pricesTitle}>
-            <p>{body.pricesParagraph}</p>
+            {synced.prices ? <SyncedHtml html={synced.prices} /> : <p>{body.pricesParagraph}</p>}
           </TextBlock>
           <ImageBox src={assets.price} alt={copy.pricesTitle} className="ml-auto h-[330px] w-[430px] max-lg:mx-auto max-md:h-[260px] max-md:w-full" />
         </div>
@@ -231,9 +251,11 @@ export async function AboutPageContent({
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
           <ImageBox src={assets.team} alt={copy.teamTitle} className="h-[380px] w-[520px] max-lg:mx-auto max-md:h-[300px] max-md:w-full" />
           <TextBlock title={copy.teamTitle}>
-            {body.teamParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+            {synced.team ? (
+              <SyncedHtml html={synced.team} />
+            ) : (
+              body.teamParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+            )}
           </TextBlock>
         </div>
       </section>
@@ -241,9 +263,11 @@ export async function AboutPageContent({
       <section className="bg-white py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-20 max-lg:grid-cols-1 max-lg:gap-10">
           <TextBlock title={copy.devicesTitle}>
-            {body.devicesParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+            {synced.devices ? (
+              <SyncedHtml html={synced.devices} />
+            ) : (
+              body.devicesParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+            )}
           </TextBlock>
           <div className="relative">
             <Dots className="bottom-[-55px] left-[-55px] h-[210px] w-[260px] max-md:hidden" />
@@ -256,12 +280,18 @@ export async function AboutPageContent({
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
           <ImageBox src={assets.spray} alt={body.materialsAlt} className="h-[520px] w-[420px] overflow-hidden rounded-[20px] max-lg:mx-auto max-md:h-[360px] max-md:w-full" contain={false} />
           <TextBlock title={copy.featuresTitle}>
-            <ol className="list-decimal space-y-1 pl-5">
-              {body.features.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ol>
-            <p>{body.featuresParagraph}</p>
+            {synced.features ? (
+              <SyncedHtml html={synced.features} />
+            ) : (
+              <>
+                <ol className="list-decimal space-y-1 pl-5">
+                  {body.features.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ol>
+                <p>{body.featuresParagraph}</p>
+              </>
+            )}
           </TextBlock>
         </div>
       </section>
@@ -269,11 +299,15 @@ export async function AboutPageContent({
       <section className="bg-white py-10 pb-16">
         <div className="container-shell grid grid-cols-2 items-center gap-20 max-lg:grid-cols-1 max-lg:gap-10">
           <TextBlock title={copy.servicesTitle}>
-            <ul className="list-disc pl-5">
-              {localizedServicesList.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            {synced.services ? (
+              <SyncedHtml html={synced.services} />
+            ) : (
+              <ul className="list-disc pl-5">
+                {localizedServicesList.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            )}
           </TextBlock>
           <ImageBox src={assets.services} alt={body.servicesAlt} className="h-[420px] w-[520px] max-lg:mx-auto max-md:h-[320px] max-md:w-full" />
         </div>

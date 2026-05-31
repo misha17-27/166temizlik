@@ -34,15 +34,17 @@ export async function EmployeesPageContent({ locale = "az" }: { locale?: Locale 
   const copy = staticPageCopy[locale].employees;
   const page = await getStaticWordPressPage("employees", locale);
   const employees = await getEmployeeCards(locale);
+  const title = page?.title || copy.title;
+  const heroImage = page?.featuredImage?.url || pageHeroAssets.employees;
 
   return (
     <SitePage active="about" locale={locale} currentSlug="employees">
       <WordPressSeoSchema seo={page?.seo} />
       <section className="relative h-[410px] bg-white max-md:h-[240px]">
-        <Image src={pageHeroAssets.employees} alt={copy.title} fill priority sizes="100vw" className="object-cover opacity-70" />
+        <Image src={heroImage} alt={page?.featuredImage?.alt || title} fill priority sizes="100vw" className="object-cover opacity-70" />
         <div className="absolute inset-0 bg-white/35" />
         <div className="container-shell relative flex h-full items-center">
-          <h1 className="text-[30px] font-medium text-[#202b90] max-md:text-[24px]">{copy.title}</h1>
+          <h1 className="text-[30px] font-medium text-[#202b90] max-md:text-[24px]">{title}</h1>
         </div>
       </section>
 

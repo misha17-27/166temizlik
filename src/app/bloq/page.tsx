@@ -42,16 +42,18 @@ export async function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale];
   const page = await getWordPressPage("bloq", locale).catch(() => null);
   const posts = await getBlogCards(locale);
+  const title = page?.title || copy.blog.title;
+  const heroImage = page?.featuredImage?.url || pageHeroAssets.blog;
 
   return (
     <SitePage active="about" locale={locale} currentSlug="blog">
       <WordPressSeoSchema seo={page?.seo} />
       <section className="bg-[#f5f5f5]">
         <div className="container-shell relative h-[395px] overflow-hidden max-md:h-[260px]">
-          <Image src={pageHeroAssets.blog} alt={copy.blog.title} fill priority sizes="100vw" className="object-cover" />
+          <Image src={heroImage} alt={page?.featuredImage?.alt || title} fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-black/35" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
-            <h1 className="text-[36px] font-bold leading-tight max-md:text-[30px]">{copy.blog.title}</h1>
+            <h1 className="text-[36px] font-bold leading-tight max-md:text-[30px]">{title}</h1>
             <p className="mt-2 text-[18px] font-semibold max-md:text-[15px]">{copy.subtitle}</p>
           </div>
         </div>

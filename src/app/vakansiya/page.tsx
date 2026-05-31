@@ -47,6 +47,8 @@ export async function VacancyPageContent({ locale = "az" }: { locale?: Locale })
   const sharedCopy = staticPageCopy[locale];
   const page = await getWordPressPage("vakansiya", locale).catch(() => null);
   const vacancies = await getVacancyCards(locale);
+  const title = page?.title || copy.title;
+  const heroImage = page?.featuredImage?.url || pageHeroAssets.partners;
 
   return (
     <SitePage active="about" locale={locale} currentSlug="vacancy">
@@ -54,9 +56,9 @@ export async function VacancyPageContent({ locale = "az" }: { locale?: Locale })
       <section className="bg-[#f5f5f5]">
         <div
           className="container-shell grid h-[520px] place-items-center bg-cover bg-center max-md:h-[280px]"
-          style={{ backgroundImage: `linear-gradient(rgb(0 0 0 / 28%), rgb(0 0 0 / 28%)), url(${pageHeroAssets.partners})` }}
+          style={{ backgroundImage: `linear-gradient(rgb(0 0 0 / 28%), rgb(0 0 0 / 28%)), url(${heroImage})` }}
         >
-          <h1 className="text-[34px] font-bold text-white max-md:text-[28px]">{copy.title}</h1>
+          <h1 className="text-[34px] font-bold text-white max-md:text-[28px]">{title}</h1>
         </div>
       </section>
 

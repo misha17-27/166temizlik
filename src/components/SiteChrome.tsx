@@ -100,6 +100,11 @@ type SyncedFooterContact = {
   social?: Partial<Record<"Facebook" | "Instagram" | "WhatsApp" | "YouTube", string>>;
 };
 
+type SyncedService = {
+  slug: string;
+  title: string;
+};
+
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
 const overlayTransitionMs = 260;
@@ -367,6 +372,33 @@ async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact |
   };
 }
 
+async function fetchServices(locale: Locale): Promise<SyncedService[]> {
+  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/services?lang=${locale}`, {
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const payload = (await response.json()) as { items?: Array<{ slug?: unknown; title?: unknown }> };
+
+  return (payload.items ?? []).flatMap((item) =>
+    typeof item.slug === "string" && typeof item.title === "string" && item.slug && item.title
+      ? [{ slug: item.slug, title: item.title }]
+      : [],
+  );
+}
+
+function mergeServices<T extends { slug: string; title: string }>(fallback: T[], synced: SyncedService[]) {
+  const syncedBySlug = new Map(synced.map((service) => [service.slug, service.title]));
+  return fallback.map((service) => ({
+    ...service,
+    title: syncedBySlug.get(service.slug) || service.title,
+  }));
+}
+
 export function Header({
   active = "home",
   locale = "az",
@@ -382,9 +414,10 @@ export function Header({
   const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
   const [contact, setContact] = useState<SyncedFooterContact | null>(null);
+  const [syncedServices, setSyncedServices] = useState<SyncedService[]>([]);
   const mobileMenuPresence = useAnimatedPresence(mobileMenuOpen);
   const copy = chromeCopy[locale];
-  const localizedServices = getLocalizedServices(locale);
+  const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
   const popupServices = currentSlug
     ? [...localizedServices].sort((a, b) => (a.slug === currentSlug ? -1 : b.slug === currentSlug ? 1 : 0))
     : localizedServices;
@@ -410,10 +443,13 @@ export function Header({
   useEffect(() => {
     let cancelled = false;
 
-    fetchFooterContact(locale)
-      .then((nextContact) => {
+    Promise.all([fetchFooterContact(locale), fetchServices(locale)])
+      .then(([nextContact, nextServices]) => {
         if (!cancelled && nextContact) {
           setContact(nextContact);
+        }
+        if (!cancelled) {
+          setSyncedServices(nextServices);
         }
       })
       .catch(() => {
@@ -660,8 +696,9 @@ export function Header({
 
 export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const copy = chromeCopy[locale];
-  const localizedServices = getLocalizedServices(locale);
   const [contact, setContact] = useState<SyncedFooterContact | null>(null);
+  const [syncedServices, setSyncedServices] = useState<SyncedService[]>([]);
+  const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
   const phonePrimaryLabel = contact?.phonePrimary || copy.footer.phone;
   const phonePrimaryHref = contact?.phonePrimaryHref || site.phoneHref;
   const phoneSecondaryLabel = contact?.phoneSecondary || site.mobileLabel;
@@ -673,10 +710,13 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   useEffect(() => {
     let cancelled = false;
 
-    fetchFooterContact(locale)
-      .then((nextContact) => {
+    Promise.all([fetchFooterContact(locale), fetchServices(locale)])
+      .then(([nextContact, nextServices]) => {
         if (!cancelled && nextContact) {
           setContact(nextContact);
+        }
+        if (!cancelled) {
+          setSyncedServices(nextServices);
         }
       })
       .catch(() => {
