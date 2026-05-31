@@ -12,7 +12,7 @@ import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 import { buildWordPressMetadata, getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
-import { getWordPressServiceContent, type WordPressServiceContent } from "@/lib/wordpress-service";
+import { getWordPressServiceContent, type WordPressServiceContent, type WordPressServicePricing } from "@/lib/wordpress-service";
 
 export const dynamic = "force-dynamic";
 
@@ -473,7 +473,7 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
       <DetailHero title={displayTitle} heroImage={heroImage} subtitle={copy.subtitle} />
       <IntroBlocks service={service} title={displayTitle} images={introImages} paragraphs={paragraphs} isWordPressContent={Boolean(wpContent)} />
       <IncludedSection service={service} title={displayTitle} images={images} locale={locale} detailOverride={wpContent ?? undefined} />
-      {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} serviceSlug={service.slug} /> : null}
+      {packagePricingServices.has(service.slug) ? <PackagesAndNote locale={locale} serviceSlug={service.slug} pricing={wpContent?.pricing} /> : null}
       <OrderFormSection serviceTitle={displayTitle} locale={locale} />
       <BottomImageCta locale={locale} serviceSlug={service.slug} text={wpContent?.bottomText} />
     </SitePage>
@@ -920,7 +920,7 @@ const officeNoteItems: Record<Locale, { before: string; strong: string; after?: 
   ],
 };
 
-function NotePanel({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
+function NotePanel({ locale, serviceSlug, noteHtml }: { locale: Locale; serviceSlug: string; noteHtml?: string }) {
   const copy = pageCopy[locale];
   const noteItems = serviceSlug === "ofis-temizliyi" || serviceSlug === "bag-evlerinin-temizliyi" ? officeNoteItems[locale] : null;
 
@@ -932,7 +932,9 @@ function NotePanel({ locale, serviceSlug }: { locale: Locale; serviceSlug: strin
       </div>
       <div className="px-10 py-9 max-md:px-6">
         <h3 className="text-[30px] font-semibold leading-[30px]">{copy.noteTitle}</h3>
-        {noteItems ? (
+        {noteHtml ? (
+          <div className="wp-content mt-5 text-[18px] font-normal leading-[27px] text-white [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6" dangerouslySetInnerHTML={{ __html: noteHtml }} />
+        ) : noteItems ? (
           <ul className="mt-5 list-disc space-y-1 pl-6 text-[18px] font-normal leading-[27px] text-white">
             {noteItems.map((item) => (
               <li key={`${item.before}-${item.strong}`}>
@@ -952,24 +954,32 @@ function NotePanel({ locale, serviceSlug }: { locale: Locale; serviceSlug: strin
   );
 }
 
-function PackagesAndNote({ locale, serviceSlug }: { locale: Locale; serviceSlug: string }) {
+function PackagesAndNote({ locale, serviceSlug, pricing }: { locale: Locale; serviceSlug: string; pricing?: WordPressServicePricing }) {
   const copy = homeCopy[locale];
   const titles = packageTitles[locale];
-  const weeklyItems = serviceSlug === "ofis-temizliyi" || serviceSlug === "bag-evlerinin-temizliyi" ? officeWeeklyPrices[locale] : copy.weeklyPrices;
+  const fallbackWeeklyItems = serviceSlug === "ofis-temizliyi" || serviceSlug === "bag-evlerinin-temizliyi" ? officeWeeklyPrices[locale] : copy.weeklyPrices;
+  const weeklyItems = pricing
+    ? fallbackWeeklyItems.map((item, index) => ({
+        ...item,
+        four: pricing.prices[index] || item.four,
+        eight: pricing.prices[index + 3] || item.eight,
+      }))
+    : fallbackWeeklyItems;
+  const packageFeatures = pricing?.features ?? copy.packageFeatures;
 
   return (
     <section className="bg-[#f7f7f7] pb-20">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <div className="grid grid-cols-2 gap-0 max-lg:grid-cols-1 max-lg:gap-10">
-          <CleaningPackageCard title={titles.four} items={copy.packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" weeklyItems={weeklyItems} toggleLabels={copy.packageLabels} />
-          <CleaningPackageCard title={titles.eight} items={copy.packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" weeklyItems={weeklyItems} toggleLabels={copy.packageLabels} />
+          <CleaningPackageCard title={titles.four} items={packageFeatures.fourHours} priceKey="four" tone="blue" variant="detail" weeklyItems={weeklyItems} toggleLabels={copy.packageLabels} />
+          <CleaningPackageCard title={titles.eight} items={packageFeatures.eightHours} priceKey="eight" tone="yellow" variant="detail" weeklyItems={weeklyItems} toggleLabels={copy.packageLabels} />
         </div>
         <div className="mt-[92px] rounded-[30px] bg-[#e4efff] px-[42px] pb-[70px] pt-0 max-lg:px-8 max-md:mt-10 max-md:px-4 max-md:py-8">
           <div className="relative z-10 -translate-y-[54px] max-md:translate-y-0">
             <HourlyCards locale={locale} />
           </div>
           <div className="pt-[72px] max-md:pt-8">
-            <NotePanel locale={locale} serviceSlug={serviceSlug} />
+            <NotePanel locale={locale} serviceSlug={serviceSlug} noteHtml={pricing?.noteHtml} />
           </div>
         </div>
       </div>

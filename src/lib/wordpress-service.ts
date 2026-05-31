@@ -9,6 +9,16 @@ export type WordPressServiceContent = {
   includedItems: string[];
   includedNote?: string;
   bottomText?: string;
+  pricing?: WordPressServicePricing;
+};
+
+export type WordPressServicePricing = {
+  features: {
+    fourHours: string[];
+    eightHours: string[];
+  };
+  prices: string[];
+  noteHtml?: string;
 };
 
 const serviceAcfPrefixes: Record<string, string[]> = {
@@ -148,6 +158,33 @@ function orderedTexts(entries: AcfEntry[], matcher: (entry: AcfEntry) => boolean
     .filter(Boolean);
 }
 
+function listTexts(value: unknown) {
+  return typeof value === "string"
+    ? Array.from(value.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi), (match) => toText(match[1])).filter(Boolean)
+    : [];
+}
+
+function getPricing(entries: AcfEntry[]): WordPressServicePricing | undefined {
+  const fourHours = entries.find((entry) => /_4_saat(?:_|$)/.test(entry.normalizedKey));
+  const eightHours = entries.find((entry) => /_8_saat(?:_|$)/.test(entry.normalizedKey));
+  const prices = orderedTexts(entries, (entry) => /_qiymet_\d+$/.test(entry.normalizedKey));
+  const note = entries.find((entry) => entry.normalizedKey.includes("_qeyd"));
+  const features = {
+    fourHours: listTexts(fourHours?.value),
+    eightHours: listTexts(eightHours?.value),
+  };
+
+  if (!features.fourHours.length || !features.eightHours.length || prices.length < 6) {
+    return undefined;
+  }
+
+  return {
+    features,
+    prices,
+    noteHtml: typeof note?.value === "string" ? note.value : undefined,
+  };
+}
+
 export function getWordPressServiceContent(item: WordPressContentItem, slug: string): WordPressServiceContent {
   const allEntries = Object.entries(item.acf ?? {}).map(([key, value]) => ({
     key,
@@ -187,5 +224,6 @@ export function getWordPressServiceContent(item: WordPressContentItem, slug: str
     includedItems,
     includedNote,
     bottomText,
+    pricing: getPricing(entries),
   };
 }
