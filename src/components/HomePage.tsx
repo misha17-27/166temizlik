@@ -230,6 +230,13 @@ export function HomePage({
           ...fallbackCopy.about,
           ...homeData.copy.about,
         },
+        ...(homeData.packages
+          ? {
+              packageFeatures: homeData.packages.features,
+              weeklyPrices: homeData.packages.weeklyPrices,
+              notes: homeData.packages.notes,
+            }
+          : {}),
       }
     : fallbackCopy;
   const heroSlides = homeData?.copy.heroSlides.length ? homeData.copy.heroSlides : copy.heroSlides;

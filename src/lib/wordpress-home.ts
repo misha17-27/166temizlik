@@ -1,5 +1,5 @@
 import type { Locale } from "./routes";
-import type { HeroSlide } from "./site-data";
+import { weeklyPrices as fallbackWeeklyPrices, type HeroSlide } from "./site-data";
 import type { WordPressLocale } from "./wordpress";
 import { getLocalizedServices } from "./i18n";
 
@@ -76,6 +76,18 @@ export type HomePageData = {
   beforeAfter: HomeBeforeAfterItem[];
   partnerLogos: string[];
   aboutImage: string;
+  packages?: {
+    features: {
+      fourHours: string[];
+      eightHours: string[];
+    };
+    weeklyPrices: typeof fallbackWeeklyPrices;
+    notes: Array<{
+      before: string;
+      strong: string;
+      after: string;
+    }>;
+  };
 };
 
 const fallbackCopy: Record<Locale, Pick<HomePageData["copy"], "heroSlides" | "servicesTitle" | "testimonials" | "about">> = {
@@ -129,6 +141,51 @@ function readAcf(acf: Record<string, unknown>, key: string) {
 
 function plainText(value: unknown) {
   return typeof value === "string" ? value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "";
+}
+
+function listItems(value: unknown) {
+  return typeof value === "string"
+    ? Array.from(value.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi), (match) => plainText(match[1])).filter(Boolean)
+    : [];
+}
+
+function buildLegacyHomePackages(acf: Record<string, unknown>): HomePageData["packages"] {
+  const prices = Array.from({ length: 6 }, (_, index) => plainText(readAcf(acf, `qiymət_${index + 1}`)));
+  const features = {
+    fourHours: listItems(readAcf(acf, "4_saatliq_metn")),
+    eightHours: listItems(readAcf(acf, "8_saatliq_metn")),
+  };
+  const noteHtml = readAcf(acf, "qeyd");
+  const notes =
+    typeof noteHtml === "string"
+      ? Array.from(noteHtml.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/gi), (match) => {
+          const html = match[1];
+          const strongMatch = html.match(/<(?:strong|b)\b[^>]*>([\s\S]*?)<\/(?:strong|b)>/i);
+          const strong = plainText(strongMatch?.[1] ?? "");
+          const [before = "", after = ""] = strongMatch ? html.split(strongMatch[0], 2) : [html, ""];
+          const beforeText = plainText(before);
+          const afterText = plainText(after);
+          return {
+            before: beforeText ? `${beforeText} ` : "",
+            strong,
+            after: afterText ? `${/^[.,;:!?]/.test(afterText) ? "" : " "}${afterText}` : "",
+          };
+        })
+      : [];
+
+  if (!features.fourHours.length || !features.eightHours.length || prices.some((price) => !price)) {
+    return undefined;
+  }
+
+  return {
+    features,
+    weeklyPrices: fallbackWeeklyPrices.map((price, index) => ({
+      ...price,
+      four: prices[index] || price.four,
+      eight: prices[index + 3] || price.eight,
+    })),
+    notes,
+  };
 }
 
 function buildLegacyHomePayload(acf: Record<string, unknown>): HomePayload {
@@ -266,5 +323,6 @@ export async function getHomePageData(locale: Locale) {
   return {
     ...pageData,
     services,
+    packages: legacyPage ? buildLegacyHomePackages(legacyPage.acf) : undefined,
   };
 }
