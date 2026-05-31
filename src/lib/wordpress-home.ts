@@ -42,6 +42,7 @@ type HomePayload = {
     paragraphs?: string[];
     image?: WordPressImageLike | null;
   };
+  mapImage?: WordPressImageLike | null;
 };
 
 export type HomeServiceItem = {
@@ -76,6 +77,7 @@ export type HomePageData = {
   beforeAfter: HomeBeforeAfterItem[];
   partnerLogos: string[];
   aboutImage: string;
+  mapImage: string;
   packages?: {
     features: {
       fourHours: string[];
@@ -188,7 +190,18 @@ function buildLegacyHomePackages(acf: Record<string, unknown>): HomePageData["pa
   };
 }
 
-function buildLegacyHomePayload(acf: Record<string, unknown>): HomePayload {
+function getLegacyHomeSectionImages(content: string) {
+  const images = Array.from(content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi), (match) => match[1]).filter(
+    (image) => !image.includes("/revslider-2/public/assets/assets/dummy.png"),
+  );
+
+  return {
+    about: images.at(-8) ?? "",
+    map: images.at(-7) ?? "",
+  };
+}
+
+function buildLegacyHomePayload(acf: Record<string, unknown>, content: string): HomePayload {
   const beforeAfter = [
     {
       title: "1",
@@ -210,6 +223,7 @@ function buildLegacyHomePayload(acf: Record<string, unknown>): HomePayload {
     };
   });
   const about = plainText(readAcf(acf, "sirkət_haqqinda"));
+  const sectionImages = getLegacyHomeSectionImages(content);
   const partners = Array.isArray(readAcf(acf, "partnyorlar"))
     ? (readAcf(acf, "partnyorlar") as WordPressImageLike[]).map((logo, index) => ({
         name: `Partner ${index + 1}`,
@@ -220,7 +234,8 @@ function buildLegacyHomePayload(acf: Record<string, unknown>): HomePayload {
   return {
     beforeAfter,
     testimonials,
-    about: about ? { paragraphs: [about] } : undefined,
+    about: about ? { paragraphs: [about], image: sectionImages.about ? { url: sectionImages.about } : undefined } : undefined,
+    mapImage: sectionImages.map ? { url: sectionImages.map } : undefined,
     partners,
   };
 }
@@ -312,6 +327,7 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
     beforeAfter,
     partnerLogos,
     aboutImage: imageUrl(payload?.about?.image),
+    mapImage: imageUrl(payload?.mapImage),
   };
 }
 
@@ -319,7 +335,7 @@ export async function getHomePageData(locale: Locale) {
   const { getWordPressCanonicalSlug, getWordPressHome, getWordPressPage, getWordPressServices } = await import("@/lib/wordpress");
   const response = await getWordPressHome(locale as WordPressLocale).catch(() => null);
   const legacyPage = response ? null : await getWordPressPage("ana-sehife", locale as WordPressLocale).catch(() => null);
-  const pageData = buildHomePageData(locale, response?.mappedAcf ?? (legacyPage ? buildLegacyHomePayload(legacyPage.acf) : null));
+  const pageData = buildHomePageData(locale, response?.mappedAcf ?? (legacyPage ? buildLegacyHomePayload(legacyPage.acf, legacyPage.content) : null));
   const wordpressServices = await getWordPressServices(locale as WordPressLocale).catch(() => null);
   const wordpressTitles = new Map(wordpressServices?.items.map((service) => [getWordPressCanonicalSlug(service), service.title]) ?? []);
   const services = getLocalizedServices(locale).map((service) => ({

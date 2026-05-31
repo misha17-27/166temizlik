@@ -137,7 +137,7 @@ function NotePanel({ copy }: { copy: HomeCopy }) {
   );
 }
 
-function AboutSection({ copy, image }: { copy: HomeCopy; image?: string }) {
+function AboutSection({ copy, image, mapImage }: { copy: HomeCopy; image?: string; mapImage?: string }) {
   return (
     <section id="about" className="bg-white">
       <div className="bg-[#eef6ff] py-14">
@@ -164,7 +164,7 @@ function AboutSection({ copy, image }: { copy: HomeCopy; image?: string }) {
             {copy.about.mapTitle}
           </h2>
           <div className="relative mx-auto mt-8 h-[400px] w-full max-w-[610px] max-md:h-[270px]">
-            <Image src={site.mapImage} alt={copy.about.mapAlt} fill sizes="610px" className="object-contain" />
+            <Image src={mapImage || site.mapImage} alt={copy.about.mapAlt} fill sizes="610px" className="object-contain" />
           </div>
         </div>
       </div>
@@ -247,7 +247,7 @@ export function HomePage({
       <HeroSlider slides={heroSlides} />
       <ServicesSection locale={locale} title={copy.servicesTitle} services={homeData?.services} />
       <PricesSection copy={copy} locale={locale} />
-      <AboutSection copy={copy} image={homeData?.aboutImage} />
+      <AboutSection copy={copy} image={homeData?.aboutImage} mapImage={homeData?.mapImage} />
       <BeforeAfterSection copy={copy} items={homeData?.beforeAfter} partnerLogos={homeData?.partnerLogos} />
       <TestimonialsSection copy={copy} />
       <CtaFooter locale={locale} />
