@@ -105,6 +105,14 @@ type SyncedService = {
   title: string;
 };
 
+type SyncedMenuLabels = Partial<Record<"home" | "services" | "about" | "gallery" | "contact" | "blog" | "vacancy", string>>;
+
+type SyncedMenus = {
+  header: SyncedMenuLabels;
+  footer: SyncedMenuLabels;
+  about: Array<{ label: string; href: string }>;
+};
+
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
 const overlayTransitionMs = 260;
@@ -405,6 +413,67 @@ function mergeServices<T extends { slug: string; title: string }>(fallback: T[],
   }));
 }
 
+function getMenuRouteKey(url: string) {
+  const slug = new URL(url).pathname.replace(/^\/+|\/+$/g, "");
+  const keys: Record<string, keyof SyncedMenuLabels> = {
+    "": "home",
+    "ana-sehife": "home",
+    "temizlik-xidmetleri": "services",
+    "sirket-haqqinda": "about",
+    qalereya: "gallery",
+    "166-temizlik-elaqe": "contact",
+    bloq: "blog",
+    vakansiya: "vacancy",
+  };
+  return keys[slug];
+}
+
+async function fetchMenus(locale: Locale): Promise<SyncedMenus> {
+  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/menus?lang=${locale}`, {
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+  });
+
+  if (!response.ok) {
+    return { header: {}, footer: {}, about: [] };
+  }
+
+  type MenuItem = { id: number; parentId: number; title: string; url: string };
+  const payload = (await response.json()) as { items?: Array<{ slug?: string; items?: MenuItem[] }> };
+  const mainItems = payload.items?.find((menu) => menu.slug === "main")?.items ?? [];
+  const footerItems = payload.items?.find((menu) => menu.slug === "footer-az")?.items ?? [];
+  const header: SyncedMenuLabels = {};
+  const footer: SyncedMenuLabels = {};
+
+  mainItems
+    .filter((item) => item.parentId === 0)
+    .forEach((item) => {
+      const key = getMenuRouteKey(item.url);
+      if (key) {
+        header[key] = item.title;
+      }
+    });
+
+  footerItems.forEach((item) => {
+    const key = getMenuRouteKey(item.url);
+    if (key) {
+      footer[key] = item.title;
+    }
+  });
+
+  const aboutParent = mainItems.find((item) => item.parentId === 0 && getMenuRouteKey(item.url) === "about");
+  const about = aboutParent
+    ? mainItems
+        .filter((item) => item.parentId === aboutParent.id)
+        .map((item) => ({
+          label: item.title,
+          href: getLocalizedHref(locale, new URL(item.url).pathname),
+        }))
+    : [];
+
+  return { header, footer, about };
+}
+
 export function Header({
   active = "home",
   locale = "az",
@@ -421,6 +490,7 @@ export function Header({
   const [orderOpen, setOrderOpen] = useState(false);
   const [contact, setContact] = useState<SyncedFooterContact | null>(null);
   const [syncedServices, setSyncedServices] = useState<SyncedService[]>([]);
+  const [syncedMenus, setSyncedMenus] = useState<SyncedMenus>({ header: {}, footer: {}, about: [] });
   const mobileMenuPresence = useAnimatedPresence(mobileMenuOpen);
   const copy = chromeCopy[locale];
   const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
@@ -428,18 +498,20 @@ export function Header({
     ? [...localizedServices].sort((a, b) => (a.slug === currentSlug ? -1 : b.slug === currentSlug ? 1 : 0))
     : localizedServices;
   const navItems = [
-    { key: "home", label: copy.nav.home, href: getLocalizedHref(locale, "/") },
-    { key: "services", label: copy.nav.services, href: getLocalizedHref(locale, "/temizlik-xidmetleri/"), hasMenu: true },
-    { key: "about", label: copy.nav.about, href: getLocalizedHref(locale, "/sirket-haqqinda/"), hasMenu: true },
-    { key: "gallery", label: copy.nav.gallery, href: getLocalizedHref(locale, "/qalereya/") },
-    { key: "contact", label: copy.nav.contact, href: getLocalizedHref(locale, "/166-temizlik-elaqe/") },
+    { key: "home", label: syncedMenus.header.home || copy.nav.home, href: getLocalizedHref(locale, "/") },
+    { key: "services", label: syncedMenus.header.services || copy.nav.services, href: getLocalizedHref(locale, "/temizlik-xidmetleri/"), hasMenu: true },
+    { key: "about", label: syncedMenus.header.about || copy.nav.about, href: getLocalizedHref(locale, "/sirket-haqqinda/"), hasMenu: true },
+    { key: "gallery", label: syncedMenus.header.gallery || copy.nav.gallery, href: getLocalizedHref(locale, "/qalereya/") },
+    { key: "contact", label: syncedMenus.header.contact || copy.nav.contact, href: getLocalizedHref(locale, "/166-temizlik-elaqe/") },
   ];
   const activeMobileSubmenu = mobileSubmenu ? navItems.find((item) => item.key === mobileSubmenu) : null;
   const activeMobileSubmenuItems =
     mobileSubmenu === "services"
       ? localizedServices.map((service) => ({ label: service.title, href: service.href, slug: service.slug }))
       : mobileSubmenu === "about"
-        ? copy.aboutMenu.map((item) => ({ ...item, href: getLocalizedHref(locale, item.href) }))
+        ? syncedMenus.about.length
+          ? syncedMenus.about
+          : copy.aboutMenu.map((item) => ({ ...item, href: getLocalizedHref(locale, item.href) }))
         : [];
 
   function closeMobileMenu() {
@@ -449,13 +521,14 @@ export function Header({
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([fetchFooterContact(locale), fetchServices(locale)])
-      .then(([nextContact, nextServices]) => {
+    Promise.all([fetchFooterContact(locale), fetchServices(locale), fetchMenus(locale)])
+      .then(([nextContact, nextServices, nextMenus]) => {
         if (!cancelled && nextContact) {
           setContact(nextContact);
         }
         if (!cancelled) {
           setSyncedServices(nextServices);
+          setSyncedMenus(nextMenus);
         }
       })
       .catch(() => {
@@ -510,7 +583,9 @@ export function Header({
               item.key === "services"
                 ? localizedServices.map((service) => ({ label: service.title, href: service.href, slug: service.slug }))
                 : item.key === "about"
-                  ? copy.aboutMenu.map((menuItem) => ({ ...menuItem, href: getLocalizedHref(locale, menuItem.href) }))
+                  ? syncedMenus.about.length
+                    ? syncedMenus.about
+                    : copy.aboutMenu.map((menuItem) => ({ ...menuItem, href: getLocalizedHref(locale, menuItem.href) }))
                   : [];
             return (
               <div key={item.label} className="group relative">
@@ -704,6 +779,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const copy = chromeCopy[locale];
   const [contact, setContact] = useState<SyncedFooterContact | null>(null);
   const [syncedServices, setSyncedServices] = useState<SyncedService[]>([]);
+  const [syncedMenus, setSyncedMenus] = useState<SyncedMenus>({ header: {}, footer: {}, about: [] });
   const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
   const phonePrimaryLabel = contact?.phonePrimary || copy.footer.phone;
   const phonePrimaryHref = contact?.phonePrimaryHref || site.phoneHref;
@@ -712,17 +788,25 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const address = contact?.address || copy.footer.address;
   const email = contact?.email || site.email;
   const whatsappHref = contact?.whatsappHref || site.whatsappHref;
+  const usefulLinks = [
+    [syncedMenus.footer.home || copy.footer.links.home, getLocalizedHref(locale, "/")],
+    [syncedMenus.footer.about || copy.footer.links.about, getLocalizedHref(locale, "/sirket-haqqinda/")],
+    [syncedMenus.footer.services || copy.footer.links.services, getLocalizedHref(locale, "/temizlik-xidmetleri/")],
+    [syncedMenus.footer.blog || copy.footer.links.blog, getLocalizedHref(locale, "/bloq/")],
+    [syncedMenus.footer.vacancy || copy.footer.links.vacancy, getLocalizedHref(locale, "/vakansiya/")],
+  ];
 
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([fetchFooterContact(locale), fetchServices(locale)])
-      .then(([nextContact, nextServices]) => {
+    Promise.all([fetchFooterContact(locale), fetchServices(locale), fetchMenus(locale)])
+      .then(([nextContact, nextServices, nextMenus]) => {
         if (!cancelled && nextContact) {
           setContact(nextContact);
         }
         if (!cancelled) {
           setSyncedServices(nextServices);
+          setSyncedMenus(nextMenus);
         }
       })
       .catch(() => {
@@ -762,13 +846,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
           <div>
             <h3 className="mb-4 text-[16px] font-bold">{copy.footer.useful}</h3>
             <ul className="space-y-4 text-[14px] font-normal">
-              {[
-                [copy.footer.links.home, getLocalizedHref(locale, "/")],
-                [copy.footer.links.about, getLocalizedHref(locale, "/sirket-haqqinda/")],
-                [copy.footer.links.services, getLocalizedHref(locale, "/temizlik-xidmetleri/")],
-                [copy.footer.links.blog, getLocalizedHref(locale, "/bloq/")],
-                [copy.footer.links.vacancy, getLocalizedHref(locale, "/vakansiya/")],
-              ].map(([label, href]) => (
+              {usefulLinks.map(([label, href]) => (
                 <li key={label}>
                   <Link href={href} prefetch={false}>{label}</Link>
                 </li>
