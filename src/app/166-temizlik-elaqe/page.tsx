@@ -95,9 +95,17 @@ function getContactSocialLinks(contact: ContactPageData) {
   ];
 }
 
-function getSyncedContactCards(locale: Locale, contact: ContactPageData) {
+function getContactContentImages(page: WordPressContentItem | null | undefined) {
+  return Array.from(page?.content?.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi) ?? [], (match) => match[1]);
+}
+
+function getSyncedContactCards(locale: Locale, contact: ContactPageData, contentImages: string[]) {
   const copy = staticPageCopy[locale].contact;
   const [primaryPhone, ...mobilePhones] = contact.phones;
+  const primaryPhoneIcon = contentImages[0] || "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png";
+  const mobilePhoneIcon = contentImages[1] || "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png";
+  const addressIcon = contentImages[contentImages.length - 3] || "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png";
+  const emailIcon = contentImages[contentImages.length - 2] || "https://166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png";
 
   return [
     ...(primaryPhone
@@ -106,7 +114,7 @@ function getSyncedContactCards(locale: Locale, contact: ContactPageData) {
             title: copy.phone,
             value: primaryPhone.value,
             href: primaryPhone.href,
-            icon: "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png",
+            icon: primaryPhoneIcon,
           },
         ]
       : []),
@@ -114,19 +122,19 @@ function getSyncedContactCards(locale: Locale, contact: ContactPageData) {
       title: copy.mobile,
       value: phone.value,
       href: phone.href,
-      icon: "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png",
+      icon: mobilePhoneIcon,
     })),
     {
       title: copy.address,
       value: contact.address.value,
       href: contact.address.href,
-      icon: "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png",
+      icon: addressIcon,
     },
     {
       title: copy.email,
       value: contact.email.value,
       href: contact.email.href,
-      icon: "https://166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png",
+      icon: emailIcon,
     },
   ];
 }
@@ -153,7 +161,7 @@ export async function ContactPageContent({
   const settings = await getWordPressSettings(locale).catch(() => null);
   const contact = buildContactPageData(wpPage, settings, locale);
   const copy = staticPageCopy[locale].contact;
-  const contactCards = getSyncedContactCards(locale, contact);
+  const contactCards = getSyncedContactCards(locale, contact, getContactContentImages(wpPage));
   const contactSocialLinks = getContactSocialLinks(contact);
   const title = contact.contactTitle || wpPage?.title || copy.contactTitle;
   const questionsImage =
