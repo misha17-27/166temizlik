@@ -13,6 +13,7 @@ import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 import { buildWordPressMetadata, getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
+import { getWordPressPartnerLogoUrls } from "@/lib/wordpress-partners";
 import { getStaticWordPressPage } from "@/lib/wordpress-pages";
 import {
   getWordPressCorporateContent,
@@ -467,6 +468,8 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
     (service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog);
 
   if (service.slug === "korporativ-temizlik-xidmeti") {
+    const corporateLogos = (await getWordPressPartnerLogoUrls(locale)).filter((logo) => logo.includes("/2024/09/"));
+
     return (
       <>
         <WordPressSeoSchema seo={wpService?.seo} />
@@ -476,6 +479,7 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
           heroImage={heroImage}
           locale={locale}
           content={wpService ? getWordPressCorporateContent(wpService) : undefined}
+          partnerLogos={corporateLogos.length ? corporateLogos : corporatePartnerLogos}
         />
       </>
     );
@@ -655,12 +659,14 @@ function CorporateServiceContent({
   heroImage,
   locale,
   content,
+  partnerLogos,
 }: {
   service: ServicePageItem;
   displayTitle: string;
   heroImage: string;
   locale: Locale;
   content?: WordPressCorporateContent;
+  partnerLogos: string[];
 }) {
   const sections = content?.sections ?? [];
 
@@ -708,7 +714,7 @@ function CorporateServiceContent({
           />
         </div>
       </section>
-      <CorporatePartnersSection title={content?.partnersTitle} />
+      <CorporatePartnersSection title={content?.partnersTitle} logos={partnerLogos} />
       <OrderFormSection serviceTitle={displayTitle} locale={locale} />
     </SitePage>
   );
@@ -765,13 +771,13 @@ function CorporateTextImageRow({
   );
 }
 
-function CorporatePartnersSection({ title }: { title?: string }) {
+function CorporatePartnersSection({ title, logos }: { title?: string; logos: string[] }) {
   return (
     <section className="bg-[#f7f7f7] pb-20 pt-2">
       <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
         <h2 className="text-center text-[32px] font-medium leading-[42px] text-black max-md:text-[24px]">{title || "Korporativ Əməkdaşlarımız"}</h2>
         <div className="mx-auto mt-12 grid max-w-[1060px] grid-cols-5 justify-center gap-x-[30px] gap-y-[30px] max-lg:grid-cols-3 max-sm:grid-cols-2">
-          {corporatePartnerLogos.map((logo) => (
+          {logos.map((logo) => (
             <div
               key={logo}
               className="h-[124px] w-[186px] max-w-full overflow-hidden rounded-[14px] bg-contain bg-center bg-repeat"
