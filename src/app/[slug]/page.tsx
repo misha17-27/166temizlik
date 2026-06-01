@@ -428,7 +428,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const service = servicePages.find((item) => item.slug === slug);
   const post = blogPosts.find((item) => item.slug === slug);
   const wpService = service ? await getWordPressService(slug).catch(() => null) : null;
-  const wpPost = service || post ? null : await getWordPressPost(slug).catch(() => null);
+  const wpPost = service ? null : await getWordPressPost(slug).catch(() => null);
   const title = wpService?.title ?? service?.title ?? post?.title ?? wpPost?.title;
   const fallbackTitle = title ? `${title} - 166 TÉ™mizlik` : "166 TÉ™mizlik";
   const fallbackDescription = post?.excerpt ?? (wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : undefined);
