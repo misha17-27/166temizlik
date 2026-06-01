@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { SitePage } from "@/components/SiteChrome";
-import { WordPressPageContent } from "@/components/WordPressPageContent";
 import { newerPartnerLogos, pageHeroAssets, partnerLogos } from "@/lib/pages-data";
 import { getWordPressPartnerLogoUrls } from "@/lib/wordpress-partners";
 import { staticPageCopy } from "@/lib/static-page-copy";
@@ -35,8 +34,6 @@ export async function PartnersPageContent({
           <h1 className="absolute inset-0 grid place-items-center text-[34px] font-bold text-white max-md:text-[28px]">{title}</h1>
         </div>
       </section>
-
-      <WordPressPageContent page={wpPage} />
 
       <section className="bg-[#f5f5f5] py-9 pb-16">
         <div className="container-shell bg-white px-16 py-14 max-md:px-4">
