@@ -274,6 +274,37 @@ export function getWordPressCanonicalSlug(item: Pick<WordPressContentItem, "slug
   return item.translations.find((translation) => translation.language === "az")?.slug || item.slug;
 }
 
+export function getWordPressTranslationSlugs(
+  item: Pick<WordPressContentItem, "slug" | "language" | "translations">,
+) {
+  const slugs: Partial<Record<WordPressLocale, string>> = {};
+
+  if (Array.isArray(item.translations)) {
+    item.translations.forEach((translation) => {
+      if (
+        (translation.language === "az" || translation.language === "ru" || translation.language === "tr") &&
+        translation.slug
+      ) {
+        slugs[translation.language] = translation.slug;
+      }
+    });
+  } else {
+    const translations = item.translations;
+
+    (["az", "ru", "tr"] as WordPressLocale[]).forEach((locale) => {
+      if (translations[locale]?.slug) {
+        slugs[locale] = translations[locale].slug;
+      }
+    });
+  }
+
+  if ((item.language === "az" || item.language === "ru" || item.language === "tr") && !slugs[item.language]) {
+    slugs[item.language] = item.slug;
+  }
+
+  return slugs;
+}
+
 function cleanSeoValue(value: string | null | undefined) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }

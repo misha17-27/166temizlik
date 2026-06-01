@@ -160,12 +160,14 @@ function LanguageSwitcher({
   locale,
   currentSlug,
   routeKind,
+  languageTargets,
 }: {
   locale: Locale;
   currentSlug: string;
   routeKind: RouteKind;
+  languageTargets?: Partial<Record<Locale, string>>;
 }) {
-  const options = getLanguageSwitcherOptions(locale, currentSlug, routeKind);
+  const options = getLanguageSwitcherOptions(locale, currentSlug, routeKind, languageTargets);
   const current = options.find((item) => item.active) ?? options[0];
 
   return (
@@ -213,12 +215,14 @@ function MobileLanguageSwitcher({
   locale,
   currentSlug,
   routeKind,
+  languageTargets,
 }: {
   locale: Locale;
   currentSlug: string;
   routeKind: RouteKind;
+  languageTargets?: Partial<Record<Locale, string>>;
 }) {
-  const options = getLanguageSwitcherOptions(locale, currentSlug, routeKind);
+  const options = getLanguageSwitcherOptions(locale, currentSlug, routeKind, languageTargets);
 
   return (
     <div className="mt-auto border-t border-[#ececec] pt-8">
@@ -479,11 +483,13 @@ export function Header({
   locale = "az",
   currentSlug = "home",
   routeKind = "static",
+  languageTargets,
 }: {
   active?: HeaderActive;
   locale?: Locale;
   currentSlug?: string;
   routeKind?: RouteKind;
+  languageTargets?: Partial<Record<Locale, string>>;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
@@ -653,7 +659,7 @@ export function Header({
             </svg>
           </button>
           <div className="max-lg:hidden">
-            <LanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
+            <LanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} languageTargets={languageTargets} />
           </div>
         </div>
       </div>
@@ -766,7 +772,7 @@ export function Header({
                 </ul>
               </nav>
             )}
-            <MobileLanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
+            <MobileLanguageSwitcher locale={locale} currentSlug={currentSlug} routeKind={routeKind} languageTargets={languageTargets} />
           </div>
         </div>
       ) : null}
@@ -931,16 +937,18 @@ export function SitePage({
   locale = "az",
   currentSlug = "home",
   routeKind = "static",
+  languageTargets,
 }: {
   children: React.ReactNode;
   active?: HeaderActive;
   locale?: Locale;
   currentSlug?: string;
   routeKind?: RouteKind;
+  languageTargets?: Partial<Record<Locale, string>>;
 }) {
   return (
     <main>
-      <Header active={active} locale={locale} currentSlug={currentSlug} routeKind={routeKind} />
+      <Header active={active} locale={locale} currentSlug={currentSlug} routeKind={routeKind} languageTargets={languageTargets} />
       {children}
       <CtaFooter locale={locale} />
     </main>

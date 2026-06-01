@@ -90,15 +90,21 @@ export function getLanguageOptions(locale: Locale = "az", canonicalSlug = "home"
   }));
 }
 
-export function getLanguageSwitcherOptions(locale: Locale = "az", canonicalSlug = "home", kind: RouteKind = "static") {
+export function getLanguageSwitcherOptions(
+  locale: Locale = "az",
+  canonicalSlug = "home",
+  kind: RouteKind = "static",
+  hrefOverrides: Partial<Record<Locale, string>> = {},
+) {
   return (["az", "ru", "tr"] as Locale[]).map((itemLocale) => ({
     locale: itemLocale,
     label: languageLabels[itemLocale],
     name: languageNames[itemLocale],
     href:
-      itemLocale === locale
+      hrefOverrides[itemLocale] ??
+      (itemLocale === locale
         ? getHrefForCanonical(itemLocale, canonicalSlug, kind)
-        : getLanguageTargets(locale, canonicalSlug, kind).find((item) => item.locale === itemLocale)?.href ?? "/",
+        : getLanguageTargets(locale, canonicalSlug, kind).find((item) => item.locale === itemLocale)?.href ?? "/"),
     active: itemLocale === locale,
   }));
 }

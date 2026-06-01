@@ -10,9 +10,9 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { buildContactPageData } from "@/lib/contact-page-data";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { getLocalizedHref } from "@/lib/routes";
+import { getBlogPostHref, getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
-import { buildWordPressMetadata, getWordPressImageUrl, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
+import { buildWordPressMetadata, getWordPressCanonicalSlug, getWordPressImageUrl, getWordPressPost, getWordPressService, getWordPressTranslationSlugs, stripHtml } from "@/lib/wordpress";
 import { getWordPressPartnerLogoUrls } from "@/lib/wordpress-partners";
 import { getStaticWordPressPage } from "@/lib/wordpress-pages";
 import {
@@ -1106,9 +1106,18 @@ export async function BlogPostContent({ slug, locale = "az" }: { slug: string; l
   const title = wpPost?.title ?? post?.title ?? "";
   const image = wpPost ? getWordPressImageUrl(wpPost) || pageHeroAssets.blog : post?.image ?? pageHeroAssets.blog;
   const excerpt = wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : post?.excerpt ?? "";
+  const canonicalSlug = wpPost ? getWordPressCanonicalSlug(wpPost) : slug;
+  const languageTargets = wpPost
+    ? Object.fromEntries(
+        Object.entries(getWordPressTranslationSlugs(wpPost)).map(([targetLocale, targetSlug]) => [
+          targetLocale,
+          getBlogPostHref(targetSlug, targetLocale as Locale),
+        ]),
+      )
+    : undefined;
 
   return (
-    <SitePage active="about" locale={locale} currentSlug="blog">
+    <SitePage active="about" locale={locale} currentSlug={canonicalSlug} routeKind="blogPost" languageTargets={languageTargets}>
       <WordPressSeoSchema seo={wpPost?.seo} />
       <section className="bg-[#f5f5f5] pb-16">
         <div className="mx-auto w-[min(1140px,calc(100%-40px))]">

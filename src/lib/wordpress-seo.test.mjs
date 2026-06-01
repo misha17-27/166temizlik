@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { buildWordPressMetadata, normalizeWordPressSchema } from "./wordpress.ts";
+import { buildWordPressMetadata, getWordPressTranslationSlugs, normalizeWordPressSchema } from "./wordpress.ts";
 
 test("buildWordPressMetadata maps Yoast SEO fields to Next metadata", () => {
   const metadata = buildWordPressMetadata(
@@ -108,5 +108,24 @@ test("WordPress admin URLs are rewritten to the public site URL", () => {
       url: "https://admin.166temizlik.az/sirket-haqqinda/",
     }),
     ['{"@type":"WebPage","url":"https://166temizlik.az/sirket-haqqinda/"}'],
+  );
+});
+
+test("getWordPressTranslationSlugs maps WPML translations by locale", () => {
+  assert.deepEqual(
+    getWordPressTranslationSlugs({
+      slug: "otelde-temizliyik-isleri",
+      language: "az",
+      translations: {
+        az: { id: 1, slug: "otelde-temizliyik-isleri", link: "" },
+        ru: { id: 2, slug: "uborka-otelya", link: "" },
+        tr: { id: 3, slug: "otel-temizliyi", link: "" },
+      },
+    }),
+    {
+      az: "otelde-temizliyik-isleri",
+      ru: "uborka-otelya",
+      tr: "otel-temizliyi",
+    },
   );
 });
