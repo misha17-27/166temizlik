@@ -255,6 +255,22 @@ export function resolveLocalizedSlug(locale: Locale, slug: string): { kind: Rout
   return null;
 }
 
+export function getLocalizedCanonicalRedirectHref(locale: Locale, slug: string) {
+  const normalized = normalizePathToSlug(slug);
+  const match = resolveLocalizedSlug(locale, normalized);
+
+  if (!match) {
+    return null;
+  }
+
+  const canonicalHref =
+    match.kind === "service"
+      ? getServiceHref(match.canonicalSlug, locale)
+      : getStaticHref(match.routeKey ?? "home", locale);
+
+  return normalizePathToSlug(canonicalHref) === normalized ? null : canonicalHref;
+}
+
 export function getHrefForCanonical(locale: Locale, canonicalSlug: string, kind: RouteKind = "static") {
   if (kind === "service") {
     return getServiceHref(canonicalSlug, locale);

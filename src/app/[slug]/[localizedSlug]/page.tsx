@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { ContactPageContent } from "@/app/166-temizlik-elaqe/page";
 import { BlogPostContent, ServiceDetailContent } from "@/app/[slug]/page";
 import { BlogPageContent } from "@/app/bloq/page";
@@ -13,6 +13,7 @@ import { getLocalizedServicePages, pageCopy } from "@/lib/i18n";
 import { servicePages } from "@/lib/pages-data";
 import {
   getLocalizedStaticParams,
+  getLocalizedCanonicalRedirectHref,
   isLocale,
   resolveLocalizedSlug,
   type Locale,
@@ -100,6 +101,11 @@ export default async function LocalizedSlugPage({ params }: { params: Promise<Pa
   }
 
   const match = resolveLocalizedSlug(localeParam, localizedSlug);
+  const canonicalRedirectHref = getLocalizedCanonicalRedirectHref(localeParam, localizedSlug);
+
+  if (canonicalRedirectHref) {
+    permanentRedirect(canonicalRedirectHref);
+  }
 
   if (!match) {
     return <BlogPostContent slug={localizedSlug} locale={localeParam} />;
