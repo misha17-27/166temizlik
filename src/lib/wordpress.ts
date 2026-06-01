@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 export const WORDPRESS_API_URL =
   process.env.WORDPRESS_API_URL ?? "https://admin.166temizlik.az/wp-json/headless/v1";
+export const PUBLIC_SITE_URL =
+  (process.env.PUBLIC_SITE_URL ?? "https://166temizlik.az").replace(/\/$/, "");
 
 export type WordPressLocale = "az" | "ru" | "tr";
 
@@ -276,19 +278,23 @@ function cleanSeoValue(value: string | null | undefined) {
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
+export function normalizePublicSiteUrl(value: string | undefined) {
+  return value?.replace(/https?:\/\/admin\.166temizlik\.az/gi, PUBLIC_SITE_URL);
+}
+
 export function buildWordPressMetadata(
   seo: WordPressSeo | null | undefined,
   fallback: { title?: string; description?: string } = {},
 ): Metadata {
   const title = cleanSeoValue(seo?.title) ?? cleanSeoValue(fallback.title);
   const description = cleanSeoValue(seo?.description) ?? cleanSeoValue(fallback.description);
-  const canonical = cleanSeoValue(seo?.canonical);
+  const canonical = normalizePublicSiteUrl(cleanSeoValue(seo?.canonical));
   const openGraphTitle = cleanSeoValue(seo?.openGraph?.title);
   const openGraphDescription = cleanSeoValue(seo?.openGraph?.description);
-  const openGraphImage = cleanSeoValue(seo?.openGraph?.image);
+  const openGraphImage = normalizePublicSiteUrl(cleanSeoValue(seo?.openGraph?.image));
   const twitterTitle = cleanSeoValue(seo?.twitter?.title);
   const twitterDescription = cleanSeoValue(seo?.twitter?.description);
-  const twitterImage = cleanSeoValue(seo?.twitter?.image);
+  const twitterImage = normalizePublicSiteUrl(cleanSeoValue(seo?.twitter?.image));
 
   const metadata: Metadata = {};
 
@@ -337,10 +343,10 @@ export function normalizeWordPressSchema(schema: unknown): string[] {
       }
 
       if (typeof item === "string") {
-        return item.trim() || null;
+        return normalizePublicSiteUrl(item.trim()) || null;
       }
 
-      return JSON.stringify(item);
+      return normalizePublicSiteUrl(JSON.stringify(item));
     })
     .filter((item): item is string => Boolean(item));
 }

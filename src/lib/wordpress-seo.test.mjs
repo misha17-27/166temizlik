@@ -78,3 +78,35 @@ test("normalizeWordPressSchema prepares JSON-LD payloads", () => {
     ],
   );
 });
+
+test("WordPress admin URLs are rewritten to the public site URL", () => {
+  const metadata = buildWordPressMetadata({
+    canonical: "https://admin.166temizlik.az/sirket-haqqinda/",
+    openGraph: {
+      image: "https://admin.166temizlik.az/wp-content/uploads/social.jpg",
+    },
+    twitter: {
+      image: "https://admin.166temizlik.az/wp-content/uploads/twitter.jpg",
+    },
+  });
+
+  assert.deepEqual(metadata, {
+    alternates: {
+      canonical: "https://166temizlik.az/sirket-haqqinda/",
+    },
+    openGraph: {
+      images: ["https://166temizlik.az/wp-content/uploads/social.jpg"],
+    },
+    twitter: {
+      images: ["https://166temizlik.az/wp-content/uploads/twitter.jpg"],
+    },
+  });
+
+  assert.deepEqual(
+    normalizeWordPressSchema({
+      "@type": "WebPage",
+      url: "https://admin.166temizlik.az/sirket-haqqinda/",
+    }),
+    ['{"@type":"WebPage","url":"https://166temizlik.az/sirket-haqqinda/"}'],
+  );
+});

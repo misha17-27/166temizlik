@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { Locale, StaticRouteKey } from "./routes";
 import type { HeroSlide } from "./site-data";
-import { buildWordPressMetadata, getWordPressHome, getWordPressPage, stripHtml, type WordPressContentItem } from "./wordpress";
+import { buildWordPressMetadata, getWordPressHome, getWordPressPage, normalizePublicSiteUrl, stripHtml, type WordPressContentItem } from "./wordpress";
 
 const wordpressPageSlugs = {
   home: "home",
@@ -46,23 +46,24 @@ type MetadataPage = Pick<WordPressContentItem, "title" | "seo" | "featuredImage"
 export function buildWordPressPageMetadata(page: MetadataPage | null, fallbackTitle: string): Metadata {
   const title = page?.title || fallbackTitle;
   const metadata = buildWordPressMetadata(page?.seo, { title });
-  const image = page?.featuredImage?.url
+  const featuredImage = normalizePublicSiteUrl(page?.featuredImage?.url);
+  const image = featuredImage
     ? [
         {
-          url: page.featuredImage.url,
-          alt: page.featuredImage.alt || page.title,
+          url: featuredImage,
+          alt: page?.featuredImage?.alt || page?.title || "",
         },
       ]
     : undefined;
 
-  if (page?.featuredImage?.url) {
+  if (featuredImage) {
     metadata.openGraph = {
       ...metadata.openGraph,
       images: metadata.openGraph?.images ?? image,
     };
     metadata.twitter = {
       ...metadata.twitter,
-      images: metadata.twitter?.images ?? [page.featuredImage.url],
+      images: metadata.twitter?.images ?? [featuredImage],
     };
   }
 
