@@ -144,6 +144,22 @@ final class One66_Headless_API
         if (empty($mapped['services'])) {
             $mapped['services'] = self::home_services($lang);
         }
+        $content_images = self::home_content_images($normalized['content'] ?? '');
+        foreach ($mapped['services'] as $index => &$service) {
+            if (!empty($content_images[$index])) {
+                $service['icon'] = ['url' => $content_images[$index]];
+            }
+        }
+        unset($service);
+
+        $section_images = array_slice($content_images, -8);
+        if (!empty($section_images[0])) {
+            $mapped['about'] = is_array($mapped['about'] ?? null) ? $mapped['about'] : [];
+            $mapped['about']['image'] = ['url' => $section_images[0]];
+        }
+        if (!empty($section_images[1])) {
+            $mapped['mapImage'] = ['url' => $section_images[1]];
+        }
 
         return self::response([
             'lang' => $lang,
@@ -512,6 +528,21 @@ final class One66_Headless_API
         }, self::service_items($lang))));
     }
 
+    private static function home_content_images(string $content): array
+    {
+        if (!preg_match_all('/<img\b[^>]*\bsrc=["\']([^"\']+)["\']/i', $content, $matches)) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(static function (string $url): string {
+            if (str_contains($url, '/revslider-2/public/assets/assets/dummy.png')) {
+                return '';
+            }
+
+            return str_starts_with($url, '//') ? 'https:' . $url : $url;
+        }, $matches[1])));
+    }
+
     private static function is_home_page(WP_Post $post): bool
     {
         $front_id = (int) get_option('page_on_front');
@@ -776,11 +807,18 @@ final class One66_Headless_API
             self::acf_gallery_items_with_category($fields, 'fragrance', ['ətirləndirmə_xidməti_səkillər']),
             self::acf_gallery_items_with_category($fields, 'restaurant-hotel', ['restoran_və_hotel_təmizliyi'])
         );
+        $legacy_categories = [];
+        foreach ($legacy_items as $item) {
+            $legacy_categories = array_merge($legacy_categories, $item['categories'] ?? []);
+        }
 
         return [
             'title' => self::acf_text(self::acf_first($fields, ['title', 'gallery_title', 'qalereya_basliq'])),
             'subtitle' => self::acf_text(self::acf_first($fields, ['subtitle', 'gallery_subtitle', 'qalereya_alt_basliq'])),
-            'categories' => self::acf_text_list(self::acf_first($fields, ['gallery_categories', 'categories', 'kateqoriyalar'])),
+            'categories' => self::first_non_empty([
+                self::acf_text_list(self::acf_first($fields, ['gallery_categories', 'categories', 'kateqoriyalar'])),
+                array_values(array_unique($legacy_categories)),
+            ], []),
             'items' => self::first_non_empty([
                 self::acf_gallery_items(self::acf_first($fields, ['gallery_items', 'gallery', 'qalereya', 'sekiller', 'images'])),
                 $legacy_items,
