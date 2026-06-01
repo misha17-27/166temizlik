@@ -713,16 +713,54 @@ final class One66_Headless_API
 
     private static function map_home_fields(array $fields): array
     {
+        $before_after = [];
+        foreach ([1, 2] as $index) {
+            $before = self::acf_image(self::acf_first($fields, ["əvvəl_{$index}", "evvel_{$index}"]));
+            $after = self::acf_image(self::acf_first($fields, ["sonra_{$index}__867x640", "sonra_{$index}"]));
+            if ($before && $after) {
+                $before_after[] = [
+                    'title' => (string) $index,
+                    'before' => $before,
+                    'after' => $after,
+                ];
+            }
+        }
+
+        $testimonials = [];
+        foreach (range(1, 5) as $index) {
+            $name = self::acf_text(self::acf_first($fields, ["ad_{$index}", "name_{$index}"]));
+            $text = self::acf_text(self::acf_first($fields, ["mustəri_mətn_{$index}", "musteri_metn_{$index}", "text_{$index}"]));
+            $image = self::acf_image(self::acf_first($fields, ["mustəri_səkil_{$index}", "musteri_sekil_{$index}", "image_{$index}"]));
+            if ($name || $text || $image) {
+                $testimonials[] = [
+                    'name' => $name,
+                    'text' => $text,
+                    'image' => $image,
+                ];
+            }
+        }
+
+        $about_text = self::acf_text(self::acf_first($fields, ['sirkət_haqqinda', 'sirket_haqqinda']));
+
         return [
             'heroSlides' => self::acf_first($fields, ['hero_slides', 'slider', 'slides'], []),
             'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos', 'loqolar250x150px'])),
             'servicesTitle' => self::acf_text(self::acf_first($fields, ['services_title', 'xidmetler_basliq'])),
             'packagesTitle' => self::acf_text(self::acf_first($fields, ['packages_title', 'paketler_basliq'])),
-            'about' => self::acf_first($fields, ['about', 'haqqinda'], []),
-            'beforeAfter' => self::acf_first($fields, ['before_after', 'evvel_sonra'], []),
+            'about' => self::first_non_empty([
+                self::acf_first($fields, ['about', 'haqqinda'], []),
+                $about_text ? ['paragraphs' => [$about_text]] : [],
+            ], []),
+            'beforeAfter' => self::first_non_empty([
+                self::acf_first($fields, ['before_after', 'evvel_sonra'], []),
+                $before_after,
+            ], []),
             'beforeAfterPartnerTitle' => self::acf_text(self::acf_first($fields, ['before_after_partner_title', 'partners_title', 'partnyorlar_basliq'])),
             'testimonialsTitle' => self::acf_text(self::acf_first($fields, ['testimonials_title', 'reviews_title', 'reyler_basliq'])),
-            'testimonials' => self::acf_first($fields, ['testimonials', 'reviews', 'reyler'], []),
+            'testimonials' => self::first_non_empty([
+                self::acf_first($fields, ['testimonials', 'reviews', 'reyler'], []),
+                $testimonials,
+            ], []),
         ];
     }
 
@@ -988,10 +1026,10 @@ final class One66_Headless_API
             ];
         }
 
-        if (is_array($item) && isset($item['ID'], $item['url'])) {
-            $logo = self::normalize_acf_value($item);
+        if (is_array($item) && isset($item['url'])) {
+            $logo = self::acf_image($item);
             return [
-                'id' => (int) $item['ID'],
+                'id' => (int) ($item['id'] ?? $item['ID'] ?? 0),
                 'title' => $logo['alt'] ?? '',
                 'url' => '',
                 'logo' => $logo,
