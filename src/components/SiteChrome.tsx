@@ -105,6 +105,21 @@ type SyncedService = {
   title: string;
 };
 
+type SyncedChromeSettings = {
+  logo?: string | null;
+  logoDark?: string | null;
+  footer?: {
+    ctaTitle?: string | null;
+    primaryLabel?: string | null;
+    primaryUrl?: string | null;
+    secondaryLabel?: string | null;
+    secondaryUrl?: string | null;
+  };
+  orderPopup?: {
+    title?: string | null;
+  };
+};
+
 type SyncedMenuLabels = Partial<Record<"home" | "services" | "about" | "gallery" | "contact" | "blog" | "vacancy", string>>;
 
 type SyncedMenus = {
@@ -251,12 +266,14 @@ function OrderPopup({
   open,
   onClose,
   whatsappHref,
+  title,
 }: {
   locale: Locale;
   services: Array<{ title: string; href: string; slug: string }>;
   open: boolean;
   onClose: () => void;
   whatsappHref: string;
+  title?: string | null;
 }) {
   const presence = useAnimatedPresence(open);
 
@@ -290,6 +307,8 @@ function OrderPopup({
             note: "İsmaric",
             submit: "Sifariş et",
           };
+
+  labels.title = title || labels.title;
 
   if (!presence.mounted) {
     return null;
@@ -382,6 +401,15 @@ async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact |
       YouTube: readAcfString(acf, "youtube"),
     },
   };
+}
+
+async function fetchChromeSettings(locale: Locale): Promise<SyncedChromeSettings | null> {
+  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/settings?lang=${locale}`, {
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+  });
+
+  return response.ok ? ((await response.json()) as SyncedChromeSettings) : null;
 }
 
 async function fetchServices(locale: Locale): Promise<SyncedService[]> {
@@ -495,11 +523,14 @@ export function Header({
   const [mobileSubmenu, setMobileSubmenu] = useState<"services" | "about" | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
   const [contact, setContact] = useState<SyncedFooterContact | null>(null);
+  const [settings, setSettings] = useState<SyncedChromeSettings | null>(null);
   const [syncedServices, setSyncedServices] = useState<SyncedService[]>([]);
   const [syncedMenus, setSyncedMenus] = useState<SyncedMenus>({ header: {}, footer: {}, about: [] });
   const mobileMenuPresence = useAnimatedPresence(mobileMenuOpen);
   const copy = chromeCopy[locale];
   const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
+  const headerLogo = settings?.logo || site.logo;
+  const popupTitle = settings?.orderPopup?.title;
   const popupServices = currentSlug
     ? [...localizedServices].sort((a, b) => (a.slug === currentSlug ? -1 : b.slug === currentSlug ? 1 : 0))
     : localizedServices;
@@ -527,12 +558,13 @@ export function Header({
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([fetchFooterContact(locale), fetchServices(locale), fetchMenus(locale)])
-      .then(([nextContact, nextServices, nextMenus]) => {
+    Promise.all([fetchFooterContact(locale), fetchChromeSettings(locale), fetchServices(locale), fetchMenus(locale)])
+      .then(([nextContact, nextSettings, nextServices, nextMenus]) => {
         if (!cancelled && nextContact) {
           setContact(nextContact);
         }
         if (!cancelled) {
+          setSettings(nextSettings);
           setSyncedServices(nextServices);
           setSyncedMenus(nextMenus);
         }
@@ -578,7 +610,7 @@ export function Header({
     <header className="sticky top-0 z-50 blue-band">
       <div className="mx-auto flex h-[110px] w-[min(var(--header-container),calc(100%-40px))] items-center justify-between gap-5 max-md:h-[72px] max-md:w-[calc(100%-20px)] max-md:gap-2">
         <Link href={getLocalizedHref(locale, "/")} aria-label={copy.logoLabel} className="relative h-[80px] w-[154px] shrink-0 max-md:h-[48px] max-md:w-[74px]">
-          <Image src={site.logo} alt="166 Təmizlik" fill priority sizes="154px" className="object-contain brightness-0 invert" />
+          <Image src={headerLogo} alt="166 Təmizlik" fill priority sizes="154px" className="object-contain brightness-0 invert" />
         </Link>
 
         <nav className="flex flex-1 items-center justify-end gap-2 text-[14px] font-semibold text-white max-lg:hidden">
@@ -681,7 +713,7 @@ export function Header({
                 aria-label="166 Təmizlik"
               >
                 <Image
-                  src={site.logo}
+                  src={headerLogo}
                   alt="166 Təmizlik"
                   fill
                   sizes="112px"
@@ -776,7 +808,7 @@ export function Header({
           </div>
         </div>
       ) : null}
-      <OrderPopup locale={locale} services={popupServices} open={orderOpen} onClose={() => setOrderOpen(false)} whatsappHref={contact?.whatsappHref || site.whatsappHref} />
+      <OrderPopup locale={locale} services={popupServices} open={orderOpen} onClose={() => setOrderOpen(false)} whatsappHref={contact?.whatsappHref || site.whatsappHref} title={popupTitle} />
     </header>
   );
 }
@@ -784,6 +816,7 @@ export function Header({
 export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const copy = chromeCopy[locale];
   const [contact, setContact] = useState<SyncedFooterContact | null>(null);
+  const [settings, setSettings] = useState<SyncedChromeSettings | null>(null);
   const [syncedServices, setSyncedServices] = useState<SyncedService[]>([]);
   const [syncedMenus, setSyncedMenus] = useState<SyncedMenus>({ header: {}, footer: {}, about: [] });
   const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
@@ -794,6 +827,12 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const address = contact?.address || copy.footer.address;
   const email = contact?.email || site.email;
   const whatsappHref = contact?.whatsappHref || site.whatsappHref;
+  const footerLogo = settings?.logoDark || settings?.logo || site.footerLogo;
+  const ctaTitle = settings?.footer?.ctaTitle || copy.cta.title;
+  const ctaPrimaryLabel = settings?.footer?.primaryLabel || copy.cta.contact;
+  const ctaPrimaryUrl = settings?.footer?.primaryUrl || getLocalizedHref(locale, "/166-temizlik-elaqe/");
+  const ctaSecondaryLabel = settings?.footer?.secondaryLabel || copy.cta.order;
+  const ctaSecondaryUrl = settings?.footer?.secondaryUrl || whatsappHref;
   const usefulLinks = [
     [syncedMenus.footer.home || copy.footer.links.home, getLocalizedHref(locale, "/")],
     [syncedMenus.footer.about || copy.footer.links.about, getLocalizedHref(locale, "/sirket-haqqinda/")],
@@ -805,12 +844,13 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([fetchFooterContact(locale), fetchServices(locale), fetchMenus(locale)])
-      .then(([nextContact, nextServices, nextMenus]) => {
+    Promise.all([fetchFooterContact(locale), fetchChromeSettings(locale), fetchServices(locale), fetchMenus(locale)])
+      .then(([nextContact, nextSettings, nextServices, nextMenus]) => {
         if (!cancelled && nextContact) {
           setContact(nextContact);
         }
         if (!cancelled) {
+          setSettings(nextSettings);
           setSyncedServices(nextServices);
           setSyncedMenus(nextMenus);
         }
@@ -830,13 +870,13 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
     <>
       <section id="order" className="blue-band py-14 max-sm:py-9">
         <div className="container-shell flex items-center justify-between gap-8 max-lg:flex-col max-lg:text-center">
-          <h2 className="text-[23px] font-bold leading-tight text-white max-md:text-[20px]">{copy.cta.title}</h2>
+          <h2 className="text-[23px] font-bold leading-tight text-white max-md:text-[20px]">{ctaTitle}</h2>
           <div className="flex gap-9 max-sm:w-full max-sm:flex-col max-sm:gap-5">
-            <Link href={getLocalizedHref(locale, "/166-temizlik-elaqe/")} className="rounded-full bg-brand-yellow px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
-              {copy.cta.contact}
+            <Link href={ctaPrimaryUrl} className="rounded-full bg-brand-yellow px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
+              {ctaPrimaryLabel}
             </Link>
-            <Link href={whatsappHref} className="rounded-full bg-white px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
-              {copy.cta.order}
+            <Link href={ctaSecondaryUrl} className="rounded-full bg-white px-12 py-3 text-center text-[12px] font-bold text-black max-sm:w-full">
+              {ctaSecondaryLabel}
             </Link>
           </div>
         </div>
@@ -845,7 +885,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
         <div className="container-shell grid grid-cols-[1.1fr_1fr_1fr_1.35fr] gap-16 py-8 max-lg:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-x-6 max-sm:gap-y-10 max-sm:text-center">
           <div className="text-center max-sm:col-span-2">
             <div className="relative mx-auto h-[132px] w-[170px]">
-              <Image src={site.footerLogo} alt="166 Təmizlik" fill sizes="170px" className="object-contain" />
+              <Image src={footerLogo} alt="166 Təmizlik" fill sizes="170px" className="object-contain" />
             </div>
             <p className="mt-3 text-[12px] font-normal">{copy.footer.motto}</p>
           </div>
