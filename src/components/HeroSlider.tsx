@@ -120,18 +120,17 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
           <Image
             src={item.desktopImage}
             alt={index === active ? (slide?.title ?? "166 Təmizlik") : ""}
-            width={item.desktopWidth}
-            height={item.desktopHeight}
+            fill
             preload={index === 0}
-            sizes={`(max-width: ${item.desktopWidth}px) 100vw, ${item.desktopWidth}px`}
-            className="hidden h-auto w-full object-contain md:block"
+            sizes="(max-width: 768px) 1px, 100vw"
+            className="hidden object-contain md:block"
           />
           <Image
             src={item.mobileImage}
             alt={index === active ? (slide?.title ?? "166 Təmizlik") : ""}
             fill
             preload={index === 0}
-            sizes="(max-width: 768px) 100vw"
+            sizes="(max-width: 768px) calc(100vw - 48px), 1px"
             className="object-contain md:hidden"
           />
         </div>
