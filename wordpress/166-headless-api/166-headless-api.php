@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.3.0
+ * Version: 0.4.0
  * Author: 166 Temizlik
  */
 
@@ -141,6 +141,10 @@ final class One66_Headless_API
         $page = self::static_page_post('home', $lang);
         $normalized = $page ? self::normalize_static_page($page, 'home') : null;
         $mapped = $normalized['mappedAcf'] ?? [];
+        $pods_slides = self::home_slides($lang);
+        if ($pods_slides) {
+            $mapped['heroSlides'] = $pods_slides;
+        }
         if (empty($mapped['services'])) {
             $mapped['services'] = self::home_services($lang);
         }
@@ -350,7 +354,7 @@ final class One66_Headless_API
             return;
         }
 
-        if (!in_array($post->post_type, ['page', 'post', 'vakansiya', 'emakdaslar', 'partners', 'partner', 'partnyorlar'], true)) {
+        if (!in_array($post->post_type, ['page', 'post', 'vakansiya', 'emakdaslar', 'partners', 'partner', 'partnyorlar', 'slayd'], true)) {
             return;
         }
 
@@ -399,6 +403,10 @@ final class One66_Headless_API
             return ['wordpress:partners', 'wordpress:partner:' . $slug];
         }
 
+        if ($post->post_type === 'slayd') {
+            return ['wordpress:home', 'wordpress:page:home'];
+        }
+
         if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
             return ['wordpress:pages', 'wordpress:page:' . $slug, 'wordpress:services', 'wordpress:service:' . $slug];
         }
@@ -428,6 +436,10 @@ final class One66_Headless_API
 
         if (in_array($post->post_type, ['partners', 'partner', 'partnyorlar'], true)) {
             return ['/partnyorlar'];
+        }
+
+        if ($post->post_type === 'slayd') {
+            return ['/', '/ru', '/tr'];
         }
 
         if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
@@ -526,6 +538,55 @@ final class One66_Headless_API
                 'icon' => $icon,
             ];
         }, self::service_items($lang))));
+    }
+
+    private static function home_slides(string $lang): array
+    {
+        $slides = self::home_slides_for_language($lang);
+        if (count($slides) < 2 && $lang !== 'az') {
+            $slides = self::home_slides_for_language('az');
+            self::switch_language($lang);
+        }
+
+        return count($slides) >= 2 ? array_slice($slides, 0, 4) : [];
+    }
+
+    private static function home_slides_for_language(string $lang): array
+    {
+        self::switch_language($lang);
+
+        $query = new WP_Query([
+            'post_type' => 'slayd',
+            'post_status' => 'publish',
+            'posts_per_page' => 20,
+            'orderby' => 'date',
+            'order' => 'ASC',
+            'suppress_filters' => false,
+        ]);
+        $slides = [];
+
+        foreach ($query->posts as $post) {
+            $desktop = self::media((int) get_post_thumbnail_id($post));
+            if (!$desktop) {
+                continue;
+            }
+
+            $mobile = self::acf_image(get_post_meta($post->ID, 'mobile_slide', true)) ?: $desktop;
+            $sort_order = (int) get_post_meta($post->ID, 'sort_order', true);
+            $slides[] = [
+                'id' => (int) $post->ID,
+                'title' => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
+                'desktopImage' => $desktop,
+                'mobileImage' => $mobile,
+                'sortOrder' => $sort_order > 0 ? $sort_order : PHP_INT_MAX,
+            ];
+        }
+
+        usort($slides, static function (array $left, array $right): int {
+            return [$left['sortOrder'], $left['id']] <=> [$right['sortOrder'], $right['id']];
+        });
+
+        return $slides;
     }
 
     private static function home_content_images(string $content): array

@@ -25,6 +25,16 @@ https://admin.166temizlik.az/wp-json/headless/v1/gallery?lang=az
 https://admin.166temizlik.az/wp-json/headless/v1/partners?lang=az
 ```
 
+## Home slides
+
+Create between two and four published `slayd` records in Pods:
+
+- Featured image: desktop slide image.
+- `mobile_slide`: mobile slide image. The featured image is used when empty.
+- `sort_order`: numeric display position. `1` is first.
+
+WPML translations are used for `ru` and `tr`. Until a language has at least two valid translated slides, it inherits the AZ slides.
+
 ## Optional revalidation
 
 Add to `wp-config.php` when the Next.js revalidation endpoint is ready. The plugin sends a JSON payload with `type`, `slug`, `lang`, `tags`, and `paths` after supported content is saved.

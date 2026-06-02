@@ -28,3 +28,18 @@ test("settings endpoint merges contact page ACF fields", () => {
 test("static page AZ fallback restores requested WPML language", () => {
   assert.match(plugin, /self::switch_language\(\$lang\);\s+return \$source;/);
 });
+
+test("home endpoint maps published Pods slides with WPML fallback", () => {
+  assert.match(plugin, /\$pods_slides = self::home_slides\(\$lang\)/);
+  assert.match(plugin, /'post_type' => 'slayd'/);
+  assert.match(plugin, /get_post_meta\(\$post->ID, 'mobile_slide', true\)/);
+  assert.match(plugin, /get_post_meta\(\$post->ID, 'sort_order', true\)/);
+  assert.match(plugin, /count\(\$slides\) < 2 && \$lang !== 'az'/);
+  assert.match(plugin, /array_slice\(\$slides, 0, 4\)/);
+});
+
+test("saving a Pods slide revalidates localized home pages", () => {
+  assert.match(plugin, /'slayd'/);
+  assert.match(plugin, /\$post->post_type === 'slayd'/);
+  assert.match(plugin, /return \['\/', '\/ru', '\/tr'\]/);
+});

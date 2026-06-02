@@ -33,6 +33,7 @@ Rules:
 - Ignore records without a featured image.
 - If `mobile_slide` is empty, use the featured image for mobile.
 - If fewer than two valid WordPress slides exist, return no Pods slides so the frontend keeps its current local banners.
+- Use WPML translations for `ru` and `tr`. Until a language has at least two valid translated slides, inherit the AZ slides.
 
 ## Frontend
 
