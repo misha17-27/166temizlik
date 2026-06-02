@@ -125,6 +125,8 @@ const fallbackCopy: Record<Locale, Pick<HomePageData["copy"], "heroSlides" | "se
   },
 };
 
+const heroSlideBackgrounds = ["#0271C9", "#FFF424"];
+
 function imageUrl(image: WordPressImageLike | string | null | undefined) {
   if (typeof image === "string") {
     return image.trim();
@@ -291,7 +293,7 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
   const fallback = fallbackCopy[locale] ?? fallbackCopy.az;
   const heroSlides: HeroSlide[] = payload?.heroSlides?.length
     ? payload.heroSlides
-        .map((slide): HeroSlide | null => {
+        .map((slide, index): HeroSlide | null => {
           const desktopImage = imageUrl(slide.desktopImage);
           const mobileImage = imageUrl(slide.mobileImage) || desktopImage;
 
@@ -304,7 +306,7 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
             eyebrow: slide.eyebrow,
             desktopImage,
             mobileImage,
-            desktopBgColor: slide.desktopBgColor ?? "#0271C9",
+            desktopBgColor: slide.desktopBgColor ?? heroSlideBackgrounds[index % heroSlideBackgrounds.length],
             desktopWidth: slide.desktopImage?.width ?? 1920,
             desktopHeight: slide.desktopImage?.height ?? 1080,
             images: [],

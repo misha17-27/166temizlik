@@ -19,3 +19,10 @@ test("desktop hero slides fit inside the fixed-height slider without overflow", 
     /src=\{item\.desktopImage\}[\s\S]*?fill[\s\S]*?sizes="\(max-width: 768px\) 1px, 100vw"[\s\S]*?className="hidden object-contain md:block"/,
   );
 });
+
+test("WordPress hero slides alternate blue and yellow fallback backgrounds", async () => {
+  const homeSource = await readFile("src/lib/wordpress-home.ts", "utf8");
+
+  assert.match(homeSource, /const heroSlideBackgrounds = \["#0271C9", "#FFF424"\]/);
+  assert.match(homeSource, /desktopBgColor: slide\.desktopBgColor \?\? heroSlideBackgrounds\[index % heroSlideBackgrounds\.length\]/);
+});
