@@ -105,9 +105,11 @@ type SyncedService = {
   title: string;
 };
 
+type SyncedImageValue = string | { url?: string | null } | null;
+
 type SyncedChromeSettings = {
-  logo?: string | null;
-  logoDark?: string | null;
+  logo?: SyncedImageValue;
+  logoDark?: SyncedImageValue;
   footer?: {
     ctaTitle?: string | null;
     primaryLabel?: string | null;
@@ -119,6 +121,10 @@ type SyncedChromeSettings = {
     title?: string | null;
   };
 };
+
+function imageUrl(value: SyncedImageValue | undefined) {
+  return typeof value === "string" ? value : value?.url || "";
+}
 
 type SyncedMenuLabels = Partial<Record<"home" | "services" | "about" | "gallery" | "contact" | "blog" | "vacancy", string>>;
 
@@ -529,7 +535,7 @@ export function Header({
   const mobileMenuPresence = useAnimatedPresence(mobileMenuOpen);
   const copy = chromeCopy[locale];
   const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
-  const headerLogo = settings?.logo || site.logo;
+  const headerLogo = imageUrl(settings?.logo) || site.logo;
   const popupTitle = settings?.orderPopup?.title;
   const popupServices = currentSlug
     ? [...localizedServices].sort((a, b) => (a.slug === currentSlug ? -1 : b.slug === currentSlug ? 1 : 0))
@@ -827,7 +833,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const address = contact?.address || copy.footer.address;
   const email = contact?.email || site.email;
   const whatsappHref = contact?.whatsappHref || site.whatsappHref;
-  const footerLogo = settings?.logoDark || settings?.logo || site.footerLogo;
+  const footerLogo = imageUrl(settings?.logoDark) || imageUrl(settings?.logo) || site.footerLogo;
   const ctaTitle = settings?.footer?.ctaTitle || copy.cta.title;
   const ctaPrimaryLabel = settings?.footer?.primaryLabel || copy.cta.contact;
   const ctaPrimaryUrl = settings?.footer?.primaryUrl || getLocalizedHref(locale, "/166-temizlik-elaqe/");

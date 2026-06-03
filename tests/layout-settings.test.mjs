@@ -7,6 +7,7 @@ test("root metadata reads the WordPress favicon with the original site fallback"
 
   assert.match(source, /getWordPressSettings/);
   assert.match(source, /export async function generateMetadata\(\): Promise<Metadata>/);
-  assert.match(source, /settings\?\.favicon \|\| "https:\/\/166temizlik\.az\/wp-content\/uploads\/2022\/12\/fav\.png"/);
+  assert.match(source, /function imageUrl\(value: WordPressSettings\["favicon"\]\)/);
+  assert.match(source, /const favicon = imageUrl\(settings\?\.favicon\) \|\| "https:\/\/166temizlik\.az\/wp-content\/uploads\/2022\/12\/fav\.png"/);
   await assert.rejects(() => access("src/app/favicon.ico"));
 });

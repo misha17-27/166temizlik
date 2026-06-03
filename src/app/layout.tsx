@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
-import { getWordPressSettings } from "@/lib/wordpress";
+import { getWordPressSettings, type WordPressSettings } from "@/lib/wordpress";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,9 +24,13 @@ const fallbackMetadata = {
     "166 Təmizlik Xidməti - ev, ofis, fasad, pəncərə, yumşaq mebel və korporativ təmizlik xidmətləri.",
 };
 
+function imageUrl(value: WordPressSettings["favicon"]) {
+  return typeof value === "string" ? value : value?.url || "";
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getWordPressSettings("az").catch(() => null);
-  const favicon = settings?.favicon || "https://166temizlik.az/wp-content/uploads/2022/12/fav.png";
+  const favicon = imageUrl(settings?.favicon) || "https://166temizlik.az/wp-content/uploads/2022/12/fav.png";
 
   return {
     ...fallbackMetadata,

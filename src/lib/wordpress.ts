@@ -86,14 +86,16 @@ export type WordPressHomeResponse = {
   mappedAcf: Record<string, unknown>;
 };
 
+export type WordPressSettingsImage = string | WordPressImage | null;
+
 export type WordPressSettings = {
   lang: WordPressLocale | string;
   siteName: string;
   description: string;
   homeUrl: string;
-  logo?: string | null;
-  logoDark?: string | null;
-  favicon?: string | null;
+  logo?: WordPressSettingsImage;
+  logoDark?: WordPressSettingsImage;
+  favicon?: WordPressSettingsImage;
   phonePrimary: string | null;
   phoneSecondary: string | null;
   email: string | null;

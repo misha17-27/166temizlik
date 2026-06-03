@@ -92,15 +92,18 @@ final class One66_Headless_API
             'whatsapp' => self::option_text('social_whatsapp'),
             'youtube' => self::option_text('social_youtube'),
         ], [self::class, 'has_value']));
+        $logo = self::option_image('site_logo');
+        $logo_dark = self::option_image('site_logo_dark');
+        $favicon = self::option_image('favicon') ?: self::site_icon();
 
         return self::response([
             'lang' => $lang,
             'siteName' => get_bloginfo('name'),
             'description' => get_bloginfo('description'),
             'homeUrl' => home_url('/'),
-            'logo' => self::option_image('site_logo'),
-            'logoDark' => self::option_image('site_logo_dark'),
-            'favicon' => self::option_image('favicon'),
+            'logo' => $logo,
+            'logoDark' => $logo_dark,
+            'favicon' => $favicon,
             'phonePrimary' => $contact['phonePrimary'] ?? null,
             'phoneSecondary' => $contact['phoneSecondary'] ?? null,
             'email' => $contact['email'] ?? null,
@@ -124,9 +127,9 @@ final class One66_Headless_API
             ],
             'contact' => $contact,
             'assets' => [
-                'logo' => self::option_image('site_logo'),
-                'logoDark' => self::option_image('site_logo_dark'),
-                'favicon' => self::option_image('favicon'),
+                'logo' => $logo,
+                'logoDark' => $logo_dark,
+                'favicon' => $favicon,
             ],
             'staticPages' => self::static_pages($lang),
             'acf' => self::option_fields(),
@@ -1514,6 +1517,28 @@ final class One66_Headless_API
 
         $value = get_field($field, 'option');
         return is_array($value) ? self::normalize_acf_value($value) : null;
+    }
+
+    private static function site_icon(): ?array
+    {
+        $icon_id = (int) get_option('site_icon');
+        if ($icon_id > 0) {
+            $media = self::media($icon_id);
+            if ($media) {
+                return $media;
+            }
+        }
+
+        $url = get_site_icon_url();
+        return is_string($url) && $url !== ''
+            ? [
+                'id' => 'site_icon',
+                'url' => $url,
+                'alt' => get_bloginfo('name'),
+                'width' => null,
+                'height' => null,
+            ]
+            : null;
     }
 
     private static function clean_text(string $value): string

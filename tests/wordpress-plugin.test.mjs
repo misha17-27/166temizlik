@@ -25,6 +25,14 @@ test("settings endpoint merges contact page ACF fields", () => {
   assert.match(plugin, /'contact' => \$contact/);
 });
 
+test("settings endpoint falls back to WordPress site icon for favicon", () => {
+  assert.match(plugin, /\$favicon = self::option_image\('favicon'\) \?: self::site_icon\(\)/);
+  assert.match(plugin, /'favicon' => \$favicon/);
+  assert.match(plugin, /'favicon' => \$favicon,\s+\]/);
+  assert.match(plugin, /private static function site_icon\(\): \?array/);
+  assert.match(plugin, /get_site_icon_url\(/);
+});
+
 test("static page AZ fallback restores requested WPML language", () => {
   assert.match(plugin, /self::switch_language\(\$lang\);\s+return \$source;/);
 });
