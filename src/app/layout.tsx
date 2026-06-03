@@ -30,16 +30,12 @@ function imageUrl(value: WordPressSettings["favicon"]) {
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getWordPressSettings("az").catch(() => null);
-  const favicon = imageUrl(settings?.favicon) || "https://166temizlik.az/wp-content/uploads/2022/12/fav.png";
+  const appleIcon = imageUrl(settings?.favicon) || "/favicon.ico";
 
   return {
     ...fallbackMetadata,
     icons: {
-      icon: [
-        { url: favicon, sizes: "32x32" },
-        { url: favicon, sizes: "192x192" },
-      ],
-      apple: [{ url: favicon }],
+      apple: [{ url: appleIcon }],
     },
   };
 }
