@@ -32,6 +32,16 @@ type GalleryAcfImage = {
 type GalleryCategory = GalleryTabItem["categories"][number];
 
 const galleryCategoryKeys = new Set<GalleryCategory>(galleryAcfFields.map(([category]) => category));
+const galleryAcfFieldFallbacks: Record<GalleryCategory, string> = {
+  "home-office": "ev_və_ofis_təmizliyi_səkiller",
+  garden: "bag_evlərinin_təmizlənməsi_səkillər",
+  area: "ərazi_təmizliyi_səkillər",
+  facade: "fasad_təmizliyi_səkillər",
+  curtains: "pərdə_və_jaluz_yuma_səkillər",
+  furniture: "yumsaq_mebellərin_kimyəvi_təmizliyi_səkillər",
+  fragrance: "ətirləndirmə_xidməti_səkillər",
+  "restaurant-hotel": "restoran_və_hotel_təmizliyi",
+};
 
 function isGalleryCategory(category: unknown): category is GalleryCategory {
   return typeof category === "string" && galleryCategoryKeys.has(category as GalleryCategory);
@@ -43,9 +53,13 @@ function getImageHeight(image: GalleryAcfImage) {
   return Math.max(150, Math.round((360 * height) / Math.max(width, 1)));
 }
 
+function getGalleryAcfValue(acf: Record<string, unknown>, category: GalleryCategory, field: string) {
+  return acf[field] ?? acf[galleryAcfFieldFallbacks[category]];
+}
+
 function getGalleryItemsFromAcf(acf: Record<string, unknown>): GalleryTabItem[] {
   return galleryAcfFields.flatMap(([category, field]) => {
-    const value = acf[field];
+    const value = getGalleryAcfValue(acf, category, field);
     if (!Array.isArray(value)) {
       return [];
     }

@@ -176,8 +176,29 @@ function ImageBox({
 }
 
 function getAboutAcfHtml(page: WordPressContentItem | null | undefined, key: string) {
-  const value = page?.acf?.[key];
+  const acf = page?.acf ?? {};
+  const value =
+    acf[key] ??
+    Object.entries(acf).find(([entryKey]) => normalizeAboutAcfKey(entryKey) === normalizeAboutAcfKey(key))?.[1];
   return typeof value === "string" && value.trim() ? value : "";
+}
+
+function normalizeAboutAcfKey(key: string) {
+  return key
+    .toLowerCase()
+    .replace(/\u00e9\u2122/g, "e")
+    .replace(/[\u0259\u018f]/g, "e")
+    .replace(/[\u0131\u0130]/g, "i")
+    .replace(/[\u00f6\u00d6]/g, "o")
+    .replace(/[\u00fc\u00dc]/g, "u")
+    .replace(/[\u011f\u011e]/g, "g")
+    .replace(/[\u015f\u015e]/g, "s")
+    .replace(/[\u00e7\u00c7]/g, "c")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
 }
 
 function getAboutContentImages(page: WordPressContentItem | null | undefined) {

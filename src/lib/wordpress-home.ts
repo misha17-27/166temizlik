@@ -139,8 +139,32 @@ function normalizeSlug(slug: string | undefined) {
   return typeof slug === "string" ? slug.replace(/^\/+|\/+$/g, "") : "";
 }
 
+function normalizeAcfKey(key: string) {
+  return key
+    .toLowerCase()
+    .replace(/\u00e9\u2122/g, "e")
+    .replace(/[\u0259\u018f]/g, "e")
+    .replace(/[\u0131\u0130]/g, "i")
+    .replace(/[\u00f6\u00d6]/g, "o")
+    .replace(/[\u00fc\u00dc]/g, "u")
+    .replace(/[\u011f\u011e]/g, "g")
+    .replace(/[\u015f\u015e]/g, "s")
+    .replace(/[\u00e7\u00c7]/g, "c")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
 function readAcf(acf: Record<string, unknown>, key: string) {
-  return acf[key];
+  if (key in acf) {
+    return acf[key];
+  }
+
+  const normalizedKey = normalizeAcfKey(key);
+  const match = Object.entries(acf).find(([entryKey]) => normalizeAcfKey(entryKey) === normalizedKey);
+  return match?.[1];
 }
 
 function plainText(value: unknown) {
