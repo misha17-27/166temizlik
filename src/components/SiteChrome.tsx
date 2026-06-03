@@ -134,9 +134,17 @@ type SyncedMenus = {
   about: Array<{ label: string; href: string }>;
 };
 
+type SyncedChromeData = {
+  contact: SyncedFooterContact | null;
+  settings: SyncedChromeSettings | null;
+  services: SyncedService[];
+  menus: SyncedMenus;
+};
+
 export type HeaderActive = "home" | "services" | "about" | "gallery" | "contact";
 
 const overlayTransitionMs = 260;
+const chromeDataCache = new Map<Locale, Promise<SyncedChromeData>>();
 
 function useAnimatedPresence(open: boolean, duration = overlayTransitionMs) {
   const [mounted, setMounted] = useState(open);
@@ -215,7 +223,6 @@ function LanguageSwitcher({
             <Link
               key={item.locale}
               href={item.href}
-              prefetch={false}
               role="menuitem"
               aria-current={item.active ? "page" : undefined}
               className={`flex items-center justify-between rounded-[14px] px-4 py-2.5 text-[16px] font-semibold transition max-md:px-3 max-md:text-[15px] ${
@@ -252,7 +259,6 @@ function MobileLanguageSwitcher({
           <Link
             key={item.locale}
             href={item.href}
-            prefetch={false}
             aria-current={item.active ? "page" : undefined}
             className={`grid h-10 min-w-10 place-items-center rounded-[10px] px-3 text-[15px] font-semibold transition ${
               item.active ? "bg-[#fff7d7] text-[#c49a00]" : "text-[#6d7280] hover:bg-[#f5f7fb]"
@@ -377,7 +383,6 @@ function readAcfString(acf: Record<string, unknown> | undefined, key: string) {
 
 async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact | null> {
   const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/pages/166-temizlik-elaqe?lang=${locale}`, {
-    cache: "no-store",
     headers: { Accept: "application/json" },
   });
 
@@ -411,7 +416,6 @@ async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact |
 
 async function fetchChromeSettings(locale: Locale): Promise<SyncedChromeSettings | null> {
   const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/settings?lang=${locale}`, {
-    cache: "no-store",
     headers: { Accept: "application/json" },
   });
 
@@ -420,7 +424,6 @@ async function fetchChromeSettings(locale: Locale): Promise<SyncedChromeSettings
 
 async function fetchServices(locale: Locale): Promise<SyncedService[]> {
   const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/services?lang=${locale}`, {
-    cache: "no-store",
     headers: { Accept: "application/json" },
   });
 
@@ -468,7 +471,6 @@ function getMenuRouteKey(url: string) {
 
 async function fetchMenus(locale: Locale): Promise<SyncedMenus> {
   const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/menus?lang=${locale}`, {
-    cache: "no-store",
     headers: { Accept: "application/json" },
   });
 
@@ -510,6 +512,29 @@ async function fetchMenus(locale: Locale): Promise<SyncedMenus> {
     : [];
 
   return { header, footer, about };
+}
+
+function getSyncedChromeData(locale: Locale) {
+  const cached = chromeDataCache.get(locale);
+
+  if (cached) {
+    return cached;
+  }
+
+  const request = Promise.all([fetchFooterContact(locale), fetchChromeSettings(locale), fetchServices(locale), fetchMenus(locale)])
+    .then(([contact, settings, services, menus]) => ({
+      contact,
+      settings,
+      services,
+      menus,
+    }))
+    .catch((error) => {
+      chromeDataCache.delete(locale);
+      throw error;
+    });
+
+  chromeDataCache.set(locale, request);
+  return request;
 }
 
 export function Header({
@@ -564,16 +589,19 @@ export function Header({
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([fetchFooterContact(locale), fetchChromeSettings(locale), fetchServices(locale), fetchMenus(locale)])
-      .then(([nextContact, nextSettings, nextServices, nextMenus]) => {
-        if (!cancelled && nextContact) {
-          setContact(nextContact);
+    getSyncedChromeData(locale)
+      .then((data) => {
+        if (cancelled) {
+          return;
         }
-        if (!cancelled) {
-          setSettings(nextSettings);
-          setSyncedServices(nextServices);
-          setSyncedMenus(nextMenus);
+
+        if (data.contact) {
+          setContact(data.contact);
         }
+
+        setSettings(data.settings);
+        setSyncedServices(data.services);
+        setSyncedMenus(data.menus);
       })
       .catch(() => {
         if (!cancelled) {
@@ -635,7 +663,6 @@ export function Header({
               <div key={item.label} className="group relative">
                 <Link
                   href={item.href}
-                  prefetch={false}
                   style={isActive ? { color: "#0074ca" } : undefined}
                   className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 transition ${
                     isActive ? "bg-white" : "text-white hover:bg-white/12"
@@ -659,7 +686,6 @@ export function Header({
                           <Link
                             key={menuItem.href}
                             href={menuItem.href}
-                            prefetch={false}
                             aria-current={isCurrentService ? "page" : undefined}
                             className={`block rounded-[14px] px-3 transition hover:bg-[#eef6ff] ${
                               isCurrentService ? "bg-[#eef6ff]" : ""
@@ -713,7 +739,6 @@ export function Header({
             <div className="flex min-h-[62px] items-center justify-between gap-4">
               <Link
                 href={getLocalizedHref(locale, "/")}
-                prefetch={false}
                 onClick={closeMobileMenu}
                 className="relative block h-[62px] w-[112px] shrink-0"
                 aria-label="166 Təmizlik"
@@ -769,7 +794,6 @@ export function Header({
                       <li key={menuItem.href}>
                         <Link
                           href={menuItem.href}
-                          prefetch={false}
                           onClick={closeMobileMenu}
                           aria-current={isCurrentService ? "page" : undefined}
                           className={`block rounded-[14px] px-3 py-2 ${isCurrentService ? "bg-[#eef6ff] text-[#0074ca]" : ""}`}
@@ -801,7 +825,7 @@ export function Header({
                           </span>
                         </button>
                       ) : (
-                        <Link href={item.href} prefetch={false} onClick={closeMobileMenu} className="block py-1">
+                        <Link href={item.href} onClick={closeMobileMenu} className="block py-1">
                           {item.label}
                         </Link>
                       )}
@@ -850,16 +874,19 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([fetchFooterContact(locale), fetchChromeSettings(locale), fetchServices(locale), fetchMenus(locale)])
-      .then(([nextContact, nextSettings, nextServices, nextMenus]) => {
-        if (!cancelled && nextContact) {
-          setContact(nextContact);
+    getSyncedChromeData(locale)
+      .then((data) => {
+        if (cancelled) {
+          return;
         }
-        if (!cancelled) {
-          setSettings(nextSettings);
-          setSyncedServices(nextServices);
-          setSyncedMenus(nextMenus);
+
+        if (data.contact) {
+          setContact(data.contact);
         }
+
+        setSettings(data.settings);
+        setSyncedServices(data.services);
+        setSyncedMenus(data.menus);
       })
       .catch(() => {
         if (!cancelled) {
@@ -900,7 +927,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
             <ul className="space-y-4 text-[14px] font-normal">
               {usefulLinks.map(([label, href]) => (
                 <li key={label}>
-                  <Link href={href} prefetch={false}>{label}</Link>
+                  <Link href={href}>{label}</Link>
                 </li>
               ))}
             </ul>
@@ -910,7 +937,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
             <ul className="space-y-4 text-[14px] font-normal">
               {localizedServices.slice(0, 3).map((item) => (
                 <li key={item.title}>
-                  <Link href={item.href} prefetch={false}>{item.title}</Link>
+                  <Link href={item.href}>{item.title}</Link>
                 </li>
               ))}
             </ul>

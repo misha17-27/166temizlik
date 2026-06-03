@@ -4,6 +4,7 @@ export const WORDPRESS_API_URL =
   process.env.WORDPRESS_API_URL ?? "https://admin.166temizlik.az/wp-json/headless/v1";
 export const PUBLIC_SITE_URL =
   (process.env.PUBLIC_SITE_URL ?? "https://166temizlik.az").replace(/\/$/, "");
+const WORDPRESS_REVALIDATE_SECONDS = 60;
 
 export type WordPressLocale = "az" | "ru" | "tr";
 
@@ -150,13 +151,13 @@ export async function wpFetch<T>(path: string, options: WordPressFetchOptions = 
     },
   };
 
-  if (options.revalidate !== undefined) {
+  if (options.cache) {
+    requestOptions.cache = options.cache;
+  } else {
     requestOptions.next = {
-      revalidate: options.revalidate,
+      revalidate: options.revalidate ?? WORDPRESS_REVALIDATE_SECONDS,
       tags,
     };
-  } else {
-    requestOptions.cache = options.cache ?? "no-store";
   }
 
   const response = await fetch(url, requestOptions);

@@ -20,7 +20,7 @@ function getPostTimestamp(date: string) {
 
 async function getBlogCards(locale: Locale) {
   try {
-    const response = await getWordPressPosts(locale, 1, 100, { cache: "no-store" });
+    const response = await getWordPressPosts(locale, 1, 100);
     if (response.items.length > 0) {
       return [...response.items]
         .sort((left, right) => getPostTimestamp(right.date) - getPostTimestamp(left.date))
