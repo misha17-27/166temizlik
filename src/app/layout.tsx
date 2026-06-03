@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import { getWordPressSettings } from "@/lib/wordpress";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,11 +18,27 @@ const montserrat = Montserrat({
   subsets: ["latin", "latin-ext"],
 });
 
-export const metadata: Metadata = {
+const fallbackMetadata = {
   title: "Pesekar temizlik sirketi, serfeli ve keyfiyyetli xidmetler - 166temizlik",
   description:
     "166 Təmizlik Xidməti - ev, ofis, fasad, pəncərə, yumşaq mebel və korporativ təmizlik xidmətləri.",
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getWordPressSettings("az").catch(() => null);
+  const favicon = settings?.favicon || "https://166temizlik.az/wp-content/uploads/2022/12/fav.png";
+
+  return {
+    ...fallbackMetadata,
+    icons: {
+      icon: [
+        { url: favicon, sizes: "32x32" },
+        { url: favicon, sizes: "192x192" },
+      ],
+      apple: [{ url: favicon }],
+    },
+  };
+}
 
 export default function RootLayout({
   children,

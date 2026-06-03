@@ -91,6 +91,9 @@ export type WordPressSettings = {
   siteName: string;
   description: string;
   homeUrl: string;
+  logo?: string | null;
+  logoDark?: string | null;
+  favicon?: string | null;
   phonePrimary: string | null;
   phoneSecondary: string | null;
   email: string | null;
