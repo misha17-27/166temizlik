@@ -182,6 +182,14 @@ export function getWordPressPage(slug: string, lang: WordPressLocale = "az") {
   });
 }
 
+export function getWordPressPages(lang: WordPressLocale = "az", page = 1, perPage = 100) {
+  return wpFetch<WordPressCollection<WordPressContentItem>>("/pages", {
+    lang,
+    searchParams: { page, per_page: perPage },
+    tags: ["wordpress:pages"],
+  });
+}
+
 export function getWordPressHome(lang: WordPressLocale = "az") {
   return wpFetch<WordPressHomeResponse>("/home", {
     lang,
