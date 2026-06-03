@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/wp-content/:path*",
+        destination: "https://admin.166temizlik.az/wp-content/:path*",
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

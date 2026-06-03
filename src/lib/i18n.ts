@@ -487,8 +487,8 @@ export const homeCopy = {
       {
         eyebrow: "При заказе уборки дома + химчистки + стирки штор",
         title: "СКИДКА 30%",
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-2-3-1.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-3-2.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-2-3-1.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-3-2.webp",
         desktopBgColor: "#0271C9",
         desktopWidth: 1920,
         desktopHeight: 1080,
@@ -497,8 +497,8 @@ export const homeCopy = {
       {
         eyebrow: "Профессиональная команда и современное оборудование",
         title: "ЧИСТЫЙ ДОМ, УЮТНЫЙ ДЕНЬ",
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/01/Rus-1.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-1-1.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2025/01/Rus-1.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-1-1.webp",
         desktopBgColor: "#FBEA13",
         desktopWidth: 1200,
         desktopHeight: 500,
@@ -507,8 +507,8 @@ export const homeCopy = {
       {
         eyebrow: "Оперативный сервис по Баку и поселкам Баку",
         title: "166 TEMİZLİK",
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
         desktopBgColor: "#0271C9",
         desktopWidth: 1920,
         desktopHeight: 1080,
@@ -517,8 +517,8 @@ export const homeCopy = {
       {
         eyebrow: "166 Temizlik",
         title: "Services",
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2026/04/ru-desc.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2026/04/ru-mob.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2026/04/ru-desc.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2026/04/ru-mob.webp",
         desktopBgColor: "#FBEA13",
         desktopWidth: 1377,
         desktopHeight: 768,
@@ -607,8 +607,8 @@ export const homeCopy = {
   tr: {
     heroSlides: [
       {
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-5.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-4.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2025/04/Artboard-1-5.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2025/04/Artboard-1-copy-4.webp",
         desktopBgColor: "#0271C9",
         desktopWidth: 1920,
         desktopHeight: 1080,
@@ -617,8 +617,8 @@ export const homeCopy = {
         images: heroSlides[0].images,
       },
       {
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-2-1.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-2-2-1.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2025/01/Artboard-1-2-1.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2025/01/Artboard-1-copy-2-2-1.webp",
         desktopBgColor: "#FBEA13",
         desktopWidth: 1200,
         desktopHeight: 500,
@@ -629,8 +629,8 @@ export const homeCopy = {
       {
         eyebrow: "Bakü ve Bakü çevresi için hızlı hizmet",
         title: "166 TEMİZLİK",
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2025/11/Untitled-1-1.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2025/11/mobil-2.webp",
         desktopBgColor: "#0271C9",
         desktopWidth: 1920,
         desktopHeight: 1080,
@@ -639,8 +639,8 @@ export const homeCopy = {
       {
         eyebrow: "166 Temizlik",
         title: "Hizmetler",
-        desktopImage: "https://166temizlik.az/wp-content/uploads/2026/04/tr-desc-1.webp",
-        mobileImage: "https://166temizlik.az/wp-content/uploads/2026/04/tr-mob-1.webp",
+        desktopImage: "https://admin.166temizlik.az/wp-content/uploads/2026/04/tr-desc-1.webp",
+        mobileImage: "https://admin.166temizlik.az/wp-content/uploads/2026/04/tr-mob-1.webp",
         desktopBgColor: "#FBEA13",
         desktopWidth: 1376,
         desktopHeight: 768,

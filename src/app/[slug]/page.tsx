@@ -12,7 +12,7 @@ import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getBlogPostHref, getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
-import { buildWordPressMetadata, getWordPressCanonicalSlug, getWordPressImageUrl, getWordPressPost, getWordPressService, getWordPressTranslationSlugs, stripHtml } from "@/lib/wordpress";
+import { buildWordPressMetadata, getWordPressCanonicalSlug, getWordPressImageUrl, getWordPressPost, getWordPressService, getWordPressTranslationSlugs, normalizeWordPressMediaUrl, stripHtml } from "@/lib/wordpress";
 import { getWordPressPartnerLogoUrls } from "@/lib/wordpress-partners";
 import { getStaticWordPressPage } from "@/lib/wordpress-pages";
 import {
@@ -40,149 +40,149 @@ const serviceTypeLabels: Record<Locale, string> = {
 type ServicePageItem = (typeof servicePages)[number];
 
 const corporatePartnerLogos = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 1].map(
-  (file) => `https://166temizlik.az/wp-content/uploads/2024/09/${file}.jpg`
+  (file) => normalizeWordPressMediaUrl(`https://admin.166temizlik.az/wp-content/uploads/2024/09/${file}.jpg`) ?? ""
 );
 
 const detailImageSets: Record<string, string[]> = {
   "ev-temizliyi-xidmeti": [
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-8-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyiiii.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-ve-cilciraq-temizliyi-her-ikisine-geder.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/metbex-temizliyi3.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-3.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-5.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-6.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-7.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-12-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-8-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyiiii.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-ve-cilciraq-temizliyi-her-ikisine-geder.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/metbex-temizliyi3.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-3.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-5.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-6.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-7.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-12-1.webp",
   ],
   "ofis-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A8062.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A8110.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A8224.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A8093.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A8070.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A8016.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8062.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8110.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8224.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8093.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8070.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8016.jpg",
   ],
   "bag-evlerinin-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03584-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/02/53c32e194d4f010dc834b5db35f86f85-1.png",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03522.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/05/m-nzil-t-mizl-nm-si-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03584-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/53c32e194d4f010dc834b5db35f86f85-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03522.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/05/m-nzil-t-mizl-nm-si-1.jpg",
   ],
   "erazi-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2023/02/erazi2-1-1.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/erazi3-1-1.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/6237238ed7fec9df2f8a5ef54160bf80-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/1dc0d539081fc0263c4da89a9ef4d40f.jpeg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/72c66bb8b599dfcc1af3b2488cf67f71-1.jpeg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/erazi4-1-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/erazi2-1-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/erazi3-1-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/6237238ed7fec9df2f8a5ef54160bf80-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/1dc0d539081fc0263c4da89a9ef4d40f.jpeg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/72c66bb8b599dfcc1af3b2488cf67f71-1.jpeg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/erazi4-1-1.jpg",
   ],
   "fasad-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2023/02/fasad1-1.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/fasad2-1.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/03/fasad.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/fasad1-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/fasad2-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/03/fasad.webp",
   ],
   "pencere-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi-fon.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/01/dfd32fe24f874a0cd8dc95b23407c965-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/3b383dbaea1ce2ccb0be116ccaac03cf-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi.-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi..-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi-fon.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/dfd32fe24f874a0cd8dc95b23407c965-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/3b383dbaea1ce2ccb0be116ccaac03cf-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi.-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/07/pencere-temizliyi-metbex-temizliyi..-1.webp",
   ],
   "cilciraq-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03718.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03721.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03722.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/01/cilciraq4.jpg",
-    "https://166temizlik.az/wp-content/uploads/2024/12/rv.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03718.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03721.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03722.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/cilciraq4.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/rv.webp",
   ],
   "perde-yuma": [
-    "https://166temizlik.az/wp-content/uploads/2023/05/222.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/DSC08248-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/222.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/DSC08248-1.jpg",
     "/images/services/perde-yuma-1.jpg",
     "/images/services/perde-yuma-2.jpg",
     "/images/services/perde-yuma-3.jpg",
     "/images/services/perde-yuma-4.jpg",
   ],
   "yumsaq-mebel-temizlenmesi": [
-    "https://166temizlik.az/wp-content/uploads/2024/01/WhatsApp-Image-2023-12-20-at-21.06.50-2.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/02/yumshaq2.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/yum4-1.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/yum.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/01/yum2.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/yum3.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/01/WhatsApp-Image-2023-12-20-at-21.06.50-2.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/yumshaq2.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/yum4-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/yum.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/yum2.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/yum3.jpg",
   ],
   etirlendirme: [
-    "https://166temizlik.az/wp-content/uploads/2023/02/etir.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/6f736f7db92cef24bb99d694c2e7c2c6-1-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/02/6f736f7db92cef24bb99d694c2e7c2c6-1-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/02/29902f175cfb21144fcd9279725845bf-1-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/02/4ba2a6810f64ca3c6902a854decfb38a-1-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/02/00c98d5a004ab8593543547933797276-1-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/d5c3ac01d06ff9e8c0212c7d623d5b24-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/etir.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/6f736f7db92cef24bb99d694c2e7c2c6-1-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/6f736f7db92cef24bb99d694c2e7c2c6-1-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/29902f175cfb21144fcd9279725845bf-1-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/4ba2a6810f64ca3c6902a854decfb38a-1-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/00c98d5a004ab8593543547933797276-1-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/d5c3ac01d06ff9e8c0212c7d623d5b24-1.png",
   ],
   "baximsiz-ev-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2023/01/e427f74ecdda74a13f0ddf96c4a31341-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/6c0c0d48bb70a4c7a8634111438b8b97-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/ec3ce0ce31994102b8310b37f0525609-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/e7cc1eb0b8f682d49c4b9e6992e17df4-1.png",
-    "https://166temizlik.az/wp-content/uploads/2023/02/8-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/e427f74ecdda74a13f0ddf96c4a31341-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/6c0c0d48bb70a4c7a8634111438b8b97-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/ec3ce0ce31994102b8310b37f0525609-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/e7cc1eb0b8f682d49c4b9e6992e17df4-1.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/8-1.png",
   ],
   "yangindan-sonra-ev-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2023/01/ya.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/01/ya33.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/01/3cbf62432ec954bd68f6ced0510ea3e2.png",
-    "https://166temizlik.az/wp-content/uploads/2023/01/ya2.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/ya.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/ya33.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/3cbf62432ec954bd68f6ced0510ea3e2.png",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/ya2.jpg",
   ],
   "temir-sonrasi-temizlik": [
-    "https://166temizlik.az/wp-content/uploads/2023/02/XXL-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/02/fit_960_530_false_crop_1000_562_0_52_q90_2709852_1b72823ed32f1521bbdb3e471.webp",
-    "https://166temizlik.az/wp-content/uploads/2023/02/8ff3e8c4c9.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/XXL-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/fit_960_530_false_crop_1000_562_0_52_q90_2709852_1b72823ed32f1521bbdb3e471.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/8ff3e8c4c9.webp",
   ],
   "otel-temizlenmesi": [
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03522-1-1.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03468.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03405.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03584-2.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03522-1-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03468.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03405.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03584-2.webp",
   ],
   "restoran-temizlenmesi": [
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7422.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7918.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7696.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7620.jpg",
-    "https://166temizlik.az/wp-content/uploads/2023/05/J1A7451.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A7422.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A7918.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A7696.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A7620.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A7451.jpg",
   ],
   "kristallasdirma-xidmeti": [
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-89a.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-83a.jpg",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-91.jpg",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-95as.jpg",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-95.jpg",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-92.jpg",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-94.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-89a.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-83a.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-91.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-95as.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-95.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-92.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-94.jpg",
   ],
   "hovuz-temizlenmesi-xidmeti": [
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-48.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/02/image-aa.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/02/unsplash_Iu6parQAO-U.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/02/unsplash_teMzdpisXWA.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-48.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-aa.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/unsplash_Iu6parQAO-U.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/02/unsplash_teMzdpisXWA.webp",
   ],
   "korporativ-temizlik-xidmeti": [
-    "https://166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg",
-    "https://166temizlik.az/wp-content/uploads/2023/02/business-partners.jpg",
-    "https://166temizlik.az/wp-content/uploads/2024/09/DSCF2761.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg",
+    "https://admin.166temizlik.az/wp-content/uploads/2023/02/business-partners.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/09/DSCF2761.webp",
   ],
 };
 
 const introImageSets: Record<string, string[]> = {
   "bag-evlerinin-temizliyi": [
-    "https://166temizlik.az/wp-content/uploads/2024/05/t-mzilik-xidm-ti.webp",
-    "https://166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1-1.jpg",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/05/t-mzilik-xidm-ti.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1-1.jpg",
   ],
   "otel-temizlenmesi": [
-    "https://166temizlik.az/wp-content/uploads/2024/12/HRS03405-1.webp",
+    "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03405-1.webp",
   ],
 };
 
@@ -450,9 +450,11 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
   const copy = pageCopy[locale];
   const wpService = await getWordPressService(service.slug, locale).catch(() => null);
   const wpContent = wpService ? getWordPressServiceContent(wpService, service.slug) : null;
-  const fallbackImages = detailImageSets[service.slug] ?? [service.image];
+  const fallbackImages = (detailImageSets[service.slug] ?? [service.image]).map((image) => normalizeWordPressMediaUrl(image) ?? image);
   const images = wpContent?.includedImages.length ? wpContent.includedImages : fallbackImages;
-  const introImages = wpContent?.introImages.length ? wpContent.introImages : introImageSets[service.slug] ?? fallbackImages;
+  const introImages = wpContent?.introImages.length
+    ? wpContent.introImages
+    : (introImageSets[service.slug] ?? fallbackImages).map((image) => normalizeWordPressMediaUrl(image) ?? image);
   const displayTitle = wpContent?.title ?? (locale === "az" ? serviceTitleOverrides[service.slug] ?? service.title : service.title);
   const paragraphs =
     wpContent?.introParagraphs.length
@@ -464,11 +466,15 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
           ]
         : [service.description, copy.bottomText];
   const heroImage =
-    wpService?.featuredImage?.url ||
-    (service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog);
+    normalizeWordPressMediaUrl(
+      wpService?.featuredImage?.url ||
+        (service.slug === "korporativ-temizlik-xidmeti" ? pageHeroAssets.partners : pageHeroAssets.blog),
+    ) ?? pageHeroAssets.blog;
 
   if (service.slug === "korporativ-temizlik-xidmeti") {
-    const corporateLogos = (await getWordPressPartnerLogoUrls(locale)).filter((logo) => logo.includes("/2024/09/"));
+    const corporateLogos = (await getWordPressPartnerLogoUrls(locale))
+      .map((logo) => normalizeWordPressMediaUrl(logo) ?? logo)
+      .filter((logo) => logo.includes("/2024/09/"));
 
     return (
       <>
@@ -499,7 +505,8 @@ export async function ServiceDetailContent({ slug, locale = "az" }: { slug: stri
 }
 
 function getGalleryImages(images: string[]) {
-  const source = images.length > 5 ? images.slice(2) : images;
+  const normalizedImages = images.map((image) => normalizeWordPressMediaUrl(image) ?? image);
+  const source = normalizedImages.length > 5 ? normalizedImages.slice(2) : normalizedImages;
 
   return Array.from({ length: 8 }, (_, index) => source[index % source.length]);
 }
@@ -678,7 +685,7 @@ function CorporateServiceContent({
           <CorporateTextImageRow
             title={sections[0]?.title || "Korporativ əməkdaşlıq"}
             text={sections[0]?.text || "Korporativ əməkdaşlıq şirkətimizin əsas prioritetlərindən biridir. Korporativ müştərilərimiz üçün nəzərdə tutduğumuz güzəştlər həm iş prosesinin asanlaşmasına həm də biznes partnyorlarımızın məmnunluguna səbəb olur."}
-            image={sections[0]?.image || "https://166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg"}
+            image={sections[0]?.image || "https://admin.166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg"}
             imageAlt="Korporativ təmizlik xidməti"
             imageHeight="h-[600px]"
             imageFirst={false}
@@ -692,7 +699,7 @@ function CorporateServiceContent({
               "Peşəkar işçi heyəti",
               "Köçürmə vasitəsi ilə asan ödəmə imkanı",
             ]}
-            image={sections[1]?.image || "https://166temizlik.az/wp-content/uploads/2024/09/DSCF2761.webp"}
+            image={sections[1]?.image || "https://admin.166temizlik.az/wp-content/uploads/2024/09/DSCF2761.webp"}
             imageAlt="Korporativ əməkdaşlıq"
             imageHeight="h-[500px]"
             imageFirst
@@ -707,7 +714,7 @@ function CorporateServiceContent({
               "Yuyucu vasitələrin keyfiyyətli olması",
               "İstifadə olunan təmizlik vasitələrinin mebelə və s. zədələnməməsi.",
             ]}
-            image={sections[2]?.image || "https://166temizlik.az/wp-content/uploads/2024/09/DSCF3391-Edit.webp"}
+            image={sections[2]?.image || "https://admin.166temizlik.az/wp-content/uploads/2024/09/DSCF3391-Edit.webp"}
             imageAlt="166 Təmizlik korporativ xidmət"
             imageHeight="h-[500px]"
             imageFirst={false}
@@ -753,7 +760,7 @@ function CorporateTextImageRow({
   const imageBlock = (
     <div className="relative min-h-[570px] max-lg:min-h-0">
       <div
-        className={`absolute bottom-[-45px] h-[230px] w-[230px] bg-[url('https://166temizlik.az/wp-content/uploads/2023/01/travel-pattern-bg.png')] bg-repeat opacity-90 max-lg:hidden ${
+        className={`absolute bottom-[-45px] h-[230px] w-[230px] bg-[url('https://admin.166temizlik.az/wp-content/uploads/2023/01/travel-pattern-bg.png')] bg-repeat opacity-90 max-lg:hidden ${
           imageFirst ? "right-[58px]" : "left-[18px]"
         }`}
       />
@@ -1062,26 +1069,28 @@ async function OrderFormSection({ serviceTitle, locale }: { serviceTitle: string
 }
 
 const bottomCtaImages: Record<string, string> = {
-  "ofis-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/ofis4-1.jpg",
-  "bag-evlerinin-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/bag3-1.jpg",
-  "erazi-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/499c118beae7d28065328c1f6622c8d4.jpeg",
-  "kristallasdirma-xidmeti": "https://166temizlik.az/wp-content/uploads/2023/01/499c118beae7d28065328c1f6622c8d4.jpeg",
-  "fasad-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/f5130ec2ed62e432bf6eea48a4720f3f-1.jpeg",
-  "pencere-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
-  "cilciraq-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/maxresdefault-1.jpg",
-  "perde-yuma": "https://166temizlik.az/wp-content/uploads/2023/01/201410cc1626ea7478c1323445ef0eef-1.png",
-  "yumsaq-mebel-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/01/163eb70b66301186d622afe9b376fb38-1.png",
-  etirlendirme: "https://166temizlik.az/wp-content/uploads/2023/01/508ff33bcc85386acd15a427b03d8b8d-1.png",
-  "yangindan-sonra-ev-temizliyi": "https://166temizlik.az/wp-content/uploads/2023/01/89e800bb068aa1b43e8d61778c5ed1db.jpg",
-  "temir-sonrasi-temizlik": "https://166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
-  "otel-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/03/44.webp",
-  "restoran-temizlenmesi": "https://166temizlik.az/wp-content/uploads/2023/03/foto.webp",
-  "hovuz-temizlenmesi-xidmeti": "https://166temizlik.az/wp-content/uploads/2024/02/image-88-1.webp",
+  "ofis-temizliyi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/ofis4-1.jpg",
+  "bag-evlerinin-temizliyi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/bag3-1.jpg",
+  "erazi-temizliyi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/499c118beae7d28065328c1f6622c8d4.jpeg",
+  "kristallasdirma-xidmeti": "https://admin.166temizlik.az/wp-content/uploads/2023/01/499c118beae7d28065328c1f6622c8d4.jpeg",
+  "fasad-temizliyi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/f5130ec2ed62e432bf6eea48a4720f3f-1.jpeg",
+  "pencere-temizliyi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
+  "cilciraq-temizliyi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/maxresdefault-1.jpg",
+  "perde-yuma": "https://admin.166temizlik.az/wp-content/uploads/2023/01/201410cc1626ea7478c1323445ef0eef-1.png",
+  "yumsaq-mebel-temizlenmesi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/163eb70b66301186d622afe9b376fb38-1.png",
+  etirlendirme: "https://admin.166temizlik.az/wp-content/uploads/2023/01/508ff33bcc85386acd15a427b03d8b8d-1.png",
+  "yangindan-sonra-ev-temizliyi": "https://admin.166temizlik.az/wp-content/uploads/2023/01/89e800bb068aa1b43e8d61778c5ed1db.jpg",
+  "temir-sonrasi-temizlik": "https://admin.166temizlik.az/wp-content/uploads/2023/01/aac3e665d6bedbe4d6948af05ca693b1.png",
+  "otel-temizlenmesi": "https://admin.166temizlik.az/wp-content/uploads/2023/03/44.webp",
+  "restoran-temizlenmesi": "https://admin.166temizlik.az/wp-content/uploads/2023/03/foto.webp",
+  "hovuz-temizlenmesi-xidmeti": "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-88-1.webp",
 };
 
 function BottomImageCta({ locale, serviceSlug, text }: { locale: Locale; serviceSlug: string; text?: string }) {
   const copy = pageCopy[locale];
-  const image = bottomCtaImages[serviceSlug] ?? "https://166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg";
+  const image =
+    normalizeWordPressMediaUrl(bottomCtaImages[serviceSlug] ?? "https://admin.166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg") ??
+    "https://admin.166temizlik.az/wp-content/uploads/2023/01/d5330e546919a7c0d9970c407935da78-1.jpeg";
 
   return (
     <section className="relative min-h-[600px] overflow-hidden bg-black text-white max-md:min-h-[430px]">
@@ -1104,7 +1113,7 @@ export async function BlogPostContent({ slug, locale = "az" }: { slug: string; l
   }
 
   const title = wpPost?.title ?? post?.title ?? "";
-  const image = wpPost ? getWordPressImageUrl(wpPost) || pageHeroAssets.blog : post?.image ?? pageHeroAssets.blog;
+  const image = normalizeWordPressMediaUrl(wpPost ? getWordPressImageUrl(wpPost) || pageHeroAssets.blog : post?.image ?? pageHeroAssets.blog) ?? pageHeroAssets.blog;
   const excerpt = wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : post?.excerpt ?? "";
   const canonicalSlug = wpPost ? getWordPressCanonicalSlug(wpPost) : slug;
   const languageTargets = wpPost
@@ -1132,7 +1141,7 @@ export async function BlogPostContent({ slug, locale = "az" }: { slug: string; l
             <p className="text-[18px] font-medium leading-[1.7] text-[#30313a] max-md:text-[16px]">{excerpt}</p>
             <div className="mt-8 space-y-5 text-[16px] font-normal leading-[1.85] text-[#3f4652]">
               {wpPost ? (
-                <div className="wp-content space-y-5" dangerouslySetInnerHTML={{ __html: wpPost.content }} />
+                <div className="wp-content space-y-5" dangerouslySetInnerHTML={{ __html: normalizeWordPressMediaUrl(wpPost.content) ?? wpPost.content }} />
               ) : (
                 post?.content.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
               )}

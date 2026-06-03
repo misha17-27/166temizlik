@@ -4,6 +4,7 @@ export const WORDPRESS_API_URL =
   process.env.WORDPRESS_API_URL ?? "https://admin.166temizlik.az/wp-json/headless/v1";
 export const PUBLIC_SITE_URL =
   (process.env.PUBLIC_SITE_URL ?? "https://166temizlik.az").replace(/\/$/, "");
+export const WORDPRESS_MEDIA_URL = "https://admin.166temizlik.az/wp-content";
 const WORDPRESS_REVALIDATE_SECONDS = 60;
 
 export type WordPressLocale = "az" | "ru" | "tr";
@@ -293,7 +294,7 @@ export function stripHtml(value: string) {
 }
 
 export function getWordPressImageUrl(item: WordPressContentItem) {
-  return item.featuredImage?.url ?? "";
+  return normalizeWordPressMediaUrl(item.featuredImage?.url) ?? "";
 }
 
 export function getWordPressCanonicalSlug(item: Pick<WordPressContentItem, "slug" | "translations">) {
@@ -341,6 +342,10 @@ function cleanSeoValue(value: string | null | undefined) {
 
 export function normalizePublicSiteUrl(value: string | undefined) {
   return value?.replace(/https?:\/\/admin\.166temizlik\.az/gi, PUBLIC_SITE_URL);
+}
+
+export function normalizeWordPressMediaUrl(value: string | undefined) {
+  return value?.replace(/https?:\/\/(?:www\.)?166temizlik\.az\/wp-content/gi, WORDPRESS_MEDIA_URL);
 }
 
 function parseRobotsNumber(value: string) {

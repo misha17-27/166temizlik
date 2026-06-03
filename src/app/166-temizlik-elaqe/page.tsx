@@ -11,6 +11,7 @@ import type { Locale } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 import {
   getWordPressSettings,
+  normalizeWordPressMediaUrl,
   type WordPressContentItem,
 } from "@/lib/wordpress";
 import {
@@ -96,16 +97,19 @@ function getContactSocialLinks(contact: ContactPageData) {
 }
 
 function getContactContentImages(page: WordPressContentItem | null | undefined) {
-  return Array.from(page?.content?.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi) ?? [], (match) => match[1]);
+  return Array.from(
+    page?.content?.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi) ?? [],
+    (match) => normalizeWordPressMediaUrl(match[1]) ?? "",
+  ).filter(Boolean);
 }
 
 function getSyncedContactCards(locale: Locale, contact: ContactPageData, contentImages: string[]) {
   const copy = staticPageCopy[locale].contact;
   const [primaryPhone, ...mobilePhones] = contact.phones;
-  const primaryPhoneIcon = contentImages[0] || "https://166temizlik.az/wp-content/uploads/2023/02/telephone.png";
-  const mobilePhoneIcon = contentImages[1] || "https://166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png";
-  const addressIcon = contentImages[contentImages.length - 3] || "https://166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png";
-  const emailIcon = contentImages[contentImages.length - 2] || "https://166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png";
+  const primaryPhoneIcon = contentImages[0] || "https://admin.166temizlik.az/wp-content/uploads/2023/02/telephone.png";
+  const mobilePhoneIcon = contentImages[1] || "https://admin.166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png";
+  const addressIcon = contentImages[contentImages.length - 3] || "https://admin.166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png";
+  const emailIcon = contentImages[contentImages.length - 2] || "https://admin.166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png";
 
   return [
     ...(primaryPhone
@@ -165,8 +169,9 @@ export async function ContactPageContent({
   const contactSocialLinks = getContactSocialLinks(contact);
   const title = contact.contactTitle || wpPage?.title || copy.contactTitle;
   const questionsImage =
-    wpPage?.featuredImage?.url ||
-    "https://166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg";
+    normalizeWordPressMediaUrl(
+      wpPage?.featuredImage?.url || "https://admin.166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg",
+    ) ?? "https://admin.166temizlik.az/wp-content/uploads/2023/01/project_09-400x400-1.jpg";
 
   return (
     <SitePage active="contact" locale={locale} currentSlug="contact">

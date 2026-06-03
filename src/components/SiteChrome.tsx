@@ -7,6 +7,7 @@ import { WhatsAppLeadForm } from "@/components/WhatsAppLeadForm";
 import { chromeCopy, getLanguageSwitcherOptions, getLocalizedHref, getLocalizedServices, type Locale } from "@/lib/i18n";
 import type { RouteKind } from "@/lib/routes";
 import { site } from "@/lib/site-data";
+import { normalizeWordPressMediaUrl } from "@/lib/wordpress";
 
 const socialIcons = [
   {
@@ -123,7 +124,7 @@ type SyncedChromeSettings = {
 };
 
 function imageUrl(value: SyncedImageValue | undefined) {
-  return typeof value === "string" ? value : value?.url || "";
+  return normalizeWordPressMediaUrl(typeof value === "string" ? value : value?.url || "") ?? "";
 }
 
 type SyncedMenuLabels = Partial<Record<"home" | "services" | "about" | "gallery" | "contact" | "blog" | "vacancy", string>>;

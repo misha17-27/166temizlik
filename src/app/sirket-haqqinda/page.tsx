@@ -7,7 +7,7 @@ import { getLocalizedServices } from "@/lib/i18n";
 import type { Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import { site } from "@/lib/site-data";
-import type { WordPressContentItem } from "@/lib/wordpress";
+import { normalizeWordPressMediaUrl, type WordPressContentItem } from "@/lib/wordpress";
 import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
 export async function generateMetadata() {
@@ -15,15 +15,15 @@ export async function generateMetadata() {
 }
 
 const assets = {
-  hero: "https://166temizlik.az/wp-content/uploads/2023/01/10-1.jpg",
-  illustration: "https://166temizlik.az/wp-content/uploads/2023/01/a5577f36d5a3e02312cfc23a105bc121-1.png",
-  pattern: "https://166temizlik.az/wp-content/uploads/2023/01/travel-pattern-bg.png",
-  price: "https://166temizlik.az/wp-content/uploads/2024/12/Group-1000003889.webp",
-  team: "https://166temizlik.az/wp-content/uploads/2024/12/Group-1000003890.webp",
-  devices: "https://166temizlik.az/wp-content/uploads/2023/02/5-3.webp",
-  spray: "https://166temizlik.az/wp-content/uploads/2024/12/sx.webp",
-  services: "https://166temizlik.az/wp-content/uploads/2024/12/Group-1000003891.webp",
-  cta: "https://166temizlik.az/wp-content/uploads/2023/01/95v9jfn79b8kscokgc80g840swkocg.jpg",
+  hero: "https://admin.166temizlik.az/wp-content/uploads/2023/01/10-1.jpg",
+  illustration: "https://admin.166temizlik.az/wp-content/uploads/2023/01/a5577f36d5a3e02312cfc23a105bc121-1.png",
+  pattern: "https://admin.166temizlik.az/wp-content/uploads/2023/01/travel-pattern-bg.png",
+  price: "https://admin.166temizlik.az/wp-content/uploads/2024/12/Group-1000003889.webp",
+  team: "https://admin.166temizlik.az/wp-content/uploads/2024/12/Group-1000003890.webp",
+  devices: "https://admin.166temizlik.az/wp-content/uploads/2023/02/5-3.webp",
+  spray: "https://admin.166temizlik.az/wp-content/uploads/2024/12/sx.webp",
+  services: "https://admin.166temizlik.az/wp-content/uploads/2024/12/Group-1000003891.webp",
+  cta: "https://admin.166temizlik.az/wp-content/uploads/2023/01/95v9jfn79b8kscokgc80g840swkocg.jpg",
 };
 
 const aboutBodyCopy = {
@@ -202,7 +202,10 @@ function normalizeAboutAcfKey(key: string) {
 }
 
 function getAboutContentImages(page: WordPressContentItem | null | undefined) {
-  return Array.from(page?.content?.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi) ?? [], (match) => match[1]);
+  return Array.from(
+    page?.content?.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi) ?? [],
+    (match) => normalizeWordPressMediaUrl(match[1]) ?? "",
+  ).filter(Boolean);
 }
 
 function SyncedHtml({ html }: { html: string }) {
@@ -222,7 +225,7 @@ export async function AboutPageContent({
   const body = aboutBodyCopy[locale];
   const localizedServicesList = getLocalizedServices(locale).map((service) => service.title);
   const title = wpPage?.title || copy.title;
-  const heroImage = wpPage?.featuredImage?.url || assets.hero;
+  const heroImage = normalizeWordPressMediaUrl(wpPage?.featuredImage?.url || assets.hero) ?? assets.hero;
   const contentImages = getAboutContentImages(wpPage);
   const syncedImages = {
     illustration: contentImages[0] || assets.illustration,

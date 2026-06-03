@@ -1,6 +1,6 @@
 import type { Locale } from "./routes";
 import { weeklyPrices as fallbackWeeklyPrices, type HeroSlide } from "./site-data";
-import type { WordPressLocale } from "./wordpress";
+import { normalizeWordPressMediaUrl, type WordPressLocale } from "./wordpress";
 import { getLocalizedServices } from "./i18n";
 
 type WordPressImageLike = {
@@ -129,10 +129,10 @@ const heroSlideBackgrounds = ["#0271C9", "#FFF424"];
 
 function imageUrl(image: WordPressImageLike | string | null | undefined) {
   if (typeof image === "string") {
-    return image.trim();
+    return normalizeWordPressMediaUrl(image.trim()) ?? "";
   }
 
-  return typeof image?.url === "string" && image.url.trim() ? image.url.trim() : "";
+  return typeof image?.url === "string" && image.url.trim() ? normalizeWordPressMediaUrl(image.url.trim()) ?? "" : "";
 }
 
 function normalizeSlug(slug: string | undefined) {
@@ -238,9 +238,10 @@ const legacyHomeServiceSlugs = [
 ] as const;
 
 function getLegacyHomeImages(content: string) {
-  return Array.from(content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi), (match) => match[1]).filter(
-    (image) => !image.includes("/revslider-2/public/assets/assets/dummy.png"),
-  );
+  return Array.from(
+    content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi),
+    (match) => normalizeWordPressMediaUrl(match[1]) ?? "",
+  ).filter((image) => image && !image.includes("/revslider-2/public/assets/assets/dummy.png"));
 }
 
 function getLegacyHomeServiceIcons(content: string) {

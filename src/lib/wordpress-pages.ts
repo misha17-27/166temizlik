@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { Locale, StaticRouteKey } from "./routes";
 import type { HeroSlide } from "./site-data";
-import { buildWordPressMetadata, getWordPressHome, getWordPressPage, normalizePublicSiteUrl, stripHtml, type WordPressContentItem } from "./wordpress";
+import { buildWordPressMetadata, getWordPressHome, getWordPressPage, normalizePublicSiteUrl, normalizeWordPressMediaUrl, stripHtml, type WordPressContentItem } from "./wordpress";
 
 const wordpressPageSlugs = {
   home: "home",
@@ -92,8 +92,8 @@ export function getWordPressHomeHeroSlides(
   return [
     {
       title: page.title,
-      desktopImage: page.featuredImage.url,
-      mobileImage: page.featuredImage.url,
+      desktopImage: normalizeWordPressMediaUrl(page.featuredImage.url) ?? "",
+      mobileImage: normalizeWordPressMediaUrl(page.featuredImage.url) ?? "",
       desktopBgColor: fallback?.desktopBgColor ?? "#0271C9",
       desktopWidth: page.featuredImage.width || fallback?.desktopWidth || 1200,
       desktopHeight: page.featuredImage.height || fallback?.desktopHeight || 500,
@@ -158,7 +158,10 @@ function normalizeHeading(value: string) {
 }
 
 function extractImageUrls(html: string) {
-  return Array.from(html.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi), (match) => match[1])
+  return Array.from(
+    html.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi),
+    (match) => normalizeWordPressMediaUrl(match[1]) ?? "",
+  )
     .filter(Boolean)
     .filter((url, index, urls) => urls.indexOf(url) === index);
 }
@@ -225,7 +228,7 @@ export function getWordPressEquipmentPageContent(page: EquipmentPageSource | nul
 
   return {
     title: page.title,
-    heroImage: page.featuredImage?.url ?? "",
+    heroImage: normalizeWordPressMediaUrl(page.featuredImage?.url) ?? "",
     equipmentTitle,
     materialsTitle,
     equipmentCards,

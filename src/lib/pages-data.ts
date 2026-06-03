@@ -2,21 +2,21 @@ import { services } from "@/lib/site-data";
 import type { Locale } from "@/lib/routes";
 
 export const galleryImages = [
-  "https://166temizlik.az/wp-content/uploads/2023/02/perde333-1.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/05/DSC08207.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/03/20230223_114056.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-1.webp",
-  "https://166temizlik.az/wp-content/uploads/2023/02/72c66bb8b599dfcc1af3b2488cf67f71-1.jpeg",
-  "https://166temizlik.az/wp-content/uploads/2023/03/20230205_130150.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/03/IMG-20230309-WA0021.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-3.webp",
-  "https://166temizlik.az/wp-content/uploads/2023/02/29902f175cfb21144fcd9279725845bf-1-1.png",
-  "https://166temizlik.az/wp-content/uploads/2023/03/20230223_113905.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/03/IMG-20230309-WA0005.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/03/20230128_105519.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/05/DSC08231.jpg",
-  "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-10.webp",
-  "https://166temizlik.az/wp-content/uploads/2023/05/J1A8070.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/02/perde333-1.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/05/DSC08207.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/03/20230223_114056.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-1.webp",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/02/72c66bb8b599dfcc1af3b2488cf67f71-1.jpeg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/03/20230205_130150.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/03/IMG-20230309-WA0021.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-3.webp",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/02/29902f175cfb21144fcd9279725845bf-1-1.png",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/03/20230223_113905.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/03/IMG-20230309-WA0005.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/03/20230128_105519.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/05/DSC08231.jpg",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-10.webp",
+  "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8070.jpg",
 ];
 
 export const galleryCategories = [
@@ -58,17 +58,17 @@ export function getLocalizedGalleryCategories(locale: Locale) {
 }
 
 export const pageHeroAssets = {
-  blog: "https://166temizlik.az/wp-content/uploads/2023/02/5282459.webp",
-  partners: "https://166temizlik.az/wp-content/uploads/2023/02/business-partners.jpg",
-  employees: "https://166temizlik.az/wp-content/uploads/2023/07/emekdash.webp",
-  equipment: "https://166temizlik.az/wp-content/uploads/2023/01/10-1.jpg",
+  blog: "https://admin.166temizlik.az/wp-content/uploads/2023/02/5282459.webp",
+  partners: "https://admin.166temizlik.az/wp-content/uploads/2023/02/business-partners.jpg",
+  employees: "https://admin.166temizlik.az/wp-content/uploads/2023/07/emekdash.webp",
+  equipment: "https://admin.166temizlik.az/wp-content/uploads/2023/01/10-1.jpg",
 };
 
 export const blogPosts = [
   {
     slug: "vinil-dos-m-ni-nec-t-mizl-m-k-olar",
     title: "Vinil Döşəməni Necə Təmizləmək Olar?",
-    image: "https://166temizlik.az/wp-content/uploads/2026/05/shutterstock_1973895842.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2026/05/shutterstock_1973895842.jpg",
     excerpt:
       "Vinil döşəmə davamlılığı və qulluğunun asanlığı sayəsində evlərdə geniş yayılmış bir seçimdir. Düzgün qulluqla döşəməni təmiz və parlaq saxlamaq mümkündür.",
     content: [
@@ -82,7 +82,7 @@ export const blogPosts = [
   {
     slug: "baca-t-mizliyi-v-h-miyy-ti",
     title: "Baca təmizliyi və əhəmiyyəti",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/chimney-cleaning-article-image.png",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/chimney-cleaning-article-image.png",
     excerpt:
       "Bacanızın mütəmadi təmizlənməsi evinizin təhlükəsizliyi və istilik sisteminin səmərəliliyi üçün vacibdir.",
     content: [
@@ -94,7 +94,7 @@ export const blogPosts = [
   {
     slug: "bahar-t-mizliyi-il-evinizi-yenid-n-canlandirin",
     title: "Bahar təmizliyi ilə evinizi yenidən canlandırın!",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/whats-included-in-a-professional-house-cleaning-checklist-included-343704.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/whats-included-in-a-professional-house-cleaning-checklist-included-343704.jpg",
     excerpt:
       "Bahar mövsümü evi dərin təmizləmək, lazımsız əşyaları ayırmaq və məkanı təravətləndirmək üçün ideal zamandır.",
     content: [
@@ -106,7 +106,7 @@ export const blogPosts = [
   {
     slug: "evinizd-ki-tozlari-aradan-qaldirmaq-ucun-m-sl-h-tl-r",
     title: "Evdəki tozları aradan qaldırmaq üçün məsləhətlər",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/house-cleaning-team.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/house-cleaning-team.jpg",
     excerpt:
       "Doğru alətlər və üsullarla evinizi sağlam, parlaq və tozsuz saxlamaq mümkündür.",
     content: [
@@ -118,7 +118,7 @@ export const blogPosts = [
   {
     slug: "evinizd-ki-rutub-t-qoxularindan-nec-qurtula-bil-rsiniz",
     title: "Evinizdəki rütubət qoxularından necə qurtula bilərsiniz",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/230405-shower-cleaning-kb-2x1-1.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/230405-shower-cleaning-kb-2x1-1.jpg",
     excerpt:
       "Nəmli mühit xoşagəlməz qoxulara səbəb olur. Sadə və effektiv üsullarla bu problemi azaltmaq olar.",
     content: [
@@ -130,7 +130,7 @@ export const blogPosts = [
   {
     slug: "p-nc-r-l-rinizi-t-mizl-m-yi-gecikdirm-yin-t-mizlik-mut-x-ssisl-ri-s-b-bl-rini-aciqlayir",
     title: "Pəncərələrinizi təmizləməyi gecikdirməyin, təmizlik mütəxəssisləri səbəbini açıqlayır",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/hig-class-window-cleaning.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/hig-class-window-cleaning.jpg",
     excerpt:
       "Pəncərələrin müntəzəm təmizlənməsi həm görüntünü, həm də şüşələrin uzunömürlülüyünü qoruyur.",
     content: [
@@ -142,7 +142,7 @@ export const blogPosts = [
   {
     slug: "evinizi-n-t-miz-halda-tutmaq-ucun-ipuclari",
     title: "Evinizi ən təmiz halda tutmaq üçün ipucları",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/HomeWorks-thuishulp.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/HomeWorks-thuishulp.webp",
     excerpt: "Təmizlik yalnız estetik baxımdan deyil, həm də sağlamlıq və rahatlıq üçün vacibdir.",
     content: [
       "Təmizlik yalnız estetik baxımdan deyil, həm də sağlamlıq və rahatlıq üçün vacibdir. Doğru ipucları və səmərəli üsullarla bu iş daha asan və sürətli ola bilər.",
@@ -153,7 +153,7 @@ export const blogPosts = [
   {
     slug: "cilciraq-t-mizl-nm-si",
     title: "Çilçıraq təmizlənməsi",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/IMG_5340.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/IMG_5340.jpg",
     excerpt: "İşıqda parıldayan çilçırağınızın toz və hörümçək torlarından təmizlənməsi üçün peşəkar tövsiyələr.",
     content: [
       "Çilçırağı təmizləməyin bir yolu onun hər bir parçasını təmizləyici vasitə ilə isladılmış mikrofiber parça ilə diqqətlə silməkdir.",
@@ -164,7 +164,7 @@ export const blogPosts = [
   {
     slug: "t-mizl-yici-vasit-l-r-bakteriyalari-oldururmu",
     title: "Təmizləyici vasitələr bakteriyaları öldürürmü?",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/cleaning-products-stock-today-160307-tease.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/cleaning-products-stock-today-160307-tease.webp",
     excerpt: "Hər təmizləyici vasitə dezinfeksiya etmir. Səthlərin gigiyenik qalması üçün nələrə diqqət etmək lazımdır.",
     content: [
       "Bazarda ekoloji cəhətdən təmiz kimi təqdim olunan çoxlu təbii vasitələr var. Lakin onların hamısı səthləri dezinfeksiya etmir və gözlənilən dərin təmizliyi təmin etmir.",
@@ -175,7 +175,7 @@ export const blogPosts = [
   {
     slug: "evinizi-nec-dezinfeksiya-ed-bil-rsiniz",
     title: "Evinizi necə dezinfeksiya edə bilərsiniz?",
-    image: "https://166temizlik.az/wp-content/uploads/2025/02/disinfecting-door-handle-2.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/02/disinfecting-door-handle-2.jpg",
     excerpt: "Çox istifadə edilən səthləri düzgün dezinfeksiya etməklə mikrobların yayılmasının qarşısını almaq mümkündür.",
     content: [
       "Əksər insanlar evlərini mütəmadi təmizləsələr də, çoxumuz evimizi mütəmadi şəkildə dezinfeksiya etmirik.",
@@ -186,7 +186,7 @@ export const blogPosts = [
   {
     slug: "kifl-ri-t-mizl-m-yin-usullari",
     title: "Kiflərin təmizlənməsi üsulları",
-    image: "https://166temizlik.az/wp-content/uploads/2025/01/Mold-Remediation.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2025/01/Mold-Remediation.jpg",
     excerpt: "Hamam, mətbəx və digər otaqlarda yaranan kifin aradan qaldırılması üçün sadə və effektiv üsullar.",
     content: [
       "Hamamınızda, mətbəxinizdə və ya evinizin digər otaqlarında kifin xoşagəlməz hal olduğunu bilirik.",
@@ -197,7 +197,7 @@ export const blogPosts = [
   {
     slug: "hamam-otagi-temizliyi-nece-edilmeli",
     title: "Hamam otağı təmizliyi necə edilməli",
-    image: "https://166temizlik.az/wp-content/uploads/2024/07/GettyImages-153187215-65d9eaf6255a42599b005211adc5faf1.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/07/GettyImages-153187215-65d9eaf6255a42599b005211adc5faf1.jpg",
     excerpt: "Hamam təmizliyini hissələrə bölərək düzgün alətlər və texnika ilə prosesi daha rahat etmək mümkündür.",
     content: [
       "Heç kim çirkli hamam otağını təmizləməyi səbirsizliklə gözləməz. Hamamın təmizlənməsi vəzifəsini hissələrə bölmək prosesi daha asan edir.",
@@ -208,7 +208,7 @@ export const blogPosts = [
   {
     slug: "niye-divan-ve-kreslo-temizliyi-pesekar-sekilde-edilmelidir",
     title: "Niyə divan və kreslo təmizliyi peşəkar şəkildə edilməlidir?",
-    image: "https://166temizlik.az/wp-content/uploads/2024/07/Man-professionally-cleaning-couch.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/07/Man-professionally-cleaning-couch.webp",
     excerpt: "Evdə ən çox istifadə olunan yumşaq mebellərin dərin təmizliyi sağlam və səliqəli mühit yaradır.",
     content: [
       "Evdə olarkən çoxumuzun ən çox vaxt keçirdiyi yer divan və kreslolardır. Bu səbəbdən onların çirklənməsi qaçınılmazdır.",
@@ -219,7 +219,7 @@ export const blogPosts = [
   {
     slug: "metbex-dezgahinin-duzgun-dezinfeksiyasi",
     title: "Mətbəx dəzgahının düzgün dezinfeksiyası",
-    image: "https://166temizlik.az/wp-content/uploads/2024/07/shutterstock_208619104.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/07/shutterstock_208619104.jpg",
     excerpt: "Mətbəx dəzgahının dezinfeksiyası zamanı diqqət etməli olduğunuz vacib məqamlar.",
     content: [
       "Mətbəx evin qəlbidir. Ailənizin sağlamlığını qorumaq üçün yeməkdən əvvəl mətbəxi düzgün təmizləməyi və yemək bişirdikdən sonra mətbəx dəzgahınızı dezinfeksiya etməyi unutmayın.",
@@ -230,7 +230,7 @@ export const blogPosts = [
   {
     slug: "yasli-insanlar-ucun-temizlik-xidmeti",
     title: "Yaşlı insanlar üçün təmizlik xidməti",
-    image: "https://166temizlik.az/wp-content/uploads/2024/07/cleaning-for-seniors.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/07/cleaning-for-seniors.jpg",
     excerpt: "Yaşlı insanlar üçün təmizlik xidməti axtarırsınızsa doğru ünvandasınız.",
     content: [
       "Təmizlik xidmətindən istifadə yaşlıların istədikləri müddətdə evlərində qalmasına kömək etməyin ən yaxşı yollarından biridir.",
@@ -241,7 +241,7 @@ export const blogPosts = [
   {
     slug: "divarlarin-ve-sert-sethlerin-temizlenmesi-ucun-meslehetler",
     title: "Divarların və sərt səthlərin təmizlənməsi üçün məsləhətlər",
-    image: "https://166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/05/toz-alma-xidm-ti4-1.jpg",
     excerpt: "Divar təmizlənməsi ev təmizliyinin vacib hissələrindən biridir.",
     content: [
       "Yataq otaqlarımızı, vanna otağımızı, mətbəximizi və qonaq otaqlarımızı təmizləyirik, lakin divarlarımızı çox vaxt ikinci plana atırıq.",
@@ -252,7 +252,7 @@ export const blogPosts = [
   {
     slug: "isti-havalarda-heseratlardan-qacinmaq-ucun-en-yaxsi-temizlik-usullari",
     title: "İsti havalarda həşəratlardan qaçınmaq üçün ən yaxşı təmizlik üsulları",
-    image: "https://166temizlik.az/wp-content/uploads/2024/02/image-88-1.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-88-1.webp",
     excerpt: "İsti havalarda həşəratlardan qorunmaq üçün təmizlik vərdişləri xüsusi əhəmiyyət daşıyır.",
     content: [
       "Gözəl hava özü ilə ağcaqanadlar, qarışqalar və tarakanlar kimi problemlər gətirə bilər.",
@@ -263,7 +263,7 @@ export const blogPosts = [
   {
     slug: "restoran-temizliyi-ve-vacibliyi",
     title: "Restoran təmizliyi və vacibliyi",
-    image: "https://166temizlik.az/wp-content/uploads/2024/07/J1A7422.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/07/J1A7422.jpg",
     excerpt: "Restoran təmizliyi yaxşı bir müəssisənin diqqət yetirdiyi vacib məqamlardan biridir.",
     content: [
       "Yaxşı restoran müştəri məmnuniyyətini və sağlamlığını ön planda tutaraq təmizliyə xüsusi diqqət yetirməlidir.",
@@ -273,7 +273,7 @@ export const blogPosts = [
   {
     slug: "fasad-temizliyi-ve-suse-temizlenmesi",
     title: "Fasad təmizliyi və şüşə təmizlənməsi",
-    image: "https://166temizlik.az/wp-content/uploads/2024/05/cephe-sistemleri-ceylanlar-metal.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/05/cephe-sistemleri-ceylanlar-metal.jpg",
     excerpt: "Fasad təmizliyi binaların estetik görünüşünü və davamlılığını qorumaq üçün vacibdir.",
     content: [
       "Binanın xarici görünüşü onun gözə çarpan ilk hissəsidir. Təmiz və baxımlı fasad binanın dəyərini artırır və uzunömürlülüyünü təmin edir.",
@@ -284,7 +284,7 @@ export const blogPosts = [
   {
     slug: "temirden-sonra-temizlik",
     title: "Təmirdən sonra təmizlik",
-    image: "https://166temizlik.az/wp-content/uploads/2024/03/Group-254.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/03/Group-254.webp",
     excerpt: "Təmirdən sonra təmizlik zamanı toz, boya ləkələri və tikinti qalıqları peşəkar şəkildə aradan qaldırılır.",
     content: [
       "Təmir evinizi yeniləmək üçün əla yoldur, lakin təmirin sonunda toz, kir və zibil yığınları qorxuducu ola bilər.",
@@ -295,7 +295,7 @@ export const blogPosts = [
   {
     slug: "ev-zamani-temizlik-sirketi",
     title: "Ev təmizliyi zamanı təmizlik şirkətinin üstünlükləri",
-    image: "https://166temizlik.az/wp-content/uploads/2024/05/m-nzil-t-mizl-nm-si-1.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/05/m-nzil-t-mizl-nm-si-1.jpg",
     excerpt: "Ev təmizliyi vaxt aparır və bəzən yorucu olur. Peşəkar komanda vaxtınıza qənaət edir.",
     content: [
       "Peşəkar təmizlik şirkəti ev təmizliyi üçün bir sıra üstünlüklər təklif edir.",
@@ -306,7 +306,7 @@ export const blogPosts = [
   {
     slug: "otelde-temizliyik-isleri",
     title: "Oteldə təmizlik işləri",
-    image: "https://166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
     excerpt: "Otel təmizliyi müştərilərin ən çox diqqət etdiyi məsələlərdən biridir.",
     content: [
       "Otel idarəçiliyində qonaq məmnuniyyəti hər şeydən üstündür və bu məmnunluğun əsaslarından biri təmizlikdir.",
@@ -317,7 +317,7 @@ export const blogPosts = [
   {
     slug: "hovuz-temizliyi",
     title: "Hovuzun təmizliyi",
-    image: "https://166temizlik.az/wp-content/uploads/2024/04/hovuz-t-mizl-nm-si.jpeg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/04/hovuz-t-mizl-nm-si.jpeg",
     excerpt: "Hovuz təmizlənməsi zamanı suyun keyfiyyəti, filtr sistemi və kimyəvi balans diqqətdə saxlanılır.",
     content: [
       "Hovuzun müntəzəm təmizlənməsi suyun keyfiyyətinin qorunmasının əsasını təşkil edir.",
@@ -438,17 +438,17 @@ export function getLocalizedBlogPosts(locale: Locale) {
 }
 
 export const employees = [
-  ["Kazımova Sevər", "Ofis meneceri", "https://166temizlik.az/wp-content/uploads/2023/07/Kazimova-Sev-r.jpeg"],
-  ["İsayev Habil", "Təmizlik Xidməti bölümünün müdir müavini", "https://166temizlik.az/wp-content/uploads/2023/07/Isayev-Habil.jpeg"],
-  ["Əşrəfova Səidə", "Problemlər şöbəsinin əməkdaşı", "https://166temizlik.az/wp-content/uploads/2023/07/sr-fova-S-id-.jpeg"],
-  ["Yunusova Səma", "Baş menecer", "https://166temizlik.az/wp-content/uploads/2023/07/Yunusova-S-ma.jpeg"],
-  ["Quluyeva Vüsalə", "Satış meneceri", "https://166temizlik.az/wp-content/uploads/2023/07/Quluyeva-Vusal-.jpeg"],
-  ["İsgəndərova Aysel", "Satış meneceri", "https://166temizlik.az/wp-content/uploads/2023/07/Isg-nd-rova-Aysel.jpeg"],
-  ["Bağırov Fərman", "Sürücü", "https://166temizlik.az/wp-content/uploads/2023/07/Bagirov-F-rman.jpeg"],
-  ["Əskərov Namiq", "Sürücü", "https://166temizlik.az/wp-content/uploads/2023/07/sk-rov-Namiq1.jpeg"],
-  ["Xəlilov Qurban", "Sürücülərə nəzarət edən şəxs", "https://166temizlik.az/wp-content/uploads/2023/07/X-lilov-Qurban.jpeg"],
-  ["Allahverdiyeva Aysel", "Pərdə Yuma Xidmətinin qrup rəhbəri", "https://166temizlik.az/wp-content/uploads/2023/07/Allahverdiyeva-Aysel-1.jpeg"],
-  ["Bayramov Zübeyir", "Təchizat işlərinə baxan şəxs", "https://166temizlik.az/wp-content/uploads/2023/07/Bayramov-Zubeyir.jpeg"],
+  ["Kazımova Sevər", "Ofis meneceri", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Kazimova-Sev-r.jpeg"],
+  ["İsayev Habil", "Təmizlik Xidməti bölümünün müdir müavini", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Isayev-Habil.jpeg"],
+  ["Əşrəfova Səidə", "Problemlər şöbəsinin əməkdaşı", "https://admin.166temizlik.az/wp-content/uploads/2023/07/sr-fova-S-id-.jpeg"],
+  ["Yunusova Səma", "Baş menecer", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Yunusova-S-ma.jpeg"],
+  ["Quluyeva Vüsalə", "Satış meneceri", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Quluyeva-Vusal-.jpeg"],
+  ["İsgəndərova Aysel", "Satış meneceri", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Isg-nd-rova-Aysel.jpeg"],
+  ["Bağırov Fərman", "Sürücü", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Bagirov-F-rman.jpeg"],
+  ["Əskərov Namiq", "Sürücü", "https://admin.166temizlik.az/wp-content/uploads/2023/07/sk-rov-Namiq1.jpeg"],
+  ["Xəlilov Qurban", "Sürücülərə nəzarət edən şəxs", "https://admin.166temizlik.az/wp-content/uploads/2023/07/X-lilov-Qurban.jpeg"],
+  ["Allahverdiyeva Aysel", "Pərdə Yuma Xidmətinin qrup rəhbəri", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Allahverdiyeva-Aysel-1.jpeg"],
+  ["Bayramov Zübeyir", "Təchizat işlərinə baxan şəxs", "https://admin.166temizlik.az/wp-content/uploads/2023/07/Bayramov-Zubeyir.jpeg"],
 ].map(([name, role, image]) => ({ name, role, image }));
 
 const employeeRoleTranslations: Partial<Record<Locale, string[]>> = {
@@ -566,32 +566,32 @@ export const vacancyDetails = [
 export const equipment = [
   {
     title: "Tozsoran",
-    image: "https://166temizlik.az/wp-content/uploads/2023/09/tozsoran.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/09/tozsoran.webp",
     text: "Karcher tozsoranları quru və yaş təmizlikdə, təmirdən sonra zibil və tozun yığılmasında etibarlı nəticə verir.",
   },
   {
     title: "Buxarlı döşəmə təmizləyicisi",
-    image: "https://166temizlik.az/wp-content/uploads/2023/09/buxar.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/09/buxar.webp",
     text: "Buxarlı təmizləmə səthləri gigiyenik şəkildə təmizləməyə və çətin ləkələri yumşaltmağa kömək edir.",
   },
   {
     title: "Yuyucu tozsoran",
-    image: "https://166temizlik.az/wp-content/uploads/2023/09/yuycu.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/09/yuycu.webp",
     text: "Yumşaq mebel, xalça və döşəmə örtüklərinin kimyəvi təmizliyində istifadə olunur.",
   },
   {
     title: "Buxar aparatı",
-    image: "https://166temizlik.az/wp-content/uploads/2023/09/aaa11.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/09/aaa11.webp",
     text: "Kärcher buxar təmizləyiciləri kimyəvi maddəyə ehtiyac olmadan səthlərdə gigiyenik təmizliyi təmin edir.",
   },
   {
     title: "Kristallaşma aparatı",
-    image: "https://166temizlik.az/wp-content/uploads/2023/09/Untitled-1-1.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/09/Untitled-1-1.webp",
     text: "Daş və mərmər səthlərin parıldadılması, yenilənməsi və qorunması üçün peşəkar avadanlıqdır.",
   },
   {
     title: "Piləkan təmizliyi üçün aparat",
-    image: "https://166temizlik.az/wp-content/uploads/2023/09/aaa.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/09/aaa.webp",
     text: "Nəm təmizləmə, şampunlama, cilalama və kristallaşdırma imkanları pilləkən və sərt səthlər üçün effektiv həll təqdim edir.",
   },
 ];
@@ -724,7 +724,7 @@ const serviceDetails: Record<string, { description: string; image: string; bulle
   "ev-temizliyi-xidmeti": {
     description:
       "İş və ailə həyatının stresli olduğu bir vaxtda ev təmizliyinə saatlar sərf etmək böyük enerji tələb edir. 166-ya müraciət etməklə gündəlik və əsaslı təmizlik sifariş edə bilərsiniz.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-8-1.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/07/ev-temizliyi-8-1.webp",
     bullets: [
       "Otaq, dəhliz və zal təmizliyi",
       "Mətbəxin təmizliyi",
@@ -737,103 +737,103 @@ const serviceDetails: Record<string, { description: string; image: string; bulle
   "ofis-temizliyi": {
     description:
       "Təmizlik sadəcə rahatlıq üçün deyil, səmərəli iş üçün də vacibdir. Təmiz ofis əməkdaşların sağlamlığını və iş məhsuldarlığını qoruyur.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/05/J1A8062.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A8062.jpg",
     bullets: ["Döşəmə örtüyünün təmizlənməsi", "Ofis mebelləri və avadanlıqları", "Qapı-pəncərə və güzgülər", "Sanitar qovşaqlarının dezinfeksiyası"],
   },
   "bag-evlerinin-temizliyi": {
     description:
       "166 Təmizlik Xidməti bağ evinizi ilin bütün fəsillərində hazır vəziyyətə gətirmək üçün təmizlik və bağa qulluq işlərini görür.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/05/t-mzilik-xidm-ti.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/05/t-mzilik-xidm-ti.webp",
     bullets: ["Evin təmizlənməsi", "Həyətin təmizlənməsi", "Hovuzun təmizlənməsi", "Zibillərin yığılması"],
   },
   "erazi-temizliyi": {
     description:
       "Yaşayış binaları, alış-veriş mərkəzləri, mehmanxanalar və digər obyektlərin ətraf əraziləri xüsusi avadanlıqla təmizlənir.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/02/erazi2-1-1.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/02/erazi2-1-1.jpg",
     bullets: ["Ərazinin süpürülməsi", "Zibilin yığılması", "Yer səthinin xüsusi aparatla yuyulması", "Tamet yuma xidməti"],
   },
   "fasad-temizliyi": {
     description:
       "Binaların xaricinin təmiz olması şirkət haqqında ilk təəssürat üçün vacibdir. Fasad təmizliyi peşəkar və təhlükəsiz komanda ilə görülür.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/02/fasad1-1.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/02/fasad1-1.jpg",
     bullets: ["Şüşə fasadların yuyulması", "Toz və çirkin təmizlənməsi", "Hündürlük işlərinə uyğun komanda", "Xüsusi avadanlıq"],
   },
   "pencere-temizliyi": {
     description:
       "Pəncərələrin təmizliyi işıq, görüntü və məkanın ümumi səliqəsi üçün vacibdir. Standart və hündür pəncərələr üzrə xidmət göstərilir.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/05/p-nc-r-t-mizliyi.webp",
     bullets: ["Standart pəncərə təmizliyi", "Hündür pəncərə təmizliyi", "Vinil təmizliyi", "Montaj lenti təmizliyi"],
   },
   "cilciraq-temizliyi": {
     description:
       "Çilçıraq təmizliyi zamanı plafonlar və detallar diqqətlə sökülür, yuyulur, qurudulur və parlaqlığı bərpa edilir.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/12/HRS03718.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03718.webp",
     bullets: ["Çilçıraq elektrikdən ayrılır", "Plafonlar yuyulur", "Su ləkələri təmizlənir", "Detallar qurudulur"],
   },
   "perde-yuma": {
     description:
       "Peşəkar pərdə yuma komandası pərdə və jalüzləri çıxarır, xüsusi metodla yuyur, qurudur, ütüləyir və təhvil verir.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/05/222.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/05/222.jpg",
     bullets: ["Tül pərdə yuma", "Dekor pərdə yuma", "Jalüz yuma", "Abşeron yarımadası üzrə xidmət"],
   },
   "yumsaq-mebel-temizlenmesi": {
     description:
       "Gündəlik istifadə olunan divan, kreslo və stulların kimyəvi təmizliyi bakteriyaları, ləkələri və köhnə görünüşü aradan qaldırmağa kömək edir.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/01/WhatsApp-Image-2023-12-20-at-21.06.50-2.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/01/WhatsApp-Image-2023-12-20-at-21.06.50-2.webp",
     bullets: ["Divan və kreslolar", "Dəri mebellər", "Stullar və pufiklər", "Matras və kovrolin"],
   },
   etirlendirme: {
     description:
       "Evdə, ofisdə və obyektdə xoşagəlməz qoxulara qarşı peşəkar ətirləndirmə xidməti təqdim olunur.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/02/etir.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/02/etir.jpg",
     bullets: ["Pis qoxuların aradan qaldırılması", "Məkan ölçüsünə uyğun həll", "Ofis və obyektlər", "Uzunmüddətli xoş qoxu"],
   },
   "baximsiz-ev-temizliyi": {
     description:
       "Ən baxımsız evlərin təmizliyini xüsusi kimyəvi məhlullar və müasir avadanlıqla öz üzərimizə götürürük.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/01/e427f74ecdda74a13f0ddf96c4a31341-1.png",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/01/e427f74ecdda74a13f0ddf96c4a31341-1.png",
     bullets: ["Yaşlı insanların evləri", "Yataq xəstələrinin evləri", "Dərin təmizlik", "Xüsusi kimyəvi məhlullar"],
   },
   "yangindan-sonra-ev-temizliyi": {
     description:
       "Yanğın və subasma sonrası yaranan his, toz, qubar və ağır çirklənmələr peşəkar vasitələrlə təmizlənir.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/01/yangin222.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/01/yangin222.jpg",
     bullets: ["His və qubarın təmizlənməsi", "Tavan və fasad yuyulması", "Mebellərin təmizlənməsi", "Zibillərin yığılması"],
   },
   "otel-temizlenmesi": {
     description:
       "Otel təmizliyi qonaq məmnuniyyəti və gigiyena üçün əsas şərtdir. Otaqlar və ümumi sahələr sistemli şəkildə təmizlənir.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/12/HRS03405-1.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/12/HRS03405-1.webp",
     bullets: ["Sanuzel təmizliyi", "Mebel və səthlər", "Döşəmə və divarlar", "Aksessuar və kondisionerlər"],
   },
   "restoran-temizlenmesi": {
     description:
       "Restoranların təmiz və gigiyenik olması müştəri məmnuniyyəti və təhlükəsiz qida hazırlığı üçün vacibdir.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/05/J1A7451.jpg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/05/J1A7451.jpg",
     bullets: ["Zal təmizliyi", "Mətbəx sahələri", "Sanitar qovşaqları", "Gigiyenik qaydalara uyğun xidmət"],
   },
   "temir-sonrasi-temizlik": {
     description:
       "Təmir sonrası toz, boya, kley və tikinti çirkləri xüsusi avadanlıqla təmizlənir, məkan istifadəyə hazır vəziyyətə gətirilir.",
-    image: "https://166temizlik.az/wp-content/uploads/2023/02/fit_960_530_false_crop_1000_562_0_52_q90_2709852_1b72823ed32f1521bbdb3e471.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2023/02/fit_960_530_false_crop_1000_562_0_52_q90_2709852_1b72823ed32f1521bbdb3e471.webp",
     bullets: ["Tikinti çirklərinin aradan qaldırılması", "Pəncərə və qapı təmizliyi", "Səthlərin yaş və quru təmizliyi", "Məskunlaşmaya hazırlıq"],
   },
   "kristallasdirma-xidmeti": {
     description:
       "Daş, mərmər və parlaq səthlərin görünüşünü bərpa etmək üçün kristallaşdırma xidməti təqdim olunur.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/02/image-89a.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-89a.webp",
     bullets: ["Mərmər səthlər", "Parlaqlığın bərpası", "Ərp və ləkələrin təmizlənməsi", "Peşəkar aparatlarla xidmət"],
   },
   "hovuz-temizlenmesi-xidmeti": {
     description:
       "Hovuzların təmizliyi həm Bakı daxilində, həm də regionlarda sifarişçinin tələblərinə uyğun həyata keçirilir.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/02/image-89-1.webp",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/02/image-89-1.webp",
     bullets: ["Çirklənmiş suyun boşaldılması", "Hovuz çəninin təmizliyi", "Duz və kalsium ləkələri", "Dezinfeksiya"],
   },
   "korporativ-temizlik-xidmeti": {
     description:
       "Korporativ əməkdaşlıq şirkətimizin əsas prioritetlərindən biridir. Müştərilərimiz üçün güzəştlər və operativ xidmət modeli təqdim olunur.",
-    image: "https://166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg",
+    image: "https://admin.166temizlik.az/wp-content/uploads/2024/09/WhatsApp-Image-2024-09-16-at-13.35.38-1.jpeg",
     bullets: ["Korporativ təkliflər", "Sifarişlərin izlənilməsi", "Müştəri məmnuniyyəti zəngləri", "Peşəkar işçi heyəti"],
   },
 };
@@ -872,7 +872,7 @@ export const partnerLogos = [
   "Artboard-18.jpg",
   "Artboard-17.jpg",
   "Artboard-19.jpg",
-].map((file) => `https://166temizlik.az/wp-content/uploads/2023/02/${file}`);
+].map((file) => `https://admin.166temizlik.az/wp-content/uploads/2023/02/${file}`);
 
 export const newerPartnerLogos = [
   "1.jpg",
@@ -891,4 +891,4 @@ export const newerPartnerLogos = [
   "4.jpg",
   "3.jpg",
   "2.jpg",
-].map((file) => `https://166temizlik.az/wp-content/uploads/2024/09/${file}`);
+].map((file) => `https://admin.166temizlik.az/wp-content/uploads/2024/09/${file}`);

@@ -1,4 +1,4 @@
-import { stripHtml, type WordPressContentItem } from "@/lib/wordpress";
+import { normalizeWordPressMediaUrl, stripHtml, type WordPressContentItem } from "@/lib/wordpress";
 
 export type WordPressServiceContent = {
   title?: string;
@@ -116,7 +116,8 @@ function toText(value: unknown) {
 
 function getImageUrl(value: unknown): string {
   if (typeof value === "string") {
-    return value.startsWith("http") || value.startsWith("/") ? value : "";
+    const image = value.startsWith("http") || value.startsWith("/") ? value : "";
+    return normalizeWordPressMediaUrl(image) ?? "";
   }
 
   if (!value || typeof value !== "object") {
@@ -126,11 +127,11 @@ function getImageUrl(value: unknown): string {
   const record = value as Record<string, unknown>;
 
   if (typeof record.url === "string") {
-    return record.url;
+    return normalizeWordPressMediaUrl(record.url) ?? "";
   }
 
   if (typeof record.source_url === "string") {
-    return record.source_url;
+    return normalizeWordPressMediaUrl(record.source_url) ?? "";
   }
 
   if (record.sizes && typeof record.sizes === "object") {
@@ -138,7 +139,7 @@ function getImageUrl(value: unknown): string {
     const preferred = ["large", "medium_large", "medium", "thumbnail"];
     for (const size of preferred) {
       if (typeof sizes[size] === "string") {
-        return sizes[size];
+        return normalizeWordPressMediaUrl(sizes[size]) ?? "";
       }
     }
   }
@@ -184,7 +185,7 @@ function getCorporateBlocks(content: string) {
       const title = toText(block.match(/<h2\b[^>]*>([\s\S]*?)<\/h2>/i)?.[1] ?? "");
       const text = toText(block.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] ?? "");
       const items = listTexts(block);
-      const image = block.match(/<img\b[^>]*\bsrc=["']([^"']+)["']/i)?.[1] ?? "";
+      const image = normalizeWordPressMediaUrl(block.match(/<img\b[^>]*\bsrc=["']([^"']+)["']/i)?.[1]) ?? "";
 
       return { title, text: text || undefined, items, image };
     })
@@ -193,7 +194,10 @@ function getCorporateBlocks(content: string) {
 
 export function getWordPressCorporateContent(item: WordPressContentItem): WordPressCorporateContent | undefined {
   const blocks = getCorporateBlocks(item.content);
-  const images = Array.from(item.content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi), (match) => match[1]);
+  const images = Array.from(
+    item.content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi),
+    (match) => normalizeWordPressMediaUrl(match[1]) ?? "",
+  );
   const sections = blocks.slice(0, 3).map((block, index) => ({
     ...block,
     image: images[index] ?? block.image,
@@ -226,7 +230,7 @@ function getPricing(entries: AcfEntry[]): WordPressServicePricing | undefined {
   return {
     features,
     prices,
-    noteHtml: typeof note?.value === "string" ? note.value : undefined,
+    noteHtml: typeof note?.value === "string" ? normalizeWordPressMediaUrl(note.value) : undefined,
   };
 }
 
