@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { newerPartnerLogos, pageHeroAssets, partnerLogos } from "@/lib/pages-data";
 import { getWordPressPartnerLogoUrls } from "@/lib/wordpress-partners";
 import { staticPageCopy } from "@/lib/static-page-copy";
@@ -27,6 +28,7 @@ export async function PartnersPageContent({
 
   return (
     <SitePage active="about" locale={locale} currentSlug="partners">
+      <WordPressSeoSchema seo={wpPage?.seo} />
       <section className="bg-[#f5f5f5]">
         <div className="container-shell relative h-[520px] overflow-hidden max-md:h-[280px]">
           <Image src={heroImage} alt={wpPage?.featuredImage?.alt || title} fill priority sizes="100vw" className="object-cover" />

@@ -13,7 +13,7 @@ export function WordPressSeoSchema({ seo }: { seo?: WordPressSeo | null }) {
         <script
           key={index}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: schema }}
+          dangerouslySetInnerHTML={{ __html: schema.replace(/</g, "\\u003c") }}
         />
       ))}
     </>

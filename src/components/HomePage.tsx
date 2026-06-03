@@ -5,6 +5,7 @@ import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
 import { HeroSlider } from "@/components/HeroSlider";
 import { CtaFooter, Header } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServices, homeCopy, type Locale } from "@/lib/i18n";
 import { partners, site } from "@/lib/site-data";
 import type { HomePageData } from "@/lib/wordpress-home";
@@ -243,6 +244,7 @@ export function HomePage({
 
   return (
     <main>
+      <WordPressSeoSchema seo={homeData?.seo} />
       <Header locale={locale} />
       <HeroSlider slides={heroSlides} />
       <ServicesSection locale={locale} title={copy.servicesTitle} services={homeData?.services} />

@@ -1,6 +1,6 @@
 import type { Locale } from "./routes";
 import { weeklyPrices as fallbackWeeklyPrices, type HeroSlide } from "./site-data";
-import { normalizeWordPressMediaUrl, type WordPressLocale } from "./wordpress";
+import { normalizeWordPressMediaUrl, type WordPressLocale, type WordPressSeo } from "./wordpress";
 import { getLocalizedServices } from "./i18n";
 
 type WordPressImageLike = {
@@ -59,6 +59,7 @@ export type HomeBeforeAfterItem = {
 };
 
 export type HomePageData = {
+  seo?: WordPressSeo | null;
   copy: {
     heroSlides: HeroSlide[];
     servicesTitle: string;
@@ -423,6 +424,7 @@ export async function getHomePageData(locale: Locale) {
   }));
 
   return {
+    seo: sourcePage?.seo,
     ...pageData,
     services,
     packages: sourcePage ? buildLegacyHomePackages(sourcePage.acf) : undefined,

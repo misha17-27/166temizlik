@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SitePage } from "@/components/SiteChrome";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedEquipment, getLocalizedMaterialCards, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
@@ -29,6 +30,7 @@ export async function EquipmentPageContent({
 
   return (
     <SitePage active="about" locale={locale} currentSlug="equipment">
+      <WordPressSeoSchema seo={wpPage?.seo} />
       <section className="relative h-[400px] bg-white max-md:h-[240px]">
         <Image src={heroImage} alt={wpPage?.featuredImage?.alt || title} fill preload sizes="100vw" className="object-cover" />
         <div className="container-shell relative flex h-full items-center">

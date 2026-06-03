@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { SitePage } from "@/components/SiteChrome";
 import { WhatsAppLeadForm } from "@/components/WhatsAppLeadForm";
+import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import {
   buildContactPageData,
   type ContactPageData,
@@ -175,6 +176,7 @@ export async function ContactPageContent({
 
   return (
     <SitePage active="contact" locale={locale} currentSlug="contact">
+      <WordPressSeoSchema seo={wpPage?.seo} />
       <section className="relative overflow-hidden bg-white pb-24 pt-[130px] max-lg:pt-16">
         <div className="absolute -left-28 bottom-10 h-[380px] w-[520px] rounded-[55%] bg-[#f8f8ff]" />
         <div className="absolute -right-20 top-[300px] h-[360px] w-[170px] rounded-[55%] bg-[#e8fbff]" />
