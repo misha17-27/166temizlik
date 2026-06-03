@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.0
+ * Version: 0.4.1
  * Author: 166 Temizlik
  */
 
@@ -44,6 +44,76 @@ final class One66_Headless_API
         'hovuz-temizlenmesi-xidmeti',
         'kristallasdirma-xidmeti',
         'korporativ-temizlik-xidmeti',
+    ];
+
+    private const FRONTEND_STATIC_PATHS = [
+        'az' => [
+            'ana-sehife' => '/',
+            'ana-sehife-2' => '/',
+            '166-temizlik' => '/',
+            'temizlik-xidmetleri' => '/temizlik-xidmetleri',
+            'sirket-haqqinda' => '/sirket-haqqinda',
+            'qalereya' => '/qalereya',
+            '166-temizlik-elaqe' => '/166-temizlik-elaqe',
+            'bloq' => '/bloq',
+            'temizlik-xidmeti' => '/temizlik-xidmeti',
+            'partnyorlar' => '/partnyorlar',
+            'emekdaslarimiz' => '/emekdaslarimiz',
+            'vakansiya' => '/vakansiya',
+        ],
+        'ru' => [
+            'glavnaya2' => '/ru/',
+            'ana-sehife' => '/ru/',
+            'temizlik-xidmetleri' => '/ru/uslugi-po-uborke',
+            'uslugi-po-uborke' => '/ru/uslugi-po-uborke',
+            'sirket-haqqinda' => '/ru/o-kompanii',
+            'o-kompanii' => '/ru/o-kompanii',
+            'qalereya' => '/ru/galereya',
+            'galereya' => '/ru/galereya',
+            '166-temizlik-elaqe' => '/ru/166-kontaktnyj-nomer',
+            '166-kontaktnyj-nomer' => '/ru/166-kontaktnyj-nomer',
+            'bloq' => '/ru/bloq',
+            'temizlik-xidmeti' => '/ru/oborudovanie-i-materialy',
+            'oborudovanie-i-materialy' => '/ru/oborudovanie-i-materialy',
+            'partnyorlar' => '/ru/partnyory',
+            'partnyory' => '/ru/partnyory',
+            'emekdaslarimiz' => '/ru/nashikollegi',
+            'nashikollegi' => '/ru/nashikollegi',
+            'vakansiya' => '/ru/vakansiya',
+        ],
+        'tr' => [
+            'ana-sehife' => '/tr/',
+            'temizlik-xidmetleri' => '/tr/temizlik-xidmetleri',
+            'sirket-haqqinda' => '/tr/sirket-haqqinda',
+            'qalereya' => '/tr/qalereya',
+            '166-temizlik-elaqe' => '/tr/166-temizlik-elaqe',
+            'bloq' => '/tr/bloq',
+            'temizlik-xidmeti' => '/tr/temizlik-xidmeti',
+            'partnyorlar' => '/tr/partnyorlar',
+            'emekdaslarimiz' => '/tr/emekdaslarimiz',
+            'vakansiya' => '/tr/vakansiya',
+        ],
+    ];
+
+    private const SERVICE_FRONTEND_SLUGS = [
+        'ev-temizliyi-xidmeti' => ['az' => 'ev-temizliyi-xidmeti', 'ru' => 'uborka-doma', 'tr' => 'ev-temizliyi-xidmeti'],
+        'ofis-temizliyi' => ['az' => 'ofis-temizliyi', 'ru' => 'uborka-ofisa', 'tr' => 'ofis-temizliyi'],
+        'bag-evlerinin-temizliyi' => ['az' => 'bag-evlerinin-temizliyi', 'ru' => 'uborka-zagorodnogo-doma', 'tr' => 'bag-evlerinin-temizliyi'],
+        'erazi-temizliyi' => ['az' => 'erazi-temizliyi', 'ru' => 'uborka-territorii', 'tr' => 'erazi-temizliyi'],
+        'fasad-temizliyi' => ['az' => 'fasad-temizliyi', 'ru' => 'ochistka-fasada', 'tr' => 'fasad-temizliyi'],
+        'pencere-temizliyi' => ['az' => 'pencere-temizliyi', 'ru' => 'mojka-okon', 'tr' => 'pencere-temizliyi'],
+        'cilciraq-temizliyi' => ['az' => 'cilciraq-temizliyi', 'ru' => 'chistka-lyustry', 'tr' => 'cilciraq-temizliyi'],
+        'perde-yuma' => ['az' => 'perde-yuma', 'ru' => 'stirka-shtor-i-zhalyuzi', 'tr' => 'perde-yuma'],
+        'yumsaq-mebel-temizlenmesi' => ['az' => 'yumsaq-mebel-temizlenmesi', 'ru' => 'chistka-obivki', 'tr' => 'yumsaq-mebel-temizlenmesi'],
+        'etirlendirme' => ['az' => 'etirlendirme', 'ru' => 'aromatizatsiya-pomeshheniya', 'tr' => 'etirlendirme'],
+        'baximsiz-ev-temizliyi' => ['az' => 'baximsiz-ev-temizliyi', 'ru' => 'uborka-chistyj-dom', 'tr' => 'baximsiz-ev-temizliyi'],
+        'yangindan-sonra-ev-temizliyi' => ['az' => 'yangindan-sonra-ev-temizliyi', 'ru' => 'uborka-doma-posle-pozhara', 'tr' => 'yangindan-sonra-ev-temizliyi'],
+        'temir-sonrasi-temizlik' => ['az' => 'temir-sonrasi-temizlik', 'ru' => 'uborka-doma-posle-remonta', 'tr' => 'temir-sonrasi-temizlik'],
+        'otel-temizlenmesi' => ['az' => 'otel-temizlenmesi', 'ru' => 'uborka-otelya', 'tr' => 'otel-temizlenmesi'],
+        'restoran-temizlenmesi' => ['az' => 'restoran-temizlenmesi', 'ru' => 'uborka-restorana', 'tr' => 'restoran-temizlenmesi'],
+        'kristallasdirma-xidmeti' => ['az' => 'kristallasdirma-xidmeti', 'ru' => 'sluzhba-kristallizatsii', 'tr' => 'kristallasdirma-xidmeti'],
+        'hovuz-temizlenmesi-xidmeti' => ['az' => 'hovuz-temizlenmesi-xidmeti', 'ru' => 'uslugi-po-chistke-bassejna', 'tr' => 'hovuz-temizlenmesi-xidmeti'],
+        'korporativ-temizlik-xidmeti' => ['az' => 'korporativ-temizlik-xidmeti', 'ru' => 'korporativ-temizlik-xidmeti', 'tr' => 'korporativ-temizlik-xidmeti'],
     ];
 
     public static function boot(): void
@@ -389,6 +459,7 @@ final class One66_Headless_API
     private static function revalidate_tags(WP_Post $post): array
     {
         $slug = $post->post_name;
+        $service_slug = self::canonical_service_slug($slug);
 
         if ($post->post_type === 'post') {
             return ['wordpress:posts', 'wordpress:post:' . $slug];
@@ -410,8 +481,13 @@ final class One66_Headless_API
             return ['wordpress:home', 'wordpress:page:home'];
         }
 
-        if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
-            return ['wordpress:pages', 'wordpress:page:' . $slug, 'wordpress:services', 'wordpress:service:' . $slug];
+        if ($post->post_type === 'page' && $service_slug) {
+            return array_values(array_unique([
+                'wordpress:pages',
+                'wordpress:page:' . $slug,
+                'wordpress:services',
+                'wordpress:service:' . $service_slug,
+            ]));
         }
 
         if ($post->post_type === 'page' && self::is_home_page($post)) {
@@ -424,29 +500,40 @@ final class One66_Headless_API
     private static function revalidate_paths(WP_Post $post): array
     {
         $slug = $post->post_name;
+        $lang = self::post_language($post->ID) ?: 'az';
+        $service_slug = self::canonical_service_slug($slug);
 
         if ($post->post_type === 'post') {
-            return ['/bloq', '/' . $slug];
+            return [
+                self::frontend_static_path('bloq', $lang),
+                self::frontend_path($slug, $lang),
+            ];
         }
 
         if ($post->post_type === 'vakansiya') {
-            return ['/vakansiya', '/vakansiya/' . $slug];
+            return [
+                self::frontend_static_path('vakansiya', $lang),
+                self::frontend_path('vakansiya/' . $slug, $lang),
+            ];
         }
 
         if ($post->post_type === 'emakdaslar') {
-            return ['/emekdaslarimiz'];
+            return [self::frontend_static_path('emekdaslarimiz', $lang)];
         }
 
         if (in_array($post->post_type, ['partners', 'partner', 'partnyorlar'], true)) {
-            return ['/partnyorlar'];
+            return [self::frontend_static_path('partnyorlar', $lang)];
         }
 
         if ($post->post_type === 'slayd') {
             return ['/', '/ru', '/tr'];
         }
 
-        if ($post->post_type === 'page' && in_array($slug, self::SERVICE_SLUGS, true)) {
-            return ['/temizlik-xidmetleri', '/' . $slug];
+        if ($post->post_type === 'page' && $service_slug) {
+            return [
+                self::frontend_static_path('temizlik-xidmetleri', $lang),
+                self::frontend_service_path($service_slug, $lang),
+            ];
         }
 
         if ($post->post_type === 'page' && self::is_home_page($post)) {
@@ -454,10 +541,43 @@ final class One66_Headless_API
         }
 
         if ($post->post_type === 'page') {
-            return ['/' . $slug];
+            return [self::frontend_static_path($slug, $lang) ?: self::frontend_path($slug, $lang)];
         }
 
         return [];
+    }
+
+    private static function canonical_service_slug(string $slug): ?string
+    {
+        foreach (self::SERVICE_FRONTEND_SLUGS as $canonical_slug => $localized_slugs) {
+            if ($slug === $canonical_slug || in_array($slug, $localized_slugs, true)) {
+                return $canonical_slug;
+            }
+        }
+
+        return null;
+    }
+
+    private static function frontend_static_path(string $slug, string $lang): string
+    {
+        return self::FRONTEND_STATIC_PATHS[$lang][$slug] ?? self::frontend_path($slug, $lang);
+    }
+
+    private static function frontend_service_path(string $canonical_slug, string $lang): string
+    {
+        $localized_slug = self::SERVICE_FRONTEND_SLUGS[$canonical_slug][$lang] ?? $canonical_slug;
+        return self::frontend_path($localized_slug, $lang);
+    }
+
+    private static function frontend_path(string $path, string $lang): string
+    {
+        $normalized = trim($path, '/');
+
+        if ($normalized === '') {
+            return $lang === 'az' ? '/' : '/' . $lang;
+        }
+
+        return ($lang === 'az' ? '' : '/' . $lang) . '/' . $normalized;
     }
 
     private static function read_route(string $route, string $callback, array $extra_args = []): void
