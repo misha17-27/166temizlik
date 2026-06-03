@@ -28,6 +28,11 @@ export type WordPressSeo = {
   description?: string | null;
   canonical?: string | null;
   schema?: unknown;
+  robots?: {
+    index?: boolean | null;
+    follow?: boolean | null;
+    advanced?: string[] | null;
+  } | null;
   openGraph?: {
     title?: string | null;
     description?: string | null;
@@ -318,6 +323,75 @@ export function normalizePublicSiteUrl(value: string | undefined) {
   return value?.replace(/https?:\/\/admin\.166temizlik\.az/gi, PUBLIC_SITE_URL);
 }
 
+function parseRobotsNumber(value: string) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function buildRobotsMetadata(robots: WordPressSeo["robots"]): Metadata["robots"] | undefined {
+  if (!robots) {
+    return undefined;
+  }
+
+  const metadataRobots: Record<string, boolean | number | string> = {};
+
+  if (typeof robots.index === "boolean") {
+    metadataRobots.index = robots.index;
+  }
+
+  if (typeof robots.follow === "boolean") {
+    metadataRobots.follow = robots.follow;
+  }
+
+  robots.advanced?.forEach((directive) => {
+    const normalized = directive.trim().toLowerCase();
+
+    if (!normalized) {
+      return;
+    }
+
+    if (normalized === "noarchive" || normalized === "noimageindex" || normalized === "nositelinkssearchbox") {
+      metadataRobots[normalized] = true;
+      return;
+    }
+
+    if (normalized === "notranslate") {
+      metadataRobots.notranslate = true;
+      return;
+    }
+
+    if (normalized.startsWith("max-snippet:")) {
+      const value = parseRobotsNumber(normalized.slice("max-snippet:".length));
+
+      if (value !== undefined) {
+        metadataRobots["max-snippet"] = value;
+      }
+
+      return;
+    }
+
+    if (normalized.startsWith("max-video-preview:")) {
+      const value = parseRobotsNumber(normalized.slice("max-video-preview:".length));
+
+      if (value !== undefined) {
+        metadataRobots["max-video-preview"] = value;
+      }
+
+      return;
+    }
+
+    if (normalized.startsWith("max-image-preview:")) {
+      const value = normalized.slice("max-image-preview:".length);
+
+      if (value === "none" || value === "standard" || value === "large") {
+        metadataRobots["max-image-preview"] = value;
+      }
+    }
+  });
+
+  return Object.keys(metadataRobots).length > 0 ? (metadataRobots as Metadata["robots"]) : undefined;
+}
+
 export function buildWordPressMetadata(
   seo: WordPressSeo | null | undefined,
   fallback: { title?: string; description?: string } = {},
@@ -331,6 +405,7 @@ export function buildWordPressMetadata(
   const twitterTitle = cleanSeoValue(seo?.twitter?.title);
   const twitterDescription = cleanSeoValue(seo?.twitter?.description);
   const twitterImage = normalizePublicSiteUrl(cleanSeoValue(seo?.twitter?.image));
+  const robots = buildRobotsMetadata(seo?.robots);
 
   const metadata: Metadata = {};
 
@@ -360,6 +435,10 @@ export function buildWordPressMetadata(
       ...(twitterDescription ? { description: twitterDescription } : {}),
       ...(twitterImage ? { images: [twitterImage] } : {}),
     };
+  }
+
+  if (robots) {
+    metadata.robots = robots;
   }
 
   return metadata;

@@ -19,6 +19,11 @@ test("buildWordPressMetadata maps Yoast SEO fields to Next metadata", () => {
         description: "Twitter description",
         image: "https://166temizlik.az/twitter.jpg",
       },
+      robots: {
+        index: false,
+        follow: false,
+        advanced: ["noarchive", "max-snippet:-1"],
+      },
     },
     { title: "Fallback title", description: "Fallback description" },
   );
@@ -38,6 +43,12 @@ test("buildWordPressMetadata maps Yoast SEO fields to Next metadata", () => {
       title: "Twitter title",
       description: "Twitter description",
       images: ["https://166temizlik.az/twitter.jpg"],
+    },
+    robots: {
+      index: false,
+      follow: false,
+      noarchive: true,
+      "max-snippet": -1,
     },
   });
 });
