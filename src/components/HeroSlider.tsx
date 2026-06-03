@@ -1,8 +1,44 @@
 "use client";
 
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import { useCallback, useEffect, useRef, useState, type PointerEvent, type TouchEvent } from "react";
 import { heroSlides, type HeroSlide } from "@/lib/site-data";
+
+function HeroSlidePicture({ slide, eager }: { slide: HeroSlide; eager: boolean }) {
+  const alt = slide.title ?? "166 Temizlik";
+  const {
+    props: { srcSet: desktopSrcSet },
+  } = getImageProps({
+    src: slide.desktopImage,
+    alt,
+    width: slide.desktopWidth || 1920,
+    height: slide.desktopHeight || 1080,
+    sizes: "100vw",
+  });
+  const {
+    props: { srcSet: mobileSrcSet, ...imageProps },
+  } = getImageProps({
+    src: slide.mobileImage,
+    alt,
+    width: 684,
+    height: 620,
+    sizes: "calc(100vw - 48px)",
+  });
+
+  return (
+    <picture>
+      <source media="(min-width: 768px)" srcSet={desktopSrcSet} />
+      <source media="(max-width: 767px)" srcSet={mobileSrcSet} />
+      <img
+        {...imageProps}
+        alt={alt}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        className="absolute inset-0 h-full w-full object-contain"
+      />
+    </picture>
+  );
+}
 
 export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
   const [active, setActive] = useState(0);
@@ -114,22 +150,7 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
           style={{ backgroundColor: slide.desktopBgColor }}
           className="absolute inset-0 max-md:inset-x-6 max-md:inset-y-[10px] max-md:overflow-hidden max-md:rounded-[12px] md:flex md:items-center md:justify-center"
         >
-          <Image
-            src={slide.desktopImage}
-            alt={slide.title ?? "166 Temizlik"}
-            fill
-            preload={false}
-            sizes="(max-width: 768px) 1px, 100vw"
-            className="hidden object-contain md:block"
-          />
-          <Image
-            src={slide.mobileImage}
-            alt={slide.title ?? "166 Temizlik"}
-            fill
-            preload={active === 0}
-            sizes="(max-width: 768px) calc(100vw - 48px), 1px"
-            className="object-contain md:hidden"
-          />
+          <HeroSlidePicture slide={slide} eager={active === 0} />
         </div>
       ) : null}
 
