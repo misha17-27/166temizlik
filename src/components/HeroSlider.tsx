@@ -108,33 +108,30 @@ export function HeroSlider({ slides = heroSlides }: { slides?: HeroSlide[] }) {
         touchStartRef.current = null;
       }}
     >
-      {slides.map((item, index) => (
+      {slide ? (
         <div
-          key={`${item.desktopImage}-${index}`}
-          aria-hidden={active !== index}
-          style={{ backgroundColor: item.desktopBgColor }}
-          className={`absolute inset-0 transition-opacity duration-700 max-md:inset-x-6 max-md:inset-y-[10px] max-md:overflow-hidden max-md:rounded-[12px] md:flex md:items-center md:justify-center ${
-            active === index ? "opacity-100" : "opacity-0"
-          }`}
+          key={`${slide.desktopImage}-${active}`}
+          style={{ backgroundColor: slide.desktopBgColor }}
+          className="absolute inset-0 max-md:inset-x-6 max-md:inset-y-[10px] max-md:overflow-hidden max-md:rounded-[12px] md:flex md:items-center md:justify-center"
         >
           <Image
-            src={item.desktopImage}
-            alt={index === active ? (slide?.title ?? "166 Təmizlik") : ""}
+            src={slide.desktopImage}
+            alt={slide.title ?? "166 Temizlik"}
             fill
-            preload={index === 0}
+            preload={false}
             sizes="(max-width: 768px) 1px, 100vw"
             className="hidden object-contain md:block"
           />
           <Image
-            src={item.mobileImage}
-            alt={index === active ? (slide?.title ?? "166 Təmizlik") : ""}
+            src={slide.mobileImage}
+            alt={slide.title ?? "166 Temizlik"}
             fill
-            preload={index === 0}
+            preload={active === 0}
             sizes="(max-width: 768px) calc(100vw - 48px), 1px"
             className="object-contain md:hidden"
           />
         </div>
-      ))}
+      ) : null}
 
       <div className="absolute inset-0">
         <button

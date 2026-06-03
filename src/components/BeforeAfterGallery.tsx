@@ -78,7 +78,7 @@ export function BeforeAfterGallery({
           onPointerUp={() => setDragging(false)}
           onPointerCancel={() => setDragging(false)}
         >
-          <Image src={active.after} alt={`${active.title} ${copy.afterLabel}`} fill sizes="640px" className="object-cover" priority />
+          <Image src={active.after} alt={`${active.title} ${copy.afterLabel}`} fill sizes="640px" className="object-cover" />
           <Image
             src={active.before}
             alt={`${active.title} ${copy.beforeLabel}`}
@@ -86,7 +86,6 @@ export function BeforeAfterGallery({
             sizes="640px"
             className="object-cover"
             style={{ clipPath: beforeClip }}
-            priority
           />
 
           <span className="absolute left-2 top-2 bg-brand-yellow px-2 py-1 [font-family:var(--font-montserrat)] text-[10px] font-semibold text-black">
