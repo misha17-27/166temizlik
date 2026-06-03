@@ -46,10 +46,10 @@ const serviceAcfPrefixes: Record<string, string[]> = {
   etirlendirme: ["etirlendirme_xidmeti"],
   "baximsiz-ev-temizliyi": ["gozel_ev"],
   "yangindan-sonra-ev-temizliyi": ["yangindan_sonra"],
-  "temir-sonrasi-temizlik": ["temir_sonrasi_temizlik"],
-  "otel-temizlenmesi": ["otel_temizlenmesi"],
-  "restoran-temizlenmesi": ["restoran_temizlenmesi"],
-  "hovuz-temizlenmesi-xidmeti": ["hovuzlarin_temizliyi_xidmeti"],
+  "temir-sonrasi-temizlik": ["temir_sonrasi_temizlik", "temir_sonrasi"],
+  "otel-temizlenmesi": ["otel_temizlenmesi", "otel"],
+  "restoran-temizlenmesi": ["restoran_temizlenmesi", "restoran"],
+  "hovuz-temizlenmesi-xidmeti": ["hovuzlarin_temizliyi_xidmeti", "hovuz"],
   "kristallasdirma-xidmeti": ["kristallasdirma_xidmeti"],
 };
 
@@ -76,6 +76,7 @@ const entityMap: Record<string, string> = {
 function normalizeAcfKey(key: string) {
   return key
     .toLowerCase()
+    .replace(/\u00e9\u2122/g, "e")
     .replace(/[\u0259\u018f]/g, "e")
     .replace(/[\u0131\u0130]/g, "i")
     .replace(/[\u00f6\u00d6]/g, "o")
@@ -235,7 +236,7 @@ export function getWordPressServiceContent(item: WordPressContentItem, slug: str
     normalizedKey: normalizeAcfKey(key),
     value,
   }));
-  const prefixes = serviceAcfPrefixes[slug] ?? [];
+  const prefixes = (serviceAcfPrefixes[slug] ?? []).map(normalizeAcfKey);
   const entries = prefixes.length
     ? allEntries.filter((entry) => prefixes.some((prefix) => entry.normalizedKey.startsWith(prefix)))
     : allEntries;

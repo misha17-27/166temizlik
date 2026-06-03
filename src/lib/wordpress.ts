@@ -205,11 +205,22 @@ export function getWordPressServices(lang: WordPressLocale = "az") {
   });
 }
 
-export function getWordPressService(slug: string, lang: WordPressLocale = "az") {
-  return wpFetch<WordPressContentItem>(`/services/${slug}`, {
-    lang,
-    tags: ["wordpress:services", `wordpress:service:${slug}`],
-  });
+export async function getWordPressService(slug: string, lang: WordPressLocale = "az") {
+  try {
+    return await wpFetch<WordPressContentItem>(`/services/${slug}`, {
+      lang,
+      tags: ["wordpress:services", `wordpress:service:${slug}`],
+    });
+  } catch (error) {
+    const response = await getWordPressServices(lang);
+    const item = response.items.find((service) => service.slug === slug || getWordPressCanonicalSlug(service) === slug);
+
+    if (item) {
+      return item;
+    }
+
+    throw error;
+  }
 }
 
 export function getWordPressPosts(
