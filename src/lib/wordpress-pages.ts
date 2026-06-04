@@ -195,7 +195,7 @@ function isMaterialsHeading(value: string) {
     heading.includes("madde") ||
     heading.includes("material") ||
     heading.includes("malzeme") ||
-    heading.includes("средств")
+    heading.includes("\u0441\u0440\u0435\u0434\u0441\u0442\u0432\u0430 \u0434\u043b\u044f \u0447\u0438\u0441\u0442\u043a\u0438")
   );
 }
 
