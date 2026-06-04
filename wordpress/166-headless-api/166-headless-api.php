@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.1
+ * Version: 0.4.2
  * Author: 166 Temizlik
  */
 
@@ -162,8 +162,8 @@ final class One66_Headless_API
             'whatsapp' => self::option_text('social_whatsapp'),
             'youtube' => self::option_text('social_youtube'),
         ], [self::class, 'has_value']));
-        $logo = self::option_image('site_logo');
-        $logo_dark = self::option_image('site_logo_dark');
+        $logo = self::option_image('site_logo') ?: self::custom_logo();
+        $logo_dark = self::option_image('site_logo_dark') ?: $logo;
         $favicon = self::option_image('favicon') ?: self::site_icon();
 
         return self::response([
@@ -1636,12 +1636,40 @@ final class One66_Headless_API
         }
 
         $value = get_field($field, 'option');
-        return is_array($value) ? self::normalize_acf_value($value) : null;
+        if (is_array($value)) {
+            return self::normalize_acf_value($value);
+        }
+
+        if (is_numeric($value)) {
+            return self::media((int) $value);
+        }
+
+        if (is_string($value) && $value !== '') {
+            return [
+                'id' => $field,
+                'url' => esc_url_raw($value),
+                'alt' => get_bloginfo('name'),
+                'width' => null,
+                'height' => null,
+            ];
+        }
+
+        return null;
+    }
+
+    private static function custom_logo(): ?array
+    {
+        $logo_id = (int) get_theme_mod('custom_logo');
+        return $logo_id > 0 ? self::media($logo_id) : null;
     }
 
     private static function site_icon(): ?array
     {
         $icon_id = (int) get_option('site_icon');
+        if ($icon_id <= 0) {
+            $icon_id = (int) get_theme_mod('site_icon');
+        }
+
         if ($icon_id > 0) {
             $media = self::media($icon_id);
             if ($media) {
@@ -1649,7 +1677,7 @@ final class One66_Headless_API
             }
         }
 
-        $url = get_site_icon_url();
+        $url = get_site_icon_url(512);
         return is_string($url) && $url !== ''
             ? [
                 'id' => 'site_icon',
