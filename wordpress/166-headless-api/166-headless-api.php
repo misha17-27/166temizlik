@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.4
+ * Version: 0.4.5
  * Author: 166 Temizlik
  */
 
@@ -506,7 +506,7 @@ final class One66_Headless_API
         if ($post->post_type === 'post') {
             return [
                 self::frontend_static_path('bloq', $lang),
-                self::frontend_path($slug, $lang),
+                self::frontend_blog_path($slug, $lang),
             ];
         }
 
@@ -567,6 +567,12 @@ final class One66_Headless_API
     {
         $localized_slug = self::SERVICE_FRONTEND_SLUGS[$canonical_slug][$lang] ?? $canonical_slug;
         return self::frontend_path($localized_slug, $lang);
+    }
+
+    private static function frontend_blog_path(string $slug, string $lang): string
+    {
+        $blog_path = self::frontend_static_path('bloq', $lang);
+        return rtrim($blog_path, '/') . '/' . trim($slug, '/');
     }
 
     private static function frontend_path(string $path, string $lang): string
