@@ -4,7 +4,7 @@ import { SitePage } from "@/components/SiteChrome";
 import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServicePages, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { getWordPressImageUrl, getWordPressServices, stripHtml, type WordPressContentItem } from "@/lib/wordpress";
+import { getWordPressCanonicalSlug, getWordPressImageUrl, getWordPressServices, stripHtml, type WordPressContentItem } from "@/lib/wordpress";
 import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
@@ -345,7 +345,7 @@ async function getServiceCards(locale: Locale, page: WordPressContentItem | null
     const response = await getWordPressServices(locale);
     if (response.items.length > 0) {
       const fallbackBySlug = new Map(fallbackServices.map((service) => [service.slug, service]));
-      const wordpressBySlug = new Map(response.items.map((service) => [service.slug, service]));
+      const wordpressBySlug = new Map(response.items.map((service) => [getWordPressCanonicalSlug(service), service]));
 
       return serviceOrder
         .map((slug) => {
