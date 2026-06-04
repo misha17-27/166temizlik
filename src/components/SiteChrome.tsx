@@ -58,6 +58,8 @@ const socialIcons = [
   },
 ];
 
+type SocialLabel = "Facebook" | "Instagram" | "WhatsApp" | "YouTube";
+
 const contactIcons = {
   phone: (
     <path
@@ -111,6 +113,12 @@ type SyncedImageValue = string | { url?: string | null } | null;
 type SyncedChromeSettings = {
   logo?: SyncedImageValue;
   logoDark?: SyncedImageValue;
+  social?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    whatsapp?: string | null;
+    youtube?: string | null;
+  };
   footer?: {
     ctaTitle?: string | null;
     primaryLabel?: string | null;
@@ -136,6 +144,23 @@ function footerLogoUrl(settings: SyncedChromeSettings | null) {
   }
 
   return site.footerLogo;
+}
+
+function getFooterSocialUrl(label: SocialLabel, contact: SyncedFooterContact | null, settings: SyncedChromeSettings | null) {
+  const contactSocial = contact?.social?.[label as keyof NonNullable<SyncedFooterContact["social"]>];
+
+  if (contactSocial) {
+    return contactSocial;
+  }
+
+  const settingsSocial = {
+    Facebook: settings?.social?.facebook,
+    Instagram: settings?.social?.instagram,
+    WhatsApp: settings?.social?.whatsapp,
+    YouTube: settings?.social?.youtube,
+  } satisfies Record<SocialLabel, string | null | undefined>;
+
+  return settingsSocial[label] || "";
 }
 
 type SyncedMenuLabels = Partial<Record<"home" | "services" | "about" | "gallery" | "contact" | "blog" | "vacancy", string>>;
@@ -991,20 +1016,24 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
               </li>
             </ul>
             <div className="mt-4 flex gap-2">
-              {socialIcons.map((item) => (
-                <Link
-                  key={item.label}
-                  href={contact?.social?.[item.label as keyof NonNullable<SyncedFooterContact["social"]>] || "#"}
-                  aria-label={item.label}
-                  target={contact?.social?.[item.label as keyof NonNullable<SyncedFooterContact["social"]>] ? "_blank" : undefined}
-                  rel={contact?.social?.[item.label as keyof NonNullable<SyncedFooterContact["social"]>] ? "noreferrer" : undefined}
-                  className="grid h-[27px] w-[27px] place-items-center rounded-full border-2 border-white text-white"
-                >
-                  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
-                    {item.icon}
-                  </svg>
-                </Link>
-              ))}
+              {socialIcons.map((item) => {
+                const href = getFooterSocialUrl(item.label as SocialLabel, contact, settings);
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={href || "#"}
+                    aria-label={item.label}
+                    target={href ? "_blank" : undefined}
+                    rel={href ? "noreferrer" : undefined}
+                    className="grid h-[27px] w-[27px] place-items-center rounded-full border-2 border-white text-white"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[15px] w-[15px]" fill="none">
+                      {item.icon}
+                    </svg>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
