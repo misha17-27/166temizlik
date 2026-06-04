@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.2
+ * Version: 0.4.3
  * Author: 166 Temizlik
  */
 
@@ -718,13 +718,94 @@ final class One66_Headless_API
             return [];
         }
 
-        return array_values(array_filter(array_map(static function (string $url): string {
-            if (str_contains($url, '/revslider-2/public/assets/assets/dummy.png')) {
-                return '';
+        return array_values(array_filter(array_map([self::class, 'normalize_content_image_url'], $matches[1])));
+    }
+
+    private static function home_content_before_after(string $content): array
+    {
+        if ($content === '') {
+            return [];
+        }
+
+        $before_urls = self::image_urls_by_class($content, 'jet-image-comparison__before-image');
+        $after_urls = self::image_urls_by_class($content, 'jet-image-comparison__after-image');
+        $count = min(count($before_urls), count($after_urls));
+        $items = [];
+
+        for ($index = 0; $index < $count; $index++) {
+            $before = self::acf_image($before_urls[$index]);
+            $after = self::acf_image($after_urls[$index]);
+            if (!$before || !$after) {
+                continue;
             }
 
-            return str_starts_with($url, '//') ? 'https:' . $url : $url;
-        }, $matches[1])));
+            $items[] = [
+                'title' => (string) ($index + 1),
+                'before' => $before,
+                'after' => $after,
+            ];
+        }
+
+        return $items;
+    }
+
+    private static function image_urls_by_class(string $content, string $class): array
+    {
+        if (!preg_match_all('/<img\b[^>]*>/i', $content, $matches)) {
+            return [];
+        }
+
+        $urls = [];
+        foreach ($matches[0] as $tag) {
+            if (!preg_match('/\bclass=["\']([^"\']*)["\']/i', $tag, $class_match)) {
+                continue;
+            }
+
+            $classes = preg_split('/\s+/', $class_match[1]);
+            if (!in_array($class, $classes, true)) {
+                continue;
+            }
+
+            if (preg_match('/\bsrc=["\']([^"\']+)["\']/i', $tag, $src_match)) {
+                $urls[] = self::normalize_content_image_url($src_match[1]);
+            }
+        }
+
+        return array_values(array_filter($urls));
+    }
+
+    private static function normalize_content_image_url(string $url): string
+    {
+        if (str_contains($url, '/revslider-2/public/assets/assets/dummy.png')) {
+            return '';
+        }
+
+        return str_starts_with($url, '//') ? 'https:' . $url : $url;
+    }
+
+    private static function merge_before_after_items(array $primary, array $secondary): array
+    {
+        $items = [];
+        $seen = [];
+
+        foreach (array_merge($primary, $secondary) as $item) {
+            $before_url = (string) ($item['before']['url'] ?? '');
+            $after_url = (string) ($item['after']['url'] ?? '');
+            if ($before_url === '' || $after_url === '') {
+                continue;
+            }
+
+            $key = $before_url . '|' . $after_url;
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $item['title'] = (string) (count($items) + 1);
+            $items[] = $item;
+        }
+
+        return $items;
     }
 
     private static function is_home_page(WP_Post $post): bool
@@ -821,7 +902,7 @@ final class One66_Headless_API
                 'title' => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
                 'link' => get_permalink($post),
                 'acf' => $acf,
-                'mappedAcf' => self::map_static_page_fields($key, $acf),
+                'mappedAcf' => self::map_static_page_fields($key, $acf, apply_filters('the_content', $post->post_content)),
                 'seo' => self::seo($post->ID),
             ];
         }
@@ -897,18 +978,18 @@ final class One66_Headless_API
     private static function normalize_static_page(WP_Post $post, string $key): array
     {
         $page = self::normalize_post($post);
-        $page['mappedAcf'] = self::map_static_page_fields($key, $page['acf']);
+        $page['mappedAcf'] = self::map_static_page_fields($key, $page['acf'], $page['content'] ?? '');
         return $page;
     }
 
-    private static function map_static_page_fields(string $key, array $fields): array
+    private static function map_static_page_fields(string $key, array $fields, string $content = ''): array
     {
         if ($key === 'gallery') {
             return self::map_gallery_fields($fields);
         }
 
         if ($key === 'home') {
-            return self::map_home_fields($fields);
+            return self::map_home_fields($fields, $content);
         }
 
         if ($key === 'partners') {
@@ -926,7 +1007,7 @@ final class One66_Headless_API
         ];
     }
 
-    private static function map_home_fields(array $fields): array
+    private static function map_home_fields(array $fields, string $content = ''): array
     {
         $before_after = [];
         foreach ([1, 2] as $index) {
@@ -940,6 +1021,7 @@ final class One66_Headless_API
                 ];
             }
         }
+        $before_after = self::merge_before_after_items($before_after, self::home_content_before_after($content));
 
         $testimonials = [];
         foreach (range(1, 5) as $index) {
