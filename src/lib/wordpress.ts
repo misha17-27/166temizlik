@@ -344,7 +344,7 @@ export function normalizePublicSiteUrl(value: string | undefined) {
   return value?.replace(/https?:\/\/admin\.166temizlik\.az/gi, PUBLIC_SITE_URL);
 }
 
-function normalizeCanonicalUrl(value: string | undefined) {
+export function normalizeCanonicalUrl(value: string | undefined) {
   const normalized = normalizePublicSiteUrl(value);
 
   if (!normalized) {
@@ -362,6 +362,51 @@ function normalizeCanonicalUrl(value: string | undefined) {
   } catch {
     return normalized.replace(/\/+$/g, "");
   }
+}
+
+function normalizeStructuredDataUrl(value: string, canonicalOverride?: { source?: string; target?: string }) {
+  const publicValue = normalizePublicSiteUrl(value) ?? value;
+  const source = normalizeCanonicalUrl(canonicalOverride?.source);
+  const target = normalizeCanonicalUrl(canonicalOverride?.target);
+  const sourceWithSlash = source && source !== `${PUBLIC_SITE_URL}/` ? `${source}/` : source;
+  const replaced =
+    source && target && publicValue.startsWith(source)
+      ? `${target}${publicValue.slice(source.length)}`
+      : sourceWithSlash && target && publicValue.startsWith(sourceWithSlash)
+        ? `${target}/${publicValue.slice(sourceWithSlash.length)}`
+        : publicValue;
+
+  if (!replaced.startsWith(PUBLIC_SITE_URL) || replaced.includes("/wp-content/")) {
+    return replaced;
+  }
+
+  try {
+    const url = new URL(replaced);
+    if (url.pathname !== "/") {
+      url.pathname = url.pathname.replace(/\/+$/g, "");
+    }
+    return url.toString();
+  } catch {
+    return replaced;
+  }
+}
+
+function normalizeStructuredDataValue(value: unknown, canonicalOverride?: { source?: string; target?: string }): unknown {
+  if (typeof value === "string") {
+    return normalizeStructuredDataUrl(value, canonicalOverride);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => normalizeStructuredDataValue(item, canonicalOverride));
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, normalizeStructuredDataValue(item, canonicalOverride)]),
+    );
+  }
+
+  return value;
 }
 
 export function normalizeWordPressMediaUrl(value: string | undefined) {
@@ -503,7 +548,10 @@ export function buildWordPressMetadata(
   return metadata;
 }
 
-export function normalizeWordPressSchema(schema: unknown): string[] {
+export function normalizeWordPressSchema(
+  schema: unknown,
+  canonicalOverride?: { source?: string; target?: string },
+): string[] {
   if (!schema) {
     return [];
   }
@@ -517,10 +565,19 @@ export function normalizeWordPressSchema(schema: unknown): string[] {
       }
 
       if (typeof item === "string") {
-        return normalizePublicSiteUrl(item.trim()) || null;
+        const trimmed = item.trim();
+        if (!trimmed) {
+          return null;
+        }
+
+        try {
+          return JSON.stringify(normalizeStructuredDataValue(JSON.parse(trimmed), canonicalOverride));
+        } catch {
+          return normalizeStructuredDataUrl(trimmed, canonicalOverride) || null;
+        }
       }
 
-      return normalizePublicSiteUrl(JSON.stringify(item));
+      return JSON.stringify(normalizeStructuredDataValue(item, canonicalOverride));
     })
     .filter((item): item is string => Boolean(item));
 }

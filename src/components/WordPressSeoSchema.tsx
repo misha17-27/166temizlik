@@ -1,7 +1,13 @@
 import { normalizeWordPressSchema, type WordPressSeo } from "@/lib/wordpress";
 
-export function WordPressSeoSchema({ seo }: { seo?: WordPressSeo | null }) {
-  const schemas = normalizeWordPressSchema(seo?.schema);
+export function WordPressSeoSchema({
+  seo,
+  canonical,
+}: {
+  seo?: WordPressSeo | null;
+  canonical?: string;
+}) {
+  const schemas = normalizeWordPressSchema(seo?.schema, { source: seo?.canonical ?? undefined, target: canonical });
 
   if (schemas.length === 0) {
     return null;

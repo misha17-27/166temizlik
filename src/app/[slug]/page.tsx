@@ -1122,6 +1122,7 @@ export async function BlogPostContent({ slug, locale = "az" }: { slug: string; l
   const image = normalizeWordPressMediaUrl(wpPost ? getWordPressImageUrl(wpPost) || pageHeroAssets.blog : post?.image ?? pageHeroAssets.blog) ?? pageHeroAssets.blog;
   const excerpt = wpPost ? stripHtml(wpPost.excerpt || wpPost.content) : post?.excerpt ?? "";
   const canonicalSlug = wpPost ? getWordPressCanonicalSlug(wpPost) : slug;
+  const canonicalHref = wpPost ? getBlogPostHref(wpPost.slug, locale) : undefined;
   const languageTargets = wpPost
     ? Object.fromEntries(
         Object.entries(getWordPressTranslationSlugs(wpPost)).map(([targetLocale, targetSlug]) => [
@@ -1133,7 +1134,7 @@ export async function BlogPostContent({ slug, locale = "az" }: { slug: string; l
 
   return (
     <SitePage active="about" locale={locale} currentSlug={canonicalSlug} routeKind="blogPost" languageTargets={languageTargets}>
-      <WordPressSeoSchema seo={wpPost?.seo} />
+      <WordPressSeoSchema seo={wpPost?.seo} canonical={canonicalHref} />
       <section className="bg-[#f5f5f5] pb-16">
         <div className="mx-auto w-[min(1140px,calc(100%-40px))]">
           <div className="relative h-[430px] overflow-hidden max-md:h-[270px]">

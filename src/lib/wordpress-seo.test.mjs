@@ -163,7 +163,31 @@ test("WordPress admin URLs are rewritten to the public site URL", () => {
       "@type": "WebPage",
       url: "https://admin.166temizlik.az/sirket-haqqinda/",
     }),
-    ['{"@type":"WebPage","url":"https://166temizlik.az/sirket-haqqinda/"}'],
+    ['{"@type":"WebPage","url":"https://166temizlik.az/sirket-haqqinda"}'],
+  );
+});
+
+test("normalizeWordPressSchema aligns structured data URLs with frontend canonical routes", () => {
+  assert.deepEqual(
+    normalizeWordPressSchema(
+      {
+        "@type": "Article",
+        "@id": "https://166temizlik.az/ru/uborka-doma/#article",
+        isPartOf: {
+          "@id": "https://166temizlik.az/ru/uborka-doma/",
+        },
+        image: {
+          url: "https://166temizlik.az/wp-content/uploads/image.jpg",
+        },
+      },
+      {
+        source: "https://166temizlik.az/ru/uborka-doma/",
+        target: "/ru/bloq/uborka-doma/",
+      },
+    ),
+    [
+      "{\"@type\":\"Article\",\"@id\":\"https://166temizlik.az/ru/bloq/uborka-doma#article\",\"isPartOf\":{\"@id\":\"https://166temizlik.az/ru/bloq/uborka-doma\"},\"image\":{\"url\":\"https://166temizlik.az/wp-content/uploads/image.jpg\"}}",
+    ],
   );
 });
 
