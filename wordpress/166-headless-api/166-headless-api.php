@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.3
+ * Version: 0.4.4
  * Author: 166 Temizlik
  */
 
@@ -729,6 +729,10 @@ final class One66_Headless_API
 
         $before_urls = self::image_urls_by_class($content, 'jet-image-comparison__before-image');
         $after_urls = self::image_urls_by_class($content, 'jet-image-comparison__after-image');
+        if (!$before_urls || !$after_urls) {
+            return self::legacy_home_content_before_after($content);
+        }
+
         $count = min(count($before_urls), count($after_urls));
         $items = [];
 
@@ -741,6 +745,30 @@ final class One66_Headless_API
 
             $items[] = [
                 'title' => (string) ($index + 1),
+                'before' => $before,
+                'after' => $after,
+            ];
+        }
+
+        return $items;
+    }
+
+    private static function legacy_home_content_before_after(string $content): array
+    {
+        $urls = array_values(array_filter(self::home_content_images($content), static function (string $url): bool {
+            return (bool) preg_match('/\/(?:as12|as11|b11|b22|q11|q22)\.webp(?:\?.*)?$/i', $url);
+        }));
+
+        $items = [];
+        for ($index = 0; $index + 1 < count($urls); $index += 2) {
+            $before = self::acf_image($urls[$index]);
+            $after = self::acf_image($urls[$index + 1]);
+            if (!$before || !$after) {
+                continue;
+            }
+
+            $items[] = [
+                'title' => (string) (count($items) + 1),
                 'before' => $before,
                 'after' => $after,
             ];
