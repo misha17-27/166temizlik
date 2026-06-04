@@ -29,7 +29,9 @@ const staticRouteKeys = [
 const wordpressHomeSlugs = new Set(["ana-sehife", "glavnaya2"]);
 
 function absoluteUrl(path: string) {
-  return `${PUBLIC_SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const canonicalPath = normalizedPath === "/" ? normalizedPath : normalizedPath.replace(/\/+$/g, "");
+  return `${PUBLIC_SITE_URL}${canonicalPath}`;
 }
 
 function itemLastModified(item: Pick<WordPressContentItem, "modified" | "date">) {
