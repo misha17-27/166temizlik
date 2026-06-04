@@ -344,6 +344,24 @@ export function normalizePublicSiteUrl(value: string | undefined) {
   return value?.replace(/https?:\/\/admin\.166temizlik\.az/gi, PUBLIC_SITE_URL);
 }
 
+function normalizeCanonicalUrl(value: string | undefined) {
+  const normalized = normalizePublicSiteUrl(value);
+
+  if (!normalized) {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(normalized);
+    if (url.pathname !== "/") {
+      url.pathname = url.pathname.replace(/\/+$/g, "");
+    }
+    return url.toString();
+  } catch {
+    return normalized.replace(/\/+$/g, "");
+  }
+}
+
 export function normalizeWordPressMediaUrl(value: string | undefined) {
   return value?.replace(/https?:\/\/(?:www\.)?166temizlik\.az\/wp-content/gi, WORDPRESS_MEDIA_URL);
 }
@@ -423,7 +441,7 @@ export function buildWordPressMetadata(
 ): Metadata {
   const title = cleanSeoValue(seo?.title) ?? cleanSeoValue(fallback.title);
   const description = cleanSeoValue(seo?.description) ?? cleanSeoValue(fallback.description);
-  const canonical = normalizePublicSiteUrl(cleanSeoValue(seo?.canonical));
+  const canonical = normalizeCanonicalUrl(cleanSeoValue(seo?.canonical));
   const openGraphTitle = cleanSeoValue(seo?.openGraph?.title);
   const openGraphDescription = cleanSeoValue(seo?.openGraph?.description);
   const openGraphImage = normalizePublicSiteUrl(cleanSeoValue(seo?.openGraph?.image));

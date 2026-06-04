@@ -32,7 +32,7 @@ test("buildWordPressMetadata maps Yoast SEO fields to Next metadata", () => {
     title: "Yoast title",
     description: "Yoast description",
     alternates: {
-      canonical: "https://166temizlik.az/bloq/",
+      canonical: "https://166temizlik.az/bloq",
     },
     openGraph: {
       title: "OG title",
@@ -103,7 +103,7 @@ test("WordPress admin URLs are rewritten to the public site URL", () => {
 
   assert.deepEqual(metadata, {
     alternates: {
-      canonical: "https://166temizlik.az/sirket-haqqinda/",
+      canonical: "https://166temizlik.az/sirket-haqqinda",
     },
     openGraph: {
       images: ["https://166temizlik.az/wp-content/uploads/social.jpg"],
