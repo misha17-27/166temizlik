@@ -127,6 +127,17 @@ function imageUrl(value: SyncedImageValue | undefined) {
   return normalizeWordPressMediaUrl(typeof value === "string" ? value : value?.url || "") ?? "";
 }
 
+function footerLogoUrl(settings: SyncedChromeSettings | null) {
+  const logo = imageUrl(settings?.logo);
+  const logoDark = imageUrl(settings?.logoDark);
+
+  if (logoDark && logoDark !== logo) {
+    return logoDark;
+  }
+
+  return site.footerLogo;
+}
+
 type SyncedMenuLabels = Partial<Record<"home" | "services" | "about" | "gallery" | "contact" | "blog" | "vacancy", string>>;
 
 type SyncedMenus = {
@@ -858,7 +869,7 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const address = contact?.address || copy.footer.address;
   const email = contact?.email || site.email;
   const whatsappHref = contact?.whatsappHref || site.whatsappHref;
-  const footerLogo = imageUrl(settings?.logoDark) || imageUrl(settings?.logo) || site.footerLogo;
+  const footerLogo = footerLogoUrl(settings);
   const ctaTitle = settings?.footer?.ctaTitle || copy.cta.title;
   const ctaPrimaryLabel = settings?.footer?.primaryLabel || copy.cta.contact;
   const ctaPrimaryUrl = settings?.footer?.primaryUrl || getLocalizedHref(locale, "/166-temizlik-elaqe/");
