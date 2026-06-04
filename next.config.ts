@@ -18,6 +18,26 @@ const nextConfig: NextConfig = {
         destination: "/tr/",
         permanent: true,
       },
+      {
+        source: "/blog/:path*",
+        destination: "/bloq/:path*",
+        permanent: true,
+      },
+      {
+        source: "/ru/blog/:path*",
+        destination: "/ru/bloq/:path*",
+        permanent: true,
+      },
+      {
+        source: "/tr/blog/:path*",
+        destination: "/tr/bloq/:path*",
+        permanent: true,
+      },
+      {
+        source: "/tr/galeri/:path*",
+        destination: "/tr/qalereya/:path*",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
