@@ -14,14 +14,16 @@ import { servicePages } from "@/lib/pages-data";
 import {
   getLocalizedStaticParams,
   getLocalizedCanonicalRedirectHref,
+  getBlogLanguageAlternates,
   getBlogPostHref,
+  getLanguageAlternates,
   isLocale,
   resolveLocalizedSlug,
   type Locale,
   type StaticRouteKey,
 } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
-import { buildWordPressMetadata, getWordPressPost, getWordPressService, stripHtml } from "@/lib/wordpress";
+import { buildWordPressMetadata, getWordPressPost, getWordPressService, getWordPressTranslationSlugs, stripHtml } from "@/lib/wordpress";
 import { generateStaticWordPressPageMetadata, getWordPressPageSlug } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 
     return buildWordPressMetadata(wpService?.seo, {
       title: service ? `${service.title} - ${siteTitle}` : siteTitle,
+      languages: getLanguageAlternates(match.canonicalSlug, "service"),
     });
   }
 
@@ -76,6 +79,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
       title: wpPost.title ? `${wpPost.title} - ${siteTitle}` : siteTitle,
       description: stripHtml(wpPost.excerpt || wpPost.content),
       canonical: getBlogPostHref(wpPost.slug, localeParam),
+      languages: getBlogLanguageAlternates(getWordPressTranslationSlugs(wpPost)),
     });
   }
 

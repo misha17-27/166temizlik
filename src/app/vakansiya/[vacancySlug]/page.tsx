@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { SitePage } from "@/components/SiteChrome";
 import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { pageHeroAssets, vacancyDetails } from "@/lib/pages-data";
-import { getLocalizedHref, type Locale } from "@/lib/routes";
+import { getLanguageAlternates, getLocalizedHref, type Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import { buildWordPressMetadata, getWordPressPage, getWordPressVacancy, stripHtml } from "@/lib/wordpress";
 
@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ vacancySl
   return buildWordPressMetadata(wpVacancy?.seo, {
     title: title ? `${title} - 166 Təmizlik` : "Vakansiya - 166 Təmizlik",
     description,
+    languages: getLanguageAlternates(vacancySlug, "vacancyDetail"),
   });
 }
 

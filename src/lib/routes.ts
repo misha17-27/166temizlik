@@ -296,6 +296,29 @@ export function getLanguageTargets(currentLocale: Locale, canonicalSlug: string,
     }));
 }
 
+export function getLanguageAlternates(canonicalSlug: string, kind: RouteKind = "static") {
+  return {
+    ...Object.fromEntries(locales.map((locale) => [locale, getHrefForCanonical(locale, canonicalSlug, kind)])),
+    "x-default": getHrefForCanonical("az", canonicalSlug, kind),
+  };
+}
+
+export function getBlogLanguageAlternates(translatedSlugs: Partial<Record<Locale, string>>) {
+  const alternates = Object.fromEntries(
+    locales.flatMap((locale) => {
+      const slug = translatedSlugs[locale];
+      return slug ? [[locale, getBlogPostHref(slug, locale)]] : [];
+    }),
+  );
+
+  return translatedSlugs.az
+    ? {
+        ...alternates,
+        "x-default": getBlogPostHref(translatedSlugs.az, "az"),
+      }
+    : alternates;
+}
+
 export function getLocalizedStaticParams() {
   const staticParams = (["ru", "tr"] as Locale[]).flatMap((locale) =>
     Object.entries(localizedStaticRoutes)

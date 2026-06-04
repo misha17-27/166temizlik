@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { Locale, StaticRouteKey } from "./routes";
+import { getLanguageAlternates, type Locale, type StaticRouteKey } from "./routes";
 import type { HeroSlide } from "./site-data";
 import { buildWordPressMetadata, getWordPressHome, getWordPressPage, normalizePublicSiteUrl, normalizeWordPressMediaUrl, stripHtml, type WordPressContentItem } from "./wordpress";
 
@@ -43,9 +43,13 @@ export async function getStaticWordPressPage(routeKey: StaticRouteKey, locale: L
 
 type MetadataPage = Pick<WordPressContentItem, "title" | "seo" | "featuredImage">;
 
-export function buildWordPressPageMetadata(page: MetadataPage | null, fallbackTitle: string): Metadata {
+export function buildWordPressPageMetadata(
+  page: MetadataPage | null,
+  fallbackTitle: string,
+  alternates?: Record<string, string | undefined>,
+): Metadata {
   const title = page?.title || fallbackTitle;
-  const metadata = buildWordPressMetadata(page?.seo, { title });
+  const metadata = buildWordPressMetadata(page?.seo, { title, languages: alternates });
   const featuredImage = normalizePublicSiteUrl(page?.featuredImage?.url);
   const image = featuredImage
     ? [
@@ -76,7 +80,7 @@ export async function generateStaticWordPressPageMetadata(
   fallbackTitle: string,
 ) {
   const page = await getStaticWordPressPage(routeKey, locale);
-  return buildWordPressPageMetadata(page, fallbackTitle);
+  return buildWordPressPageMetadata(page, fallbackTitle, getLanguageAlternates(routeKey));
 }
 
 export function getWordPressHomeHeroSlides(

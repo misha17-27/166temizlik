@@ -5,12 +5,13 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedBlogPosts, pageHeroAssets } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
-import { getWordPressImageUrl, getWordPressPage, getWordPressPageMetadata, getWordPressPosts, stripHtml } from "@/lib/wordpress";
+import { getWordPressImageUrl, getWordPressPage, getWordPressPosts, stripHtml } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
 export function generateMetadata() {
-  return getWordPressPageMetadata("bloq", "az", { title: "Bloq - 166 Təmizlik" });
+  return generateStaticWordPressPageMetadata("blog", "az", "Bloq - 166 Təmizlik");
 }
 
 function getPostTimestamp(date: string) {

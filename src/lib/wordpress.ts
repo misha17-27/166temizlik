@@ -439,7 +439,7 @@ function buildRobotsMetadata(robots: WordPressSeo["robots"]): Metadata["robots"]
 
 export function buildWordPressMetadata(
   seo: WordPressSeo | null | undefined,
-  fallback: { title?: string; description?: string; canonical?: string } = {},
+  fallback: { title?: string; description?: string; canonical?: string; languages?: Record<string, string | undefined> } = {},
 ): Metadata {
   const title = cleanSeoValue(seo?.title) ?? cleanSeoValue(fallback.title);
   const description = cleanSeoValue(seo?.description) ?? cleanSeoValue(fallback.description);
@@ -464,6 +464,20 @@ export function buildWordPressMetadata(
 
   if (canonical) {
     metadata.alternates = { canonical };
+  }
+
+  const languages = Object.fromEntries(
+    Object.entries(fallback.languages ?? {}).flatMap(([language, href]) => {
+      const normalized = normalizeCanonicalUrl(cleanSeoValue(href));
+      return normalized ? [[language, normalized]] : [];
+    }),
+  );
+
+  if (Object.keys(languages).length > 0) {
+    metadata.alternates = {
+      ...metadata.alternates,
+      languages,
+    };
   }
 
   if (openGraphTitle || openGraphDescription || openGraphImage) {

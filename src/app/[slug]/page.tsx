@@ -10,7 +10,7 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { buildContactPageData } from "@/lib/contact-page-data";
 import { getLocalizedServicePages, homeCopy, pageCopy, type Locale } from "@/lib/i18n";
 import { blogPosts, pageHeroAssets, servicePages } from "@/lib/pages-data";
-import { getBlogPostHref, getLocalizedHref } from "@/lib/routes";
+import { getBlogLanguageAlternates, getBlogPostHref, getLanguageAlternates, getLocalizedHref } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 import { buildWordPressMetadata, getWordPressCanonicalSlug, getWordPressImageUrl, getWordPressPost, getWordPressService, getWordPressTranslationSlugs, normalizeWordPressMediaUrl, stripHtml } from "@/lib/wordpress";
 import { getWordPressPartnerLogoUrls } from "@/lib/wordpress-partners";
@@ -437,6 +437,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: fallbackTitle,
     description: fallbackDescription,
     canonical: wpPost ? getBlogPostHref(wpPost.slug, "az") : undefined,
+    languages: wpPost
+      ? getBlogLanguageAlternates(getWordPressTranslationSlugs(wpPost))
+      : wpService
+        ? getLanguageAlternates(slug, "service")
+        : undefined,
   });
 }
 

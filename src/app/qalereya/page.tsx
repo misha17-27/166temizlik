@@ -4,12 +4,13 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedGalleryCategories } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
-import { getWordPressGallery, getWordPressPage, getWordPressPageMetadata } from "@/lib/wordpress";
+import { getWordPressGallery, getWordPressPage } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
 export function generateMetadata() {
-  return getWordPressPageMetadata("qalereya", "az", { title: "Qalereya - 166 Təmizlik" });
+  return generateStaticWordPressPageMetadata("gallery", "az", "Qalereya - 166 Təmizlik");
 }
 
 const galleryAcfFields = [

@@ -92,6 +92,34 @@ test("buildWordPressMetadata lets frontend routes override Yoast canonical URLs"
   });
 });
 
+test("buildWordPressMetadata maps alternate language URLs", () => {
+  const metadata = buildWordPressMetadata(
+    {
+      canonical: "https://166temizlik.az/qalereya/",
+    },
+    {
+      languages: {
+        az: "/qalereya/",
+        ru: "/ru/galereya/",
+        tr: "/tr/qalereya/",
+        "x-default": "/qalereya/",
+      },
+    },
+  );
+
+  assert.deepEqual(metadata, {
+    alternates: {
+      canonical: "https://166temizlik.az/qalereya",
+      languages: {
+        az: "https://166temizlik.az/qalereya",
+        ru: "https://166temizlik.az/ru/galereya",
+        tr: "https://166temizlik.az/tr/qalereya",
+        "x-default": "https://166temizlik.az/qalereya",
+      },
+    },
+  });
+});
+
 test("normalizeWordPressSchema prepares JSON-LD payloads", () => {
   assert.deepEqual(
     normalizeWordPressSchema([

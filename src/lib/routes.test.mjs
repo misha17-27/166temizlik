@@ -14,3 +14,26 @@ test("canonical localized slugs do not redirect", () => {
   assert.equal(routes.getLocalizedCanonicalRedirectHref?.("ru", "uborka-doma"), null);
   assert.equal(routes.getLocalizedCanonicalRedirectHref?.("tr", "temizlik-xidmetleri"), null);
 });
+
+test("language alternates include all locales and x-default", () => {
+  assert.deepEqual(routes.getLanguageAlternates("gallery"), {
+    az: "/qalereya/",
+    ru: "/ru/galereya/",
+    tr: "/tr/qalereya/",
+    "x-default": "/qalereya/",
+  });
+
+  assert.deepEqual(
+    routes.getBlogLanguageAlternates({
+      az: "vinil-dos-m-ni-nec-t-mizl-m-k-olar",
+      ru: "uborka-doma",
+      tr: "vinil-dos-m-ni-nec-t-mizl-m-k-olar",
+    }),
+    {
+      az: "/vinil-dos-m-ni-nec-t-mizl-m-k-olar/",
+      ru: "/ru/bloq/uborka-doma/",
+      tr: "/tr/vinil-dos-m-ni-nec-t-mizl-m-k-olar/",
+      "x-default": "/vinil-dos-m-ni-nec-t-mizl-m-k-olar/",
+    },
+  );
+});

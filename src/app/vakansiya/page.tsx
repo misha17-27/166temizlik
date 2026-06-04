@@ -4,12 +4,13 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedVacancies, pageHeroAssets, vacancyDetails } from "@/lib/pages-data";
 import { getVacancyHref, type Locale } from "@/lib/routes";
 import { staticPageCopy } from "@/lib/static-page-copy";
-import { getWordPressPage, getWordPressPageMetadata, getWordPressVacancies, stripHtml } from "@/lib/wordpress";
+import { getWordPressPage, getWordPressVacancies, stripHtml } from "@/lib/wordpress";
+import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
 export function generateMetadata() {
-  return getWordPressPageMetadata("vakansiya", "az", { title: "Vakansiya - 166 Təmizlik" });
+  return generateStaticWordPressPageMetadata("vacancy", "az", "Vakansiya - 166 Təmizlik");
 }
 
 type VacancyCard = {
