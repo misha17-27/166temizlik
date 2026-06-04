@@ -30,12 +30,14 @@ function imageUrl(value: WordPressSettings["favicon"]) {
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getWordPressSettings("az").catch(() => null);
-  const appleIcon = imageUrl(settings?.favicon) || "/favicon.ico";
+  const favicon = imageUrl(settings?.favicon) || "/favicon.ico";
 
   return {
     ...fallbackMetadata,
     icons: {
-      apple: [{ url: appleIcon }],
+      icon: [{ url: favicon }],
+      shortcut: [{ url: favicon }],
+      apple: [{ url: favicon }],
     },
   };
 }
