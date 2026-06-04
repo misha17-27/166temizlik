@@ -38,6 +38,21 @@ const nextConfig: NextConfig = {
         destination: "/tr/qalereya/:path*",
         permanent: true,
       },
+      {
+        source: "/category/:path*",
+        destination: "/bloq",
+        permanent: true,
+      },
+      {
+        source: "/ru/category/:path*",
+        destination: "/ru/bloq",
+        permanent: true,
+      },
+      {
+        source: "/tr/category/:path*",
+        destination: "/tr/bloq",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
