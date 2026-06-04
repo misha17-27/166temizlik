@@ -75,8 +75,39 @@ const serviceListAcfFields: Record<string, { text: string; image: string }> = {
   "hovuz-temizlenmesi-xidmeti": { text: "hovuz_təmizlənməsi", image: "hovuz_təmizlənməsi_səkil" },
 };
 
+function normalizeAcfLookupKey(key: string) {
+  return key
+    .toLowerCase()
+    .replace(/\u00e9\u2122/g, "e")
+    .replace(/[\u0259\u018f]/g, "e")
+    .replace(/[\u0131\u0130]/g, "i")
+    .replace(/[\u00f6\u00d6]/g, "o")
+    .replace(/[\u00fc\u00dc]/g, "u")
+    .replace(/[\u011f\u011e]/g, "g")
+    .replace(/[\u015f\u015e]/g, "s")
+    .replace(/[\u00e7\u00c7]/g, "c")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function getAcfValue(page: WordPressContentItem | null, key: string) {
+  if (!page?.acf) {
+    return undefined;
+  }
+
+  if (key in page.acf) {
+    return page.acf[key];
+  }
+
+  const normalizedKey = normalizeAcfLookupKey(key);
+  return Object.entries(page.acf).find(([acfKey]) => normalizeAcfLookupKey(acfKey) === normalizedKey)?.[1];
+}
+
 function getAcfCardText(page: WordPressContentItem | null, key: string) {
-  const value = page?.acf?.[key];
+  const value = getAcfValue(page, key);
 
   return typeof value === "string"
     ? stripHtml(value)
@@ -87,7 +118,7 @@ function getAcfCardText(page: WordPressContentItem | null, key: string) {
 }
 
 function getAcfCardImage(page: WordPressContentItem | null, key: string) {
-  const value = page?.acf?.[key];
+  const value = getAcfValue(page, key);
 
   if (!value || typeof value !== "object") {
     return "";
