@@ -351,8 +351,10 @@ function normalizeCanonicalUrl(value: string | undefined) {
     return undefined;
   }
 
+  const absolute = normalized.startsWith("/") ? `${PUBLIC_SITE_URL}${normalized}` : normalized;
+
   try {
-    const url = new URL(normalized);
+    const url = new URL(absolute);
     if (url.pathname !== "/") {
       url.pathname = url.pathname.replace(/\/+$/g, "");
     }
@@ -437,11 +439,11 @@ function buildRobotsMetadata(robots: WordPressSeo["robots"]): Metadata["robots"]
 
 export function buildWordPressMetadata(
   seo: WordPressSeo | null | undefined,
-  fallback: { title?: string; description?: string } = {},
+  fallback: { title?: string; description?: string; canonical?: string } = {},
 ): Metadata {
   const title = cleanSeoValue(seo?.title) ?? cleanSeoValue(fallback.title);
   const description = cleanSeoValue(seo?.description) ?? cleanSeoValue(fallback.description);
-  const canonical = normalizeCanonicalUrl(cleanSeoValue(seo?.canonical));
+  const canonical = normalizeCanonicalUrl(cleanSeoValue(fallback.canonical) ?? cleanSeoValue(seo?.canonical));
   const openGraphTitle = cleanSeoValue(seo?.openGraph?.title);
   const openGraphDescription = cleanSeoValue(seo?.openGraph?.description);
   const openGraphImage = normalizePublicSiteUrl(cleanSeoValue(seo?.openGraph?.image));

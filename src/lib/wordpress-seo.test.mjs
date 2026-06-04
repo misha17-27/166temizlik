@@ -75,6 +75,23 @@ test("buildWordPressMetadata uses fallbacks and skips empty optional SEO groups"
   });
 });
 
+test("buildWordPressMetadata lets frontend routes override Yoast canonical URLs", () => {
+  const metadata = buildWordPressMetadata(
+    {
+      canonical: "https://166temizlik.az/ru/uborka-doma/",
+    },
+    {
+      canonical: "/ru/bloq/uborka-doma/",
+    },
+  );
+
+  assert.deepEqual(metadata, {
+    alternates: {
+      canonical: "https://166temizlik.az/ru/bloq/uborka-doma",
+    },
+  });
+});
+
 test("normalizeWordPressSchema prepares JSON-LD payloads", () => {
   assert.deepEqual(
     normalizeWordPressSchema([

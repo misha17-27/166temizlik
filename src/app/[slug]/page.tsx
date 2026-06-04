@@ -436,6 +436,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return buildWordPressMetadata(wpService?.seo ?? wpPost?.seo, {
     title: fallbackTitle,
     description: fallbackDescription,
+    canonical: wpPost ? getBlogPostHref(wpPost.slug, "az") : undefined,
   });
 }
 

@@ -14,6 +14,7 @@ import { servicePages } from "@/lib/pages-data";
 import {
   getLocalizedStaticParams,
   getLocalizedCanonicalRedirectHref,
+  getBlogPostHref,
   isLocale,
   resolveLocalizedSlug,
   type Locale,
@@ -74,6 +75,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
     return buildWordPressMetadata(wpPost.seo, {
       title: wpPost.title ? `${wpPost.title} - ${siteTitle}` : siteTitle,
       description: stripHtml(wpPost.excerpt || wpPost.content),
+      canonical: getBlogPostHref(wpPost.slug, localeParam),
     });
   }
 
