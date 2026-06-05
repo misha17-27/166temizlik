@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.8
+ * Version: 0.4.9
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.8';
+    private const VERSION = '0.4.9';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -134,6 +134,9 @@ final class One66_Headless_API
         add_action('rest_api_init', [self::class, 'register_routes']);
         add_filter('rest_pre_serve_request', [self::class, 'cors_headers'], 10, 4);
         add_action('save_post', [self::class, 'notify_frontend_revalidate'], 20, 2);
+        add_action('added_option', [self::class, 'notify_frontend_settings_revalidate_on_option_update'], 20, 2);
+        add_action('updated_option', [self::class, 'notify_frontend_settings_revalidate_on_option_update'], 20, 3);
+        add_action('deleted_option', [self::class, 'notify_frontend_settings_revalidate_on_option_update'], 20, 1);
         add_action('admin_init', [self::class, 'block_elementor_editor']);
         add_action('template_redirect', [self::class, 'block_elementor_preview']);
         add_filter('page_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
@@ -548,6 +551,83 @@ final class One66_Headless_API
             return;
         }
 
+        self::send_frontend_revalidate([
+            'id' => $post_id,
+            'type' => $post->post_type,
+            'slug' => $post->post_name,
+            'lang' => self::post_language($post_id) ?: 'az',
+            'tags' => self::revalidate_tags($post),
+            'paths' => self::revalidate_paths($post),
+        ]);
+    }
+
+    public static function notify_frontend_settings_revalidate_on_option_update(string $option, $old_value = null, $value = null): void
+    {
+        if (!self::is_settings_option($option)) {
+            return;
+        }
+
+        self::send_frontend_revalidate([
+            'type' => 'settings',
+            'slug' => 'settings',
+            'tags' => ['wordpress:settings'],
+            'paths' => ['/', '/ru', '/tr'],
+        ]);
+    }
+
+    private static function is_settings_option(string $option): bool
+    {
+        if (strpos($option, 'theme_mods_') === 0) {
+            return true;
+        }
+
+        $settings_options = [
+            'blogname',
+            'blogdescription',
+            'site_icon',
+            'site_logo',
+            'site_logo_dark',
+            'favicon',
+            'phone_primary',
+            'phone_secondary',
+            'email',
+            'address',
+            'location_url',
+            'social_facebook',
+            'social_instagram',
+            'social_whatsapp',
+            'social_youtube',
+            'footer_cta_title',
+            'footer_cta_primary_label',
+            'footer_cta_primary_url',
+            'footer_cta_secondary_label',
+            'footer_cta_secondary_url',
+            'order_popup_title',
+            'options_site_logo',
+            'options_site_logo_dark',
+            'options_favicon',
+            'options_phone_primary',
+            'options_phone_secondary',
+            'options_email',
+            'options_address',
+            'options_location_url',
+            'options_social_facebook',
+            'options_social_instagram',
+            'options_social_whatsapp',
+            'options_social_youtube',
+            'options_footer_cta_title',
+            'options_footer_cta_primary_label',
+            'options_footer_cta_primary_url',
+            'options_footer_cta_secondary_label',
+            'options_footer_cta_secondary_url',
+            'options_order_popup_title',
+        ];
+
+        return in_array($option, $settings_options, true);
+    }
+
+    private static function send_frontend_revalidate(array $payload): void
+    {
         $url = defined('ONE66_REVALIDATE_URL') ? (string) constant('ONE66_REVALIDATE_URL') : '';
         $secret = self::revalidate_secret();
 
@@ -562,14 +642,7 @@ final class One66_Headless_API
                 'Content-Type' => 'application/json',
                 'X-Revalidate-Secret' => $secret,
             ],
-            'body' => wp_json_encode([
-                'id' => $post_id,
-                'type' => $post->post_type,
-                'slug' => $post->post_name,
-                'lang' => self::post_language($post_id) ?: 'az',
-                'tags' => self::revalidate_tags($post),
-                'paths' => self::revalidate_paths($post),
-            ]),
+            'body' => wp_json_encode($payload),
         ]);
     }
 
