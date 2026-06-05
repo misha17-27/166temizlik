@@ -106,15 +106,20 @@ function getAcfValue(page: WordPressContentItem | null, key: string) {
   return Object.entries(page.acf).find(([acfKey]) => normalizeAcfLookupKey(acfKey) === normalizedKey)?.[1];
 }
 
+function cleanServiceCardText(value: string) {
+  return value
+    .replace(/&#8211;/g, "-")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\*\*([\s\S]*?)\*\*/g, "$1")
+    .replace(/(^|\s)\*([^*]+?)\*(?=\s|$)/g, "$1$2")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function getAcfCardText(page: WordPressContentItem | null, key: string) {
   const value = getAcfValue(page, key);
 
-  return typeof value === "string"
-    ? stripHtml(value)
-        .replace(/&#8211;/g, "-")
-        .replace(/&nbsp;/g, " ")
-        .trim()
-    : "";
+  return typeof value === "string" ? cleanServiceCardText(stripHtml(value)) : "";
 }
 
 function getAcfCardImage(page: WordPressContentItem | null, key: string) {
@@ -130,17 +135,17 @@ function getAcfCardImage(page: WordPressContentItem | null, key: string) {
 
 function getFirstParagraphText(content: string) {
   const paragraph = content.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1];
-  return paragraph ? stripHtml(paragraph).replace(/&nbsp;/g, " ").trim() : "";
+  return paragraph ? cleanServiceCardText(stripHtml(paragraph)) : "";
 }
 
 function getServiceCardDescription(item: WordPressContentItem, fallback: string) {
   const canonicalSlug = getWordPressCanonicalSlug(item);
 
   if (canonicalSlug === "korporativ-temizlik-xidmeti") {
-    return getFirstParagraphText(item.content) || stripHtml(item.excerpt || item.content) || fallback;
+    return getFirstParagraphText(item.content) || cleanServiceCardText(stripHtml(item.excerpt || item.content)) || fallback;
   }
 
-  return stripHtml(item.excerpt || item.content) || fallback;
+  return cleanServiceCardText(stripHtml(item.excerpt || item.content)) || fallback;
 }
 
 function getServiceListAcfOverrides(page: WordPressContentItem | null) {
@@ -352,7 +357,9 @@ async function getServiceCards(locale: Locale, page: WordPressContentItem | null
       return {
         ...service,
         image: acfOverride?.image || serviceListImages[service.slug] || service.image,
-        description: acfOverride?.description || serviceListDescriptions[locale][service.slug] || service.description,
+        description: cleanServiceCardText(
+          acfOverride?.description || serviceListDescriptions[locale][service.slug] || service.description,
+        ),
       };
     });
 
@@ -376,7 +383,11 @@ async function getServiceCards(locale: Locale, page: WordPressContentItem | null
             ...fallback,
             title: wpService?.title ?? fallback.title,
             image: acfOverride?.image || (wpService ? getWordPressImageUrl(wpService) : "") || fallback.image,
-            description: acfOverride?.description || (wpService ? getServiceCardDescription(wpService, fallback.description) : "") || fallback.description,
+            description: cleanServiceCardText(
+              acfOverride?.description ||
+                (wpService ? getServiceCardDescription(wpService, fallback.description) : "") ||
+                fallback.description,
+            ),
           };
         })
         .filter((service): service is (typeof fallbackServices)[number] => Boolean(service));
