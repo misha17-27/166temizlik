@@ -6,6 +6,7 @@ export const PUBLIC_SITE_URL =
   (process.env.PUBLIC_SITE_URL ?? "https://166temizlik.az").replace(/\/$/, "");
 export const WORDPRESS_MEDIA_URL = "https://admin.166temizlik.az/wp-content";
 const WORDPRESS_REVALIDATE_SECONDS = 60;
+const WORDPRESS_FETCH_TIMEOUT_MS = Number(process.env.WORDPRESS_FETCH_TIMEOUT_MS ?? 8000);
 
 export type WordPressLocale = "az" | "ru" | "tr";
 
@@ -146,10 +147,15 @@ function createWordPressUrl(path: string, options: WordPressFetchOptions = {}) {
 export async function wpFetch<T>(path: string, options: WordPressFetchOptions = {}) {
   const url = createWordPressUrl(path, options);
   const tags = ["wordpress", ...(options.lang ? [`wordpress:${options.lang}`] : []), ...(options.tags ?? [])];
+  const controller = new AbortController();
+  const timeout = Number.isFinite(WORDPRESS_FETCH_TIMEOUT_MS) && WORDPRESS_FETCH_TIMEOUT_MS > 0
+    ? setTimeout(() => controller.abort(), WORDPRESS_FETCH_TIMEOUT_MS)
+    : null;
   const requestOptions: RequestInit & { next?: { revalidate?: number; tags?: string[] } } = {
     headers: {
       Accept: "application/json",
     },
+    signal: controller.signal,
   };
 
   if (options.cache) {
@@ -161,7 +167,21 @@ export async function wpFetch<T>(path: string, options: WordPressFetchOptions = 
     };
   }
 
-  const response = await fetch(url, requestOptions);
+  let response: Response;
+
+  try {
+    response = await fetch(url, requestOptions);
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new Error(`WordPress request timed out after ${WORDPRESS_FETCH_TIMEOUT_MS}ms (${url.pathname})`);
+    }
+
+    throw error;
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
 
   if (!response.ok) {
     throw new Error(`WordPress request failed: ${response.status} ${response.statusText} (${url.pathname})`);
