@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.5
+ * Version: 0.4.6
  * Author: 166 Temizlik
  */
 
@@ -44,6 +44,17 @@ final class One66_Headless_API
         'hovuz-temizlenmesi-xidmeti',
         'kristallasdirma-xidmeti',
         'korporativ-temizlik-xidmeti',
+    ];
+
+    private const ELEMENTOR_LOCKED_POST_TYPES = [
+        'page',
+        'post',
+        'vakansiya',
+        'emakdaslar',
+        'partners',
+        'partner',
+        'partnyorlar',
+        'slayd',
     ];
 
     private const FRONTEND_STATIC_PATHS = [
@@ -121,6 +132,96 @@ final class One66_Headless_API
         add_action('rest_api_init', [self::class, 'register_routes']);
         add_filter('rest_pre_serve_request', [self::class, 'cors_headers'], 10, 4);
         add_action('save_post', [self::class, 'notify_frontend_revalidate'], 20, 2);
+        add_action('admin_init', [self::class, 'block_elementor_editor']);
+        add_filter('page_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
+        add_filter('post_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
+        add_action('admin_head', [self::class, 'hide_elementor_admin_controls']);
+        add_action('admin_bar_menu', [self::class, 'remove_elementor_admin_bar_controls'], 999);
+    }
+
+    public static function block_elementor_editor(): void
+    {
+        if (self::elementor_editing_allowed()) {
+            return;
+        }
+
+        $action = isset($_GET['action']) ? sanitize_key(wp_unslash($_GET['action'])) : '';
+        $post_id = isset($_GET['post']) ? absint($_GET['post']) : 0;
+
+        if ($action === 'elementor' && $post_id && self::is_elementor_locked_post($post_id)) {
+            self::elementor_blocked_message();
+        }
+
+        $preview_id = isset($_GET['elementor-preview']) ? absint($_GET['elementor-preview']) : 0;
+        if ($preview_id && self::is_elementor_locked_post($preview_id)) {
+            self::elementor_blocked_message();
+        }
+    }
+
+    public static function remove_elementor_row_actions(array $actions, WP_Post $post): array
+    {
+        if (self::elementor_editing_allowed() || !self::is_elementor_locked_post((int) $post->ID)) {
+            return $actions;
+        }
+
+        foreach (array_keys($actions) as $key) {
+            if (stripos((string) $key, 'elementor') !== false || stripos((string) $actions[$key], 'elementor') !== false) {
+                unset($actions[$key]);
+            }
+        }
+
+        return $actions;
+    }
+
+    public static function hide_elementor_admin_controls(): void
+    {
+        if (self::elementor_editing_allowed()) {
+            return;
+        }
+        ?>
+        <style>
+            #elementor-switch-mode,
+            #elementor-editor,
+            .elementor-switch-mode,
+            .elementor-button,
+            .edit-with-elementor,
+            a[href*="action=elementor"],
+            a[href*="elementor-preview"] {
+                display: none !important;
+            }
+        </style>
+        <?php
+    }
+
+    public static function remove_elementor_admin_bar_controls(WP_Admin_Bar $wp_admin_bar): void
+    {
+        if (self::elementor_editing_allowed()) {
+            return;
+        }
+
+        foreach (['elementor_edit_page', 'elementor_app_site_editor', 'elementor_inspector'] as $node_id) {
+            $wp_admin_bar->remove_node($node_id);
+        }
+    }
+
+    private static function elementor_editing_allowed(): bool
+    {
+        return defined('ONE66_ALLOW_ELEMENTOR_EDITING') && (bool) ONE66_ALLOW_ELEMENTOR_EDITING;
+    }
+
+    private static function is_elementor_locked_post(int $post_id): bool
+    {
+        $post_type = get_post_type($post_id);
+        return is_string($post_type) && in_array($post_type, self::ELEMENTOR_LOCKED_POST_TYPES, true);
+    }
+
+    private static function elementor_blocked_message(): void
+    {
+        wp_die(
+            esc_html__('Elementor editing is disabled for this headless frontend. Edit content through WordPress fields, Pods, ACF, Yoast, or the standard editor instead.', 'one66-headless-api'),
+            esc_html__('Elementor editing disabled', 'one66-headless-api'),
+            ['response' => 403]
+        );
     }
 
     public static function register_routes(): void
