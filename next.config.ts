@@ -53,6 +53,11 @@ const nextConfig: NextConfig = {
         destination: "/tr/bloq",
         permanent: true,
       },
+      {
+        source: "/favicon.ico",
+        destination: "https://admin.166temizlik.az/wp-content/uploads/2022/12/fav.png",
+        permanent: false,
+      },
     ];
   },
   async rewrites() {
