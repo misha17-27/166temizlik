@@ -175,7 +175,7 @@ const serviceListDescriptions: Record<Locale, Record<string, string>> = {
     "pencere-temizliyi":
       "Binaların xaricinin təmiz olması şirkət haqqında ilk təəssürat üçün vacibdir. Bu işi 166 Təmizlik Xidmətinin peşəkar komandasına həvalə etmək isə ən düzgün qərardır. Bakıda çoxmərtəbəli binaların sayını nəzərə alaraq, fasadlarının təmizlənməsi yüksək risk zonasına daxildir.",
     "cilciraq-temizliyi":
-      "*Təmizləmə prosesi aşağıdakı qaydada həyata keçirilir:* • Çilçiraq elektrikdən söndürülür; • Plafonlar yuyucu maddələr vasitəsi ilə isladılır; • Su ləkələrini təmizləmək və parlaqlıq vermək üçün təmamilə qurudulur;",
+      "Təmizləmə prosesi aşağıdakı qaydada həyata keçirilir: • Çilçiraq elektrikdən söndürülür; • Plafonlar yuyucu maddələr vasitəsi ilə isladılır; • Su ləkələrini təmizləmək və parlaqlıq vermək üçün təmamilə qurudulur;",
     "perde-yuma":
       "Evin dekorunda xüsusi rolu olan pərdələrin təmizliyi çox önəmli bir məsələdir. Peşəkar pərdə yuma komandamız ipək, tül, kətan və digər növ pərdələrinizi və jalüzlərinizi çıxarır xüsusi metoddan istifadə etməklə yuyur, havalandırma otağında təmamilə qurudur, ütüləyir və təyin olunmuş tarixdə sizə təhvil verir.",
     "yumsaq-mebel-temizlenmesi":
@@ -251,7 +251,7 @@ const serviceListDescriptions: Record<Locale, Record<string, string>> = {
     "pencere-temizliyi":
       "Binaların dış cephesinin temiz olması, bir şirket hakkında ilk izlenim için oldukça önemlidir. Bu işi 166 Temizlik Hizmeti’nin profesyonel ekibine emanet etmek ise en doğru karardır. Bakü’de çok katlı binaların sayısı göz önünde bulundurulduğunda, cephe temizliği yüksek riskli bir alan olarak değerlendirilir.",
     "cilciraq-temizliyi":
-      "** Temizlik süreci aşağıdaki şekilde gerçekleştirilir: • Avize elektrikten kapatılır; • Plafonlar temizleyici maddelerle ıslatılır; • Su lekelerini temizlemek ve parlaklık kazandırmak için tamamen kurulanır.**",
+      "Temizlik süreci aşağıdaki şekilde gerçekleştirilir: • Avize elektrikten kapatılır; • Plafonlar temizleyici maddelerle ıslatılır; • Su lekelerini temizlemek ve parlaklık kazandırmak için tamamen kurulanır.",
     "perde-yuma":
       "Evin dekorasyonunda özel bir yeri olan perdelerin temizliği oldukça önemli bir konudur. Profesyonel perde yıkama ekibimiz; ipek, tül, keten ve diğer perde türlerinizi ve jaluzilerinizi söker, özel bir yöntemle yıkar, havalandırmalı odada tamamen kurutur, ütüler ve belirlenen tarihte size teslim eder.",
     "yumsaq-mebel-temizlenmesi":
