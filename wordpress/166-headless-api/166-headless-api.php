@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.6
+ * Version: 0.4.7
  * Author: 166 Temizlik
  */
 
@@ -133,6 +133,7 @@ final class One66_Headless_API
         add_filter('rest_pre_serve_request', [self::class, 'cors_headers'], 10, 4);
         add_action('save_post', [self::class, 'notify_frontend_revalidate'], 20, 2);
         add_action('admin_init', [self::class, 'block_elementor_editor']);
+        add_action('template_redirect', [self::class, 'block_elementor_preview']);
         add_filter('page_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
         add_filter('post_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
         add_action('admin_head', [self::class, 'hide_elementor_admin_controls']);
@@ -150,6 +151,18 @@ final class One66_Headless_API
 
         if ($action === 'elementor' && $post_id && self::is_elementor_locked_post($post_id)) {
             self::elementor_blocked_message();
+        }
+
+        $preview_id = isset($_GET['elementor-preview']) ? absint($_GET['elementor-preview']) : 0;
+        if ($preview_id && self::is_elementor_locked_post($preview_id)) {
+            self::elementor_blocked_message();
+        }
+    }
+
+    public static function block_elementor_preview(): void
+    {
+        if (self::elementor_editing_allowed()) {
+            return;
         }
 
         $preview_id = isset($_GET['elementor-preview']) ? absint($_GET['elementor-preview']) : 0;
@@ -183,7 +196,7 @@ final class One66_Headless_API
             #elementor-switch-mode,
             #elementor-editor,
             .elementor-switch-mode,
-            .elementor-button,
+            .elementor-button.elementor-switch-mode-button,
             .edit-with-elementor,
             a[href*="action=elementor"],
             a[href*="elementor-preview"] {
