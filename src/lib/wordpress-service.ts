@@ -200,7 +200,7 @@ export function getWordPressCorporateContent(item: WordPressContentItem): WordPr
   );
   const sections = blocks.slice(0, 3).map((block, index) => ({
     ...block,
-    image: images[index] ?? block.image,
+    image: block.image || images[index] || "",
   }));
 
   if (sections.length !== 3 || sections.some((section) => !section.image)) {

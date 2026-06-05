@@ -128,6 +128,21 @@ function getAcfCardImage(page: WordPressContentItem | null, key: string) {
   return typeof url === "string" ? url : "";
 }
 
+function getFirstParagraphText(content: string) {
+  const paragraph = content.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1];
+  return paragraph ? stripHtml(paragraph).replace(/&nbsp;/g, " ").trim() : "";
+}
+
+function getServiceCardDescription(item: WordPressContentItem, fallback: string) {
+  const canonicalSlug = getWordPressCanonicalSlug(item);
+
+  if (canonicalSlug === "korporativ-temizlik-xidmeti") {
+    return getFirstParagraphText(item.content) || stripHtml(item.excerpt || item.content) || fallback;
+  }
+
+  return stripHtml(item.excerpt || item.content) || fallback;
+}
+
 function getServiceListAcfOverrides(page: WordPressContentItem | null) {
   return new Map(
     Object.entries(serviceListAcfFields).map(([slug, fields]) => [
@@ -361,7 +376,7 @@ async function getServiceCards(locale: Locale, page: WordPressContentItem | null
             ...fallback,
             title: wpService?.title ?? fallback.title,
             image: acfOverride?.image || (wpService ? getWordPressImageUrl(wpService) : "") || fallback.image,
-            description: acfOverride?.description || (wpService ? stripHtml(wpService.excerpt || wpService.content) : "") || fallback.description,
+            description: acfOverride?.description || (wpService ? getServiceCardDescription(wpService, fallback.description) : "") || fallback.description,
           };
         })
         .filter((service): service is (typeof fallbackServices)[number] => Boolean(service));
