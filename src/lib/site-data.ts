@@ -1,5 +1,5 @@
 export const site = {
-  phoneLabel: "166, daxili nömrə 3",
+  phoneLabel: "166",
   phoneHref: "tel:166",
   mobileLabel: "+994 50 285 44 77",
   mobileHref: "tel:+994502854477",

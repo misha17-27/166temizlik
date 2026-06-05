@@ -113,6 +113,8 @@ type SyncedImageValue = string | { url?: string | null } | null;
 type SyncedChromeSettings = {
   logo?: SyncedImageValue;
   logoDark?: SyncedImageValue;
+  phonePrimary?: string | null;
+  phoneSecondary?: string | null;
   social?: {
     facebook?: string | null;
     instagram?: string | null;
@@ -887,10 +889,10 @@ export function CtaFooter({ locale = "az" }: { locale?: Locale }) {
   const [syncedServices, setSyncedServices] = useState<SyncedService[]>([]);
   const [syncedMenus, setSyncedMenus] = useState<SyncedMenus>({ header: {}, footer: {}, about: [] });
   const localizedServices = mergeServices(getLocalizedServices(locale), syncedServices);
-  const phonePrimaryLabel = contact?.phonePrimary || copy.footer.phone;
-  const phonePrimaryHref = contact?.phonePrimaryHref || site.phoneHref;
-  const phoneSecondaryLabel = contact?.phoneSecondary || site.mobileLabel;
-  const phoneSecondaryHref = contact?.phoneSecondaryHref || site.mobileHref;
+  const phonePrimaryLabel = contact?.phonePrimary || settings?.phonePrimary || copy.footer.phone;
+  const phonePrimaryHref = contact?.phonePrimaryHref || (settings?.phonePrimary ? normalizePhoneHref(settings.phonePrimary) : "") || site.phoneHref;
+  const phoneSecondaryLabel = contact?.phoneSecondary || settings?.phoneSecondary || site.mobileLabel;
+  const phoneSecondaryHref = contact?.phoneSecondaryHref || (settings?.phoneSecondary ? normalizePhoneHref(settings.phoneSecondary) : "") || site.mobileHref;
   const address = contact?.address || copy.footer.address;
   const email = contact?.email || site.email;
   const whatsappHref = contact?.whatsappHref || site.whatsappHref;
