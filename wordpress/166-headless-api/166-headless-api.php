@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.7
+ * Version: 0.4.8
  * Author: 166 Temizlik
  */
 
@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
+    private const VERSION = '0.4.8';
+
     private const NAMESPACE = 'headless/v1';
 
     private const LANGUAGES = ['az', 'ru', 'tr'];
@@ -282,6 +284,7 @@ final class One66_Headless_API
 
         return self::response([
             'lang' => $lang,
+            'pluginVersion' => self::VERSION,
             'siteName' => get_bloginfo('name'),
             'description' => get_bloginfo('description'),
             'homeUrl' => home_url('/'),
