@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.12
+ * Version: 0.4.13
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.12';
+    private const VERSION = '0.4.13';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -687,7 +687,30 @@ final class One66_Headless_API
             return ['wordpress:pages', 'wordpress:page:' . $slug, 'wordpress:home', 'wordpress:page:home'];
         }
 
+        if ($post->post_type === 'page') {
+            return array_values(array_unique(array_merge(
+                ['wordpress:pages', 'wordpress:page:' . $slug],
+                self::static_page_revalidate_tags($slug)
+            )));
+        }
+
         return ['wordpress:pages', 'wordpress:page:' . $slug];
+    }
+
+    private static function static_page_revalidate_tags(string $slug): array
+    {
+        $tags_by_slug = [
+            'qalereya' => ['wordpress:gallery'],
+            'galereya' => ['wordpress:gallery'],
+            'partnyorlar' => ['wordpress:partners'],
+            'partnyory' => ['wordpress:partners'],
+            '166-temizlik-elaqe' => ['wordpress:settings'],
+            '166-kontaktnyj-nomer' => ['wordpress:settings'],
+            'temizlik-xidmetleri' => ['wordpress:services'],
+            'uslugi-po-uborke' => ['wordpress:services'],
+        ];
+
+        return $tags_by_slug[$slug] ?? [];
     }
 
     private static function revalidate_paths(WP_Post $post): array
