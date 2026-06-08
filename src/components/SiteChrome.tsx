@@ -420,16 +420,35 @@ function readAcfString(acf: Record<string, unknown> | undefined, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact | null> {
-  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/pages/166-temizlik-elaqe?lang=${locale}`, {
-    headers: { Accept: "application/json" },
-  });
+const CHROME_FETCH_TIMEOUT_MS = 5000;
 
-  if (!response.ok) {
+async function fetchChromeJson<T>(url: string): Promise<T | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), CHROME_FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    });
+
+    return response.ok ? ((await response.json()) as T) : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact | null> {
+  const page = await fetchChromeJson<{ acf?: Record<string, unknown> }>(
+    `https://admin.166temizlik.az/wp-json/headless/v1/pages/166-temizlik-elaqe?lang=${locale}`,
+  );
+
+  if (!page) {
     return null;
   }
 
-  const page = (await response.json()) as { acf?: Record<string, unknown> };
   const acf = page.acf;
   const phonePrimary = readAcfString(acf, "telefon");
   const phoneSecondary = readAcfString(acf, "mobil_telefon");
@@ -454,31 +473,19 @@ async function fetchFooterContact(locale: Locale): Promise<SyncedFooterContact |
 }
 
 async function fetchChromeSettings(locale: Locale): Promise<SyncedChromeSettings | null> {
-  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/settings?lang=${locale}`, {
-    headers: { Accept: "application/json" },
-  });
-
-  return response.ok ? ((await response.json()) as SyncedChromeSettings) : null;
+  return fetchChromeJson<SyncedChromeSettings>(`https://admin.166temizlik.az/wp-json/headless/v1/settings?lang=${locale}`);
 }
 
 async function fetchServices(locale: Locale): Promise<SyncedService[]> {
-  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/services?lang=${locale}`, {
-    headers: { Accept: "application/json" },
-  });
-
-  if (!response.ok) {
-    return [];
-  }
-
-  const payload = (await response.json()) as {
+  const payload = await fetchChromeJson<{
     items?: Array<{
       slug?: unknown;
       title?: unknown;
       translations?: { az?: { slug?: unknown } };
     }>;
-  };
+  }>(`https://admin.166temizlik.az/wp-json/headless/v1/services?lang=${locale}`);
 
-  return (payload.items ?? []).flatMap((item) =>
+  return (payload?.items ?? []).flatMap((item) =>
     typeof item.slug === "string" && typeof item.title === "string" && item.slug && item.title
       ? [{ slug: typeof item.translations?.az?.slug === "string" ? item.translations.az.slug : item.slug, title: item.title }]
       : [],
@@ -509,18 +516,12 @@ function getMenuRouteKey(url: string) {
 }
 
 async function fetchMenus(locale: Locale): Promise<SyncedMenus> {
-  const response = await fetch(`https://admin.166temizlik.az/wp-json/headless/v1/menus?lang=${locale}`, {
-    headers: { Accept: "application/json" },
-  });
-
-  if (!response.ok) {
-    return { header: {}, footer: {}, about: [] };
-  }
-
   type MenuItem = { id: number; parentId: number; title: string; url: string };
-  const payload = (await response.json()) as { items?: Array<{ slug?: string; items?: MenuItem[] }> };
-  const mainItems = payload.items?.find((menu) => menu.slug === "main")?.items ?? [];
-  const footerItems = payload.items?.find((menu) => menu.slug === "footer-az")?.items ?? [];
+  const payload = await fetchChromeJson<{ items?: Array<{ slug?: string; items?: MenuItem[] }> }>(
+    `https://admin.166temizlik.az/wp-json/headless/v1/menus?lang=${locale}`,
+  );
+  const mainItems = payload?.items?.find((menu) => menu.slug === "main")?.items ?? [];
+  const footerItems = payload?.items?.find((menu) => menu.slug === "footer-az")?.items ?? [];
   const header: SyncedMenuLabels = {};
   const footer: SyncedMenuLabels = {};
 
