@@ -119,6 +119,16 @@ function getGalleryCategoryLabels(response: Record<string, unknown> | null): str
   return labels.filter((label): label is string => typeof label === "string" && label.trim() !== "");
 }
 
+function getGalleryMappedText(response: Record<string, unknown> | null, key: "title" | "subtitle") {
+  const mappedAcf = response?.mappedAcf;
+  if (!mappedAcf || typeof mappedAcf !== "object") {
+    return "";
+  }
+
+  const value = (mappedAcf as Record<string, unknown>)[key];
+  return typeof value === "string" ? value.trim() : "";
+}
+
 async function getGalleryPageData(locale: Locale) {
   try {
     const [response, page] = await Promise.all([
@@ -136,7 +146,8 @@ async function getGalleryPageData(locale: Locale) {
       items,
       videoUrl,
       seo: page.seo,
-      title: page.title,
+      title: getGalleryMappedText(response, "title") || page.title,
+      subtitle: getGalleryMappedText(response, "subtitle"),
     };
   } catch {
     return {
@@ -145,6 +156,7 @@ async function getGalleryPageData(locale: Locale) {
       videoUrl: undefined,
       seo: null,
       title: "",
+      subtitle: "",
     };
   }
 }
@@ -163,7 +175,7 @@ export async function GalleryPageContent({ locale = "az" }: { locale?: Locale })
         <div className="container-shell">
           <div className="text-center">
             <h1 className="text-[42px] font-extrabold leading-tight text-black max-md:text-[32px]">{gallery.title || copy.gallery.title}</h1>
-            <p className="mt-3 text-[19px] font-bold text-[#8c8c8c] max-md:text-[16px]">{copy.gallery.subtitle}</p>
+            <p className="mt-3 text-[19px] font-bold text-[#8c8c8c] max-md:text-[16px]">{gallery.subtitle || copy.gallery.subtitle}</p>
           </div>
 
           <GalleryTabs
