@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.9
+ * Version: 0.4.10
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.9';
+    private const VERSION = '0.4.10';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -628,22 +628,24 @@ final class One66_Headless_API
 
     private static function send_frontend_revalidate(array $payload): void
     {
-        $url = defined('ONE66_REVALIDATE_URL') ? (string) constant('ONE66_REVALIDATE_URL') : '';
+        $urls = self::revalidate_urls();
         $secret = self::revalidate_secret();
 
-        if ($url === '' || $secret === '') {
+        if ($urls === [] || $secret === '') {
             return;
         }
 
-        wp_remote_post($url, [
-            'timeout' => 3,
-            'blocking' => false,
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'X-Revalidate-Secret' => $secret,
-            ],
-            'body' => wp_json_encode($payload),
-        ]);
+        foreach ($urls as $url) {
+            wp_remote_post($url, [
+                'timeout' => 3,
+                'blocking' => false,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'X-Revalidate-Secret' => $secret,
+                ],
+                'body' => wp_json_encode($payload),
+            ]);
+        }
     }
 
     private static function revalidate_tags(WP_Post $post): array
@@ -2046,6 +2048,39 @@ final class One66_Headless_API
 
         $env = getenv('ONE66_REVALIDATE_SECRET');
         return is_string($env) ? $env : '';
+    }
+
+    private static function revalidate_urls(): array
+    {
+        $raw_urls = [];
+
+        if (defined('ONE66_REVALIDATE_URLS')) {
+            $configured = constant('ONE66_REVALIDATE_URLS');
+            $raw_urls = is_array($configured) ? $configured : preg_split('/[\s,]+/', (string) $configured);
+        }
+
+        if ($raw_urls === [] && defined('ONE66_REVALIDATE_URL')) {
+            $raw_urls = [(string) constant('ONE66_REVALIDATE_URL')];
+        }
+
+        if ($raw_urls === []) {
+            $env_urls = getenv('ONE66_REVALIDATE_URLS');
+            if (is_string($env_urls) && $env_urls !== '') {
+                $raw_urls = preg_split('/[\s,]+/', $env_urls);
+            }
+        }
+
+        if ($raw_urls === []) {
+            $env_url = getenv('ONE66_REVALIDATE_URL');
+            if (is_string($env_url) && $env_url !== '') {
+                $raw_urls = [$env_url];
+            }
+        }
+
+        return array_values(array_unique(array_filter(array_map(static function ($url): string {
+            $url = trim((string) $url);
+            return $url !== '' ? esc_url_raw($url) : '';
+        }, $raw_urls ?: []))));
     }
 
     private static function lang_args(): array

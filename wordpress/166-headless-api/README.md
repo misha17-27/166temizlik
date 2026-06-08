@@ -46,4 +46,18 @@ define('ONE66_REVALIDATE_SECRET', 'replace-with-long-secret');
 
 Set the same `ONE66_REVALIDATE_SECRET` value in Vercel for the frontend project. Redeploy the Vercel app after adding or changing the variable.
 
-Use the final production domain in `ONE66_REVALIDATE_URL` after the Vercel frontend is moved to `166temizlik.az`.
+When the frontend is moved to `166temizlik.az`, either keep the Vercel URL or switch to the final domain:
+
+```php
+define('ONE66_REVALIDATE_URL', 'https://166temizlik.az/api/revalidate');
+```
+
+During domain migration, both URLs can be configured at the same time:
+
+```php
+define('ONE66_REVALIDATE_URLS', [
+    'https://166temizlik.vercel.app/api/revalidate',
+    'https://166temizlik.az/api/revalidate',
+]);
+define('ONE66_REVALIDATE_SECRET', 'replace-with-long-secret');
+```
