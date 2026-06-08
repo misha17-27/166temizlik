@@ -138,13 +138,6 @@ export function GalleryTabs({
   }, [visibleItems.length]);
 
   useEffect(() => {
-    visibleItems.forEach((item) => {
-      const preload = new window.Image();
-      preload.src = item.src;
-    });
-  }, [visibleItems]);
-
-  useEffect(() => {
     if (lightboxIndex === null) {
       return;
     }
@@ -264,6 +257,7 @@ export function GalleryTabs({
           className="aspect-video w-full"
           src={videoUrl.replace("watch?v=", "embed/")}
           title="Temiz Evim Pencere temizliyi nece olmalıdır?"
+          loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         />

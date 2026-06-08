@@ -1,13 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import NextLink from "next/link";
+import { useEffect, useState, type ComponentProps } from "react";
 import { WhatsAppLeadForm } from "@/components/WhatsAppLeadForm";
 import { chromeCopy, getLanguageSwitcherOptions, getLocalizedHref, getLocalizedServices, type Locale } from "@/lib/i18n";
 import type { RouteKind } from "@/lib/routes";
 import { site } from "@/lib/site-data";
 import { normalizeWordPressMediaUrl } from "@/lib/wordpress";
+
+function Link(props: ComponentProps<typeof NextLink>) {
+  return <NextLink prefetch={false} {...props} />;
+}
 
 const socialIcons = [
   {
