@@ -138,14 +138,14 @@ function imageUrl(value: SyncedImageValue | undefined) {
 }
 
 function footerLogoUrl(settings: SyncedChromeSettings | null) {
-  const logo = imageUrl(settings?.logo);
   const logoDark = imageUrl(settings?.logoDark);
+  const defaultFooterLogo = normalizeWordPressMediaUrl(site.footerLogo) || site.footerLogo;
 
-  if (logoDark && logoDark !== logo) {
+  if (logoDark && logoDark !== imageUrl(settings?.logo) && logoDark !== defaultFooterLogo) {
     return logoDark;
   }
 
-  return site.footerLogo;
+  return defaultFooterLogo;
 }
 
 function getFooterSocialUrl(label: SocialLabel, contact: SyncedFooterContact | null, settings: SyncedChromeSettings | null) {
