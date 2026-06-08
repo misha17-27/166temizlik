@@ -6,7 +6,7 @@ export const PUBLIC_SITE_URL =
   (process.env.PUBLIC_SITE_URL ?? "https://166temizlik.az").replace(/\/$/, "");
 export const WORDPRESS_MEDIA_URL = "https://admin.166temizlik.az/wp-content";
 const WORDPRESS_REVALIDATE_SECONDS = 60;
-const WORDPRESS_FETCH_TIMEOUT_MS = Number(process.env.WORDPRESS_FETCH_TIMEOUT_MS ?? 8000);
+const WORDPRESS_FETCH_TIMEOUT_MS = Number(process.env.WORDPRESS_FETCH_TIMEOUT_MS ?? 15000);
 
 export type WordPressLocale = "az" | "ru" | "tr";
 
