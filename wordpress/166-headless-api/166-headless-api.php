@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.14
+ * Version: 0.4.15
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.14';
+    private const VERSION = '0.4.15';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -1326,6 +1326,7 @@ final class One66_Headless_API
             'partners' => self::normalize_partners_value(self::acf_first($fields, ['partners', 'partnyorlar', 'partner_logos', 'loqolar250x150px'])),
             'servicesTitle' => self::acf_text(self::acf_first($fields, ['services_title', 'xidmetler_basliq'])),
             'packagesTitle' => self::acf_text(self::acf_first($fields, ['packages_title', 'paketler_basliq'])),
+            'packages' => self::home_packages($fields),
             'about' => self::first_non_empty([
                 self::acf_first($fields, ['about', 'haqqinda'], []),
                 $about_text ? ['paragraphs' => [$about_text]] : [],
@@ -1340,6 +1341,32 @@ final class One66_Headless_API
                 self::acf_first($fields, ['testimonials', 'reviews', 'reyler'], []),
                 $testimonials,
             ], []),
+        ];
+    }
+
+    private static function home_packages(array $fields): array
+    {
+        $prices = [];
+        foreach (range(1, 6) as $index) {
+            $prices[] = self::acf_text(self::acf_first($fields, ["qiymət_{$index}", "qiymet_{$index}"]));
+        }
+
+        $features = [
+            'fourHours' => self::acf_text_list(self::acf_first($fields, ['4_saatliq_metn', '4_saatlıq_mətn'])),
+            'eightHours' => self::acf_text_list(self::acf_first($fields, ['8_saatliq_metn', '8_saatlıq_mətn'])),
+        ];
+
+        $note_html = self::acf_text(self::acf_first($fields, ['qeyd', 'note']));
+        $prices = array_values(array_filter($prices, [self::class, 'has_value']));
+
+        if (count($prices) < 6 || !$features['fourHours'] || !$features['eightHours']) {
+            return [];
+        }
+
+        return [
+            'features' => $features,
+            'prices' => $prices,
+            'noteHtml' => $note_html,
         ];
     }
 
