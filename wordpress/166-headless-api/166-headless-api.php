@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.11
+ * Version: 0.4.12
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.11';
+    private const VERSION = '0.4.12';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -1351,25 +1351,43 @@ final class One66_Headless_API
 
     private static function gallery_category_labels(array $fields, array $field_labels, array $categories): array
     {
+        $legacy_fields = [
+            ['home-office', ['ev_və_ofis_təmizliyi_səkiller']],
+            ['garden', ['bag_evlərinin_təmizlənməsi_səkillər']],
+            ['area', ['ərazi_təmizliyi_səkillər']],
+            ['facade', ['fasad_təmizliyi_səkillər']],
+            ['curtains', ['pərdə_və_jaluz_yuma_səkillər']],
+            ['furniture', ['yumsaq_mebellərin_kimyəvi_təmizliyi_səkillər']],
+            ['fragrance', ['ətirləndirmə_xidməti_səkillər']],
+            ['restaurant-hotel', ['restoran_və_hotel_təmizliyi']],
+        ];
+
         $labels = [];
-        foreach ($fields as $name => $value) {
-            if (!isset($field_labels[$name])) {
+        foreach ($legacy_fields as [$category, $keys]) {
+            if (!in_array($category, $categories, true)) {
                 continue;
             }
 
-            if (self::acf_gallery_items($value) === []) {
-                continue;
-            }
+            foreach ($keys as $key) {
+                if (!isset($field_labels[$key])) {
+                    continue;
+                }
 
-            $labels[] = $field_labels[$name];
+                if (self::acf_gallery_items(self::acf_first($fields, [$key], [])) === []) {
+                    continue;
+                }
+
+                $labels[] = $field_labels[$key];
+                break;
+            }
         }
 
         $labels = array_values(array_unique(array_filter($labels, [self::class, 'has_value'])));
-        if (count($labels) >= count($categories)) {
-            return array_slice($labels, 0, count($categories));
+        if (count($labels) === count($categories)) {
+            return $labels;
         }
 
-        return $labels ?: $categories;
+        return $categories;
     }
 
     private static function acf_gallery_items_with_category(array $fields, string $category, array $keys): array
