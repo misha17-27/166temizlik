@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.10
+ * Version: 0.4.11
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.10';
+    private const VERSION = '0.4.11';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -480,6 +480,7 @@ final class One66_Headless_API
             'acf' => $normalized['acf'] ?? [],
             'mappedAcf' => $mapped,
             'categories' => self::first_non_empty([self::option_value('gallery_categories', []), $mapped['categories'] ?? []], []),
+            'categoryLabels' => self::first_non_empty([self::option_value('gallery_category_labels', []), $mapped['categoryLabels'] ?? []], []),
             'items' => self::first_non_empty([self::option_value('gallery_items', []), $mapped['items'] ?? []], []),
             'videoUrl' => self::first_non_empty([self::option_text('gallery_video_url'), $mapped['videoUrl'] ?? null], 'https://www.youtube.com/watch?v=BXwEEGgWVO0'),
         ]);
@@ -1204,14 +1205,42 @@ final class One66_Headless_API
     private static function normalize_static_page(WP_Post $post, string $key): array
     {
         $page = self::normalize_post($post);
-        $page['mappedAcf'] = self::map_static_page_fields($key, $page['acf'], $page['content'] ?? '');
+        $page['acfLabels'] = self::acf_field_labels($post->ID);
+        $page['mappedAcf'] = self::map_static_page_fields($key, $page['acf'], $page['content'] ?? '', $page['acfLabels']);
         return $page;
     }
 
-    private static function map_static_page_fields(string $key, array $fields, string $content = ''): array
+    private static function acf_field_labels(int $post_id): array
+    {
+        if (!function_exists('get_field_objects')) {
+            return [];
+        }
+
+        $objects = get_field_objects($post_id);
+        if (!is_array($objects)) {
+            return [];
+        }
+
+        $labels = [];
+        foreach ($objects as $name => $field) {
+            if (!is_array($field)) {
+                continue;
+            }
+
+            $field_name = (string) ($field['name'] ?? $name);
+            $label = self::clean_text((string) ($field['label'] ?? ''));
+            if ($field_name !== '' && $label !== '') {
+                $labels[$field_name] = $label;
+            }
+        }
+
+        return $labels;
+    }
+
+    private static function map_static_page_fields(string $key, array $fields, string $content = '', array $field_labels = []): array
     {
         if ($key === 'gallery') {
-            return self::map_gallery_fields($fields);
+            return self::map_gallery_fields($fields, $field_labels);
         }
 
         if ($key === 'home') {
@@ -1287,7 +1316,7 @@ final class One66_Headless_API
         ];
     }
 
-    private static function map_gallery_fields(array $fields): array
+    private static function map_gallery_fields(array $fields, array $field_labels = []): array
     {
         $legacy_items = array_merge(
             self::acf_gallery_items_with_category($fields, 'home-office', ['ev_və_ofis_təmizliyi_səkiller']),
@@ -1311,12 +1340,36 @@ final class One66_Headless_API
                 self::acf_text_list(self::acf_first($fields, ['gallery_categories', 'categories', 'kateqoriyalar'])),
                 array_values(array_unique($legacy_categories)),
             ], []),
+            'categoryLabels' => self::gallery_category_labels($fields, $field_labels, array_values(array_unique($legacy_categories))),
             'items' => self::first_non_empty([
                 self::acf_gallery_items(self::acf_first($fields, ['gallery_items', 'gallery', 'qalereya', 'sekiller', 'images'])),
                 $legacy_items,
             ], []),
             'videoUrl' => self::acf_text(self::acf_first($fields, ['gallery_video_url', 'video_url', 'youtube_url', 'youtube_link'])),
         ];
+    }
+
+    private static function gallery_category_labels(array $fields, array $field_labels, array $categories): array
+    {
+        $labels = [];
+        foreach ($fields as $name => $value) {
+            if (!isset($field_labels[$name])) {
+                continue;
+            }
+
+            if (self::acf_gallery_items($value) === []) {
+                continue;
+            }
+
+            $labels[] = $field_labels[$name];
+        }
+
+        $labels = array_values(array_unique(array_filter($labels, [self::class, 'has_value'])));
+        if (count($labels) >= count($categories)) {
+            return array_slice($labels, 0, count($categories));
+        }
+
+        return $labels ?: $categories;
     }
 
     private static function acf_gallery_items_with_category(array $fields, string $category, array $keys): array

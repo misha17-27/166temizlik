@@ -110,6 +110,15 @@ function getGalleryItemsFromApi(response: Record<string, unknown> | null): Galle
   });
 }
 
+function getGalleryCategoryLabels(response: Record<string, unknown> | null): string[] {
+  const labels = response?.categoryLabels;
+  if (!Array.isArray(labels)) {
+    return [];
+  }
+
+  return labels.filter((label): label is string => typeof label === "string" && label.trim() !== "");
+}
+
 async function getGalleryPageData(locale: Locale) {
   try {
     const [response, page] = await Promise.all([
@@ -123,6 +132,7 @@ async function getGalleryPageData(locale: Locale) {
       (typeof page.acf.youtube_link === "string" ? page.acf.youtube_link : undefined);
 
     return {
+      categoryLabels: getGalleryCategoryLabels(response),
       items,
       videoUrl,
       seo: page.seo,
@@ -130,6 +140,7 @@ async function getGalleryPageData(locale: Locale) {
     };
   } catch {
     return {
+      categoryLabels: [],
       items: [],
       videoUrl: undefined,
       seo: null,
@@ -140,9 +151,10 @@ async function getGalleryPageData(locale: Locale) {
 
 export async function GalleryPageContent({ locale = "az" }: { locale?: Locale }) {
   const copy = staticPageCopy[locale];
-  const categories = getLocalizedGalleryCategories(locale);
+  const fallbackCategories = getLocalizedGalleryCategories(locale);
   const allLabel = locale === "ru" ? "Смотреть все" : locale === "tr" ? "Tümünü göster" : "Hamısına bax";
   const gallery = await getGalleryPageData(locale);
+  const categories = gallery.categoryLabels.length === fallbackCategories.length ? gallery.categoryLabels : fallbackCategories;
 
   return (
     <SitePage active="gallery" locale={locale} currentSlug="gallery">
