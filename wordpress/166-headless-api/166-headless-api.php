@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.15
+ * Version: 0.4.16
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.15';
+    private const VERSION = '0.4.16';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -1352,11 +1352,12 @@ final class One66_Headless_API
         }
 
         $features = [
-            'fourHours' => self::acf_text_list(self::acf_first($fields, ['4_saatliq_metn', '4_saatlıq_mətn'])),
-            'eightHours' => self::acf_text_list(self::acf_first($fields, ['8_saatliq_metn', '8_saatlıq_mətn'])),
+            'fourHours' => self::acf_list_items(self::acf_first($fields, ['4_saatliq_metn', '4_saatlıq_mətn'])),
+            'eightHours' => self::acf_list_items(self::acf_first($fields, ['8_saatliq_metn', '8_saatlıq_mətn'])),
         ];
 
         $note_html = self::acf_text(self::acf_first($fields, ['qeyd', 'note']));
+        $notes = self::acf_list_items(self::acf_first($fields, ['qeyd', 'note']));
         $prices = array_values(array_filter($prices, [self::class, 'has_value']));
 
         if (count($prices) < 6 || !$features['fourHours'] || !$features['eightHours']) {
@@ -1367,6 +1368,7 @@ final class One66_Headless_API
             'features' => $features,
             'prices' => $prices,
             'noteHtml' => $note_html,
+            'notes' => $notes,
         ];
     }
 
@@ -1510,6 +1512,33 @@ final class One66_Headless_API
         }
 
         return array_values(array_unique($items));
+    }
+
+    private static function acf_list_items($value): array
+    {
+        if (is_array($value)) {
+            return self::acf_text_list($value);
+        }
+
+        if (!is_scalar($value)) {
+            return [];
+        }
+
+        $html = (string) $value;
+        $items = [];
+        if (preg_match_all('/<li\b[^>]*>([\s\S]*?)<\/li>/i', $html, $matches)) {
+            foreach ($matches[1] as $item) {
+                $text = self::clean_text((string) $item);
+                if ($text !== '') {
+                    $items[] = $text;
+                }
+            }
+        } else {
+            $text = self::clean_text($html);
+            $items = preg_split('/\r\n|\r|\n/', $text) ?: [];
+        }
+
+        return array_values(array_unique(array_filter(array_map('trim', $items), [self::class, 'has_value'])));
     }
 
     private static function acf_image($value): ?array

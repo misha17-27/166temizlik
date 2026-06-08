@@ -43,6 +43,15 @@ type HomePayload = {
     image?: WordPressImageLike | null;
   };
   mapImage?: WordPressImageLike | null;
+  packages?: {
+    features?: {
+      fourHours?: string[];
+      eightHours?: string[];
+    };
+    prices?: string[];
+    notes?: string[];
+    noteHtml?: string;
+  };
 };
 
 export type HomeServiceItem = {
@@ -208,6 +217,42 @@ function buildLegacyHomePackages(acf: Record<string, unknown>): HomePageData["pa
 
   return {
     features,
+    weeklyPrices: fallbackWeeklyPrices.map((price, index) => ({
+      ...price,
+      four: prices[index] || price.four,
+      eight: prices[index + 3] || price.eight,
+    })),
+    notes,
+  };
+}
+
+function buildHomePackagesFromPayload(packages: HomePayload["packages"]): HomePageData["packages"] {
+  const fourHours = packages?.features?.fourHours?.filter(Boolean) ?? [];
+  const eightHours = packages?.features?.eightHours?.filter(Boolean) ?? [];
+  const prices = packages?.prices?.filter(Boolean) ?? [];
+  const notes = packages?.notes?.length
+    ? packages.notes.filter(Boolean).map((note) => ({
+        before: note,
+        strong: "",
+        after: "",
+      }))
+    : typeof packages?.noteHtml === "string"
+      ? packages.noteHtml
+          .split(/\r\n|\r|\n/)
+          .map((note) => note.trim())
+          .filter(Boolean)
+          .map((note) => ({ before: note, strong: "", after: "" }))
+      : [];
+
+  if (!fourHours.length || !eightHours.length || prices.length < 6) {
+    return undefined;
+  }
+
+  return {
+    features: {
+      fourHours,
+      eightHours,
+    },
     weeklyPrices: fallbackWeeklyPrices.map((price, index) => ({
       ...price,
       four: prices[index] || price.four,
@@ -427,6 +472,8 @@ export async function getHomePageData(locale: Locale) {
     seo: sourcePage?.seo,
     ...pageData,
     services,
-    packages: sourcePage ? buildLegacyHomePackages(sourcePage.acf) : undefined,
+    packages:
+      buildHomePackagesFromPayload(response?.mappedAcf?.packages as HomePayload["packages"]) ??
+      (sourcePage ? buildLegacyHomePackages(sourcePage.acf) : undefined),
   };
 }
