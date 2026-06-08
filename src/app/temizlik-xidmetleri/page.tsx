@@ -5,7 +5,7 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServicePages, pageCopy, type Locale } from "@/lib/i18n";
 import { pageHeroAssets, servicePages } from "@/lib/pages-data";
 import { getWordPressCanonicalSlug, getWordPressImageUrl, getWordPressServices, stripHtml, type WordPressContentItem } from "@/lib/wordpress";
-import { generateStaticWordPressPageMetadata, getStaticWordPressPage } from "@/lib/wordpress-pages";
+import { generateStaticWordPressPageMetadata, getMappedAcfImageUrl, getMappedAcfText, getStaticWordPressPage } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -280,10 +280,12 @@ const serviceListDescriptions: Record<Locale, Record<string, string>> = {
 function ServicesHero({
   locale,
   title,
+  subtitle,
   image,
 }: {
   locale: Locale;
   title?: string;
+  subtitle?: string;
   image?: string;
 }) {
   const copy = pageCopy[locale];
@@ -296,7 +298,7 @@ function ServicesHero({
           <div className="absolute inset-0 bg-black/38" />
           <div className="absolute inset-0 flex flex-col items-center justify-center px-5 text-center text-white">
             <h1 className="text-[29px] font-bold leading-tight max-md:text-[25px]">{title || copy.servicesTitle}</h1>
-            <p className="mt-3 text-[17px] font-semibold max-md:text-[14px]">{copy.subtitle}</p>
+            <p className="mt-3 text-[17px] font-semibold max-md:text-[14px]">{subtitle || copy.subtitle}</p>
           </div>
         </div>
       </div>
@@ -402,11 +404,14 @@ async function getServiceCards(locale: Locale, page: WordPressContentItem | null
 export async function ServicesPageContent({ locale = "az" }: { locale?: Locale }) {
   const page = await getStaticWordPressPage("services", locale);
   const orderedServices = await getServiceCards(locale, page);
+  const title = getMappedAcfText(page, "heroTitle") || page?.title;
+  const subtitle = getMappedAcfText(page, "heroSubtitle");
+  const heroImage = getMappedAcfImageUrl(page, "heroImage") || page?.featuredImage?.url;
 
   return (
     <SitePage active="services" locale={locale} currentSlug="services">
       <WordPressSeoSchema seo={page?.seo} />
-      <ServicesHero locale={locale} title={page?.title} image={page?.featuredImage?.url} />
+      <ServicesHero locale={locale} title={title} subtitle={subtitle} image={heroImage} />
       <section className="relative overflow-hidden bg-[#f7f7f7] pb-20 pt-7 max-md:pb-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_7%_38%,rgba(255,236,20,0.22),transparent_34%),radial-gradient(circle_at_94%_48%,rgba(0,116,202,0.16),transparent_36%)]" />
         <div className="relative mx-auto flex w-[min(var(--site-container),calc(100%-40px))] flex-col gap-6">

@@ -83,6 +83,26 @@ export async function generateStaticWordPressPageMetadata(
   return buildWordPressPageMetadata(page, fallbackTitle, getLanguageAlternates(routeKey));
 }
 
+export function getMappedAcfText(page: Pick<WordPressContentItem, "mappedAcf"> | null | undefined, key: string) {
+  const value = page?.mappedAcf?.[key];
+  return typeof value === "string" ? value.trim() : "";
+}
+
+export function getMappedAcfImageUrl(page: Pick<WordPressContentItem, "mappedAcf"> | null | undefined, key: string) {
+  const value = page?.mappedAcf?.[key];
+
+  if (typeof value === "string") {
+    return normalizeWordPressMediaUrl(value) ?? "";
+  }
+
+  if (!value || typeof value !== "object") {
+    return "";
+  }
+
+  const url = (value as { url?: unknown }).url;
+  return typeof url === "string" ? normalizeWordPressMediaUrl(url) ?? "" : "";
+}
+
 export function getWordPressHomeHeroSlides(
   page: Pick<WordPressContentItem, "title" | "featuredImage"> | null,
   fallbackSlides: HeroSlide[],

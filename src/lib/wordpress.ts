@@ -59,6 +59,7 @@ export type WordPressContentItem = {
   content: string;
   featuredImage: WordPressImage | null;
   acf: Record<string, unknown>;
+  mappedAcf?: Record<string, unknown>;
   seo: WordPressSeo;
   link: string;
   date: string;
