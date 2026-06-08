@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.13
+ * Version: 0.4.14
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.13';
+    private const VERSION = '0.4.14';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -20,10 +20,14 @@ final class One66_Headless_API
 
     private const STATIC_PAGE_SLUGS = [
         'home' => ['home', 'ana-sehife', 'ana-sehife-2', '166-temizlik'],
+        'services' => ['temizlik-xidmetleri', 'uslugi-po-uborke'],
         'gallery' => ['qalereya'],
+        'blog' => ['bloq'],
         'partners' => ['partnyorlar'],
         'about' => ['sirket-haqqinda'],
         'equipment' => ['temizlik-xidmeti'],
+        'employees' => ['emekdaslarimiz', 'nashikollegi'],
+        'vacancy' => ['vakansiya'],
         'contact' => ['166-temizlik-elaqe'],
     ];
 
