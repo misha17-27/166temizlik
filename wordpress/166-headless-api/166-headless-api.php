@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.16
+ * Version: 0.4.17
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.16';
+    private const VERSION = '0.4.17';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -1106,8 +1106,10 @@ final class One66_Headless_API
     private static function normalize_post(WP_Post $post): array
     {
         $featured_id = get_post_thumbnail_id($post);
+        $acf = self::acf_fields($post->ID);
+        $content = apply_filters('the_content', $post->post_content);
 
-        return [
+        $item = [
             'id' => (int) $post->ID,
             'type' => $post->post_type,
             'slug' => $post->post_name,
@@ -1115,14 +1117,37 @@ final class One66_Headless_API
             'translations' => self::translations($post),
             'title' => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
             'excerpt' => self::clean_text(get_the_excerpt($post)),
-            'content' => apply_filters('the_content', $post->post_content),
+            'content' => $content,
             'featuredImage' => $featured_id ? self::media($featured_id) : null,
-            'acf' => self::acf_fields($post->ID),
+            'acf' => $acf,
             'seo' => self::seo($post->ID),
             'link' => get_permalink($post),
             'date' => get_post_time('c', true, $post),
             'modified' => get_post_modified_time('c', true, $post),
         ];
+
+        $static_key = self::static_page_key_for_post($post);
+        if ($static_key) {
+            $item['acfLabels'] = self::acf_field_labels($post->ID);
+            $item['mappedAcf'] = self::map_static_page_fields($static_key, $acf, $content, $item['acfLabels']);
+        }
+
+        return $item;
+    }
+
+    private static function static_page_key_for_post(WP_Post $post): ?string
+    {
+        if ($post->post_type !== 'page') {
+            return null;
+        }
+
+        foreach (self::STATIC_PAGE_SLUGS as $key => $slugs) {
+            if (in_array($post->post_name, $slugs, true)) {
+                return $key;
+            }
+        }
+
+        return null;
     }
 
     private static function normalize_menu_item(WP_Post $item): array
