@@ -5,6 +5,7 @@ import { CleaningPackageCard } from "@/components/CleaningPackageCard";
 import { ClockIcon } from "@/components/ClockIcon";
 import { HeroSlider } from "@/components/HeroSlider";
 import { CtaFooter, Header } from "@/components/SiteChrome";
+import { TestimonialsSlider } from "@/components/TestimonialsSlider";
 import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedServices, homeCopy, type Locale } from "@/lib/i18n";
 import { partners, site } from "@/lib/site-data";
@@ -197,19 +198,7 @@ function TestimonialsSection({ copy }: { copy: HomeCopy }) {
     <section className="bg-[#f5f5f5] py-16">
       <div className="container-shell">
         <h2 className="section-title mb-12">{copy.testimonialsTitle}</h2>
-        <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
-          {copy.testimonials.map((item) => (
-            <article key={item.name} className="rounded-[18px] bg-white p-8 text-center shadow-[0_14px_34px_rgb(15_23_42_/_8%)]">
-              <p className="text-6xl font-black leading-none text-brand-blue">“</p>
-              <p className="min-h-[120px] text-[16px] font-semibold leading-7 text-[#344054]">{item.text}</p>
-              <div className="relative mx-auto mt-6 h-[86px] w-[86px] overflow-hidden rounded-full">
-                <Image src={item.image} alt={item.name} fill sizes="86px" className="object-cover" />
-              </div>
-              <h3 className="mt-4 text-[19px] font-black">{item.name}</h3>
-              <p className="mt-2 text-2xl tracking-[4px] text-brand-yellow">★★★★★</p>
-            </article>
-          ))}
-        </div>
+        <TestimonialsSlider items={copy.testimonials} />
       </div>
     </section>
   );
