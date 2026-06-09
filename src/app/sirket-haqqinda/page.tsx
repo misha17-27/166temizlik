@@ -183,6 +183,20 @@ function getAboutAcfHtml(page: WordPressContentItem | null | undefined, key: str
   return typeof value === "string" && value.trim() ? value : "";
 }
 
+function getAboutAcfLabel(page: WordPressContentItem | null | undefined, key: string, fallback: string) {
+  const labels = page?.acfLabels;
+
+  if (!labels || Array.isArray(labels)) {
+    return fallback;
+  }
+
+  return (
+    labels[key] ??
+    Object.entries(labels).find(([entryKey]) => normalizeAboutAcfKey(entryKey) === normalizeAboutAcfKey(key))?.[1] ??
+    fallback
+  );
+}
+
 function normalizeAboutAcfKey(key: string) {
   return key
     .toLowerCase()
@@ -243,6 +257,17 @@ export async function AboutPageContent({
     features: getAboutAcfHtml(wpPage, "təmizlik_xidmətləri_təklif_edən_sirkətlərin_baslica_xususiyyətləri:"),
     services: getAboutAcfHtml(wpPage, "sizə_asagidaki_təmizlik_xidmətlərini_təklif_edirik:"),
   };
+  const sectionTitles = {
+    prices: getAboutAcfLabel(wpPage, "təmizlik_xidməti_qiymətləri", copy.pricesTitle),
+    team: getAboutAcfLabel(wpPage, "pesəkar_isci_heyəti", copy.teamTitle),
+    devices: getAboutAcfLabel(wpPage, "ən_son_təmizlik_cihazlari_ilə", copy.devicesTitle),
+    features: getAboutAcfLabel(
+      wpPage,
+      "təmizlik_xidmətləri_təklif_edən_sirkətlərin_baslica_xususiyyətləri:",
+      copy.featuresTitle,
+    ),
+    services: getAboutAcfLabel(wpPage, "sizə_asagidaki_təmizlik_xidmətlərini_təklif_edirik:", copy.servicesTitle),
+  };
 
   return (
     <SitePage active="about" locale={locale} currentSlug="about">
@@ -279,17 +304,17 @@ export async function AboutPageContent({
 
       <section className="bg-white py-16 max-md:py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
-          <TextBlock title={copy.pricesTitle}>
+          <TextBlock title={sectionTitles.prices}>
             {synced.prices ? <SyncedHtml html={synced.prices} /> : <p>{body.pricesParagraph}</p>}
           </TextBlock>
-          <ImageBox src={syncedImages.price} alt={copy.pricesTitle} className="ml-auto h-[330px] w-[430px] max-lg:mx-auto max-md:h-[260px] max-md:w-full" />
+          <ImageBox src={syncedImages.price} alt={sectionTitles.prices} className="ml-auto h-[330px] w-[430px] max-lg:mx-auto max-md:h-[260px] max-md:w-full" />
         </div>
       </section>
 
       <section className="bg-white py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
-          <ImageBox src={syncedImages.team} alt={copy.teamTitle} className="h-[380px] w-[520px] max-lg:mx-auto max-md:h-[300px] max-md:w-full" />
-          <TextBlock title={copy.teamTitle}>
+          <ImageBox src={syncedImages.team} alt={sectionTitles.team} className="h-[380px] w-[520px] max-lg:mx-auto max-md:h-[300px] max-md:w-full" />
+          <TextBlock title={sectionTitles.team}>
             {synced.team ? (
               <SyncedHtml html={synced.team} />
             ) : (
@@ -301,7 +326,7 @@ export async function AboutPageContent({
 
       <section className="bg-white py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-20 max-lg:grid-cols-1 max-lg:gap-10">
-          <TextBlock title={copy.devicesTitle}>
+          <TextBlock title={sectionTitles.devices}>
             {synced.devices ? (
               <SyncedHtml html={synced.devices} />
             ) : (
@@ -310,7 +335,7 @@ export async function AboutPageContent({
           </TextBlock>
           <div className="relative">
             <Dots className="bottom-[-55px] left-[-55px] h-[210px] w-[260px] max-md:hidden" />
-            <ImageBox src={syncedImages.devices} alt={copy.devicesTitle} className="relative h-[360px] w-[560px] max-lg:mx-auto max-md:h-[280px] max-md:w-full" />
+            <ImageBox src={syncedImages.devices} alt={sectionTitles.devices} className="relative h-[360px] w-[560px] max-lg:mx-auto max-md:h-[280px] max-md:w-full" />
           </div>
         </div>
       </section>
@@ -318,7 +343,7 @@ export async function AboutPageContent({
       <section className="bg-white py-10">
         <div className="container-shell grid grid-cols-2 items-center gap-24 max-lg:grid-cols-1 max-lg:gap-10">
           <ImageBox src={syncedImages.spray} alt={body.materialsAlt} className="h-[520px] w-[420px] overflow-hidden rounded-[20px] max-lg:mx-auto max-md:h-[360px] max-md:w-full" contain={false} />
-          <TextBlock title={copy.featuresTitle}>
+          <TextBlock title={sectionTitles.features}>
             {synced.features ? (
               <SyncedHtml html={synced.features} />
             ) : (
@@ -337,7 +362,7 @@ export async function AboutPageContent({
 
       <section className="bg-white py-10 pb-16">
         <div className="container-shell grid grid-cols-2 items-center gap-20 max-lg:grid-cols-1 max-lg:gap-10">
-          <TextBlock title={copy.servicesTitle}>
+          <TextBlock title={sectionTitles.services}>
             {synced.services ? (
               <SyncedHtml html={synced.services} />
             ) : (
