@@ -309,6 +309,8 @@ export function getWordPressPartners(lang: WordPressLocale = "az") {
 
 export function stripHtml(value: string) {
   return value
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<[^>]*>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
