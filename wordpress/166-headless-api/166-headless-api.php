@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.17
+ * Version: 0.4.18
  * Author: 166 Temizlik
  */
 
@@ -12,9 +12,11 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.17';
+    private const VERSION = '0.4.18';
 
     private const NAMESPACE = 'headless/v1';
+
+    private const LOGIN_LOGO_URL = 'https://admin.166temizlik.az/wp-content/login-logo.png?v=1676025962';
 
     private const LANGUAGES = ['az', 'ru', 'tr'];
 
@@ -147,6 +149,36 @@ final class One66_Headless_API
         add_filter('post_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
         add_action('admin_head', [self::class, 'hide_elementor_admin_controls']);
         add_action('admin_bar_menu', [self::class, 'remove_elementor_admin_bar_controls'], 999);
+        add_action('login_enqueue_scripts', [self::class, 'custom_login_logo']);
+        add_filter('login_headerurl', [self::class, 'custom_login_logo_url']);
+        add_filter('login_headertext', [self::class, 'custom_login_logo_title']);
+    }
+
+    public static function custom_login_logo(): void
+    {
+        $logo_url = esc_url(self::LOGIN_LOGO_URL);
+        ?>
+        <style>
+            body.login div#login h1 a {
+                background-image: url('<?php echo $logo_url; ?>');
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: contain;
+                height: 100px;
+                width: 320px;
+            }
+        </style>
+        <?php
+    }
+
+    public static function custom_login_logo_url(): string
+    {
+        return home_url('/');
+    }
+
+    public static function custom_login_logo_title(): string
+    {
+        return get_bloginfo('name');
     }
 
     public static function block_elementor_editor(): void
