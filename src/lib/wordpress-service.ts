@@ -178,6 +178,10 @@ function listTexts(value: unknown) {
     : [];
 }
 
+function removeEmbeddedStyles(html: string) {
+  return html.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "");
+}
+
 function getCorporateBlocks(content: string) {
   return content
     .split(/(?=<h2\b)/i)
@@ -193,9 +197,10 @@ function getCorporateBlocks(content: string) {
 }
 
 export function getWordPressCorporateContent(item: WordPressContentItem): WordPressCorporateContent | undefined {
-  const blocks = getCorporateBlocks(item.content);
+  const content = removeEmbeddedStyles(item.content);
+  const blocks = getCorporateBlocks(content);
   const images = Array.from(
-    item.content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi),
+    content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi),
     (match) => normalizeWordPressMediaUrl(match[1]) ?? "",
   );
   const sections = blocks.slice(0, 3).map((block, index) => ({

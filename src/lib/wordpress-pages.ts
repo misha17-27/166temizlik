@@ -173,6 +173,10 @@ function toPlainText(value: string) {
   return stripHtml(decodeHtmlEntities(value)).trim();
 }
 
+function removeEmbeddedStyles(html: string) {
+  return html.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "");
+}
+
 function normalizeHeading(value: string) {
   return toPlainText(value)
     .toLowerCase()
@@ -234,7 +238,8 @@ export function getWordPressEquipmentPageContent(page: EquipmentPageSource | nul
     return null;
   }
 
-  const sections = splitH2Sections(page.content);
+  const content = removeEmbeddedStyles(page.content);
+  const sections = splitH2Sections(content);
   const materialsIndex = sections.findIndex((section) => isMaterialsHeading(section.title));
   const equipmentTitle = sections[0]?.title || page.title;
   const materialsTitle = materialsIndex >= 0 ? sections[materialsIndex].title : "";
