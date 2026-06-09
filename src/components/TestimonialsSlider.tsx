@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 
 type Testimonial = {
   name: string;
@@ -28,8 +28,11 @@ function getVisiblePerPage() {
 export function TestimonialsSlider({ items }: { items: Testimonial[] }) {
   const sliderItems = useMemo(() => items.slice(0, 9), [items]);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const dragStartXRef = useRef(0);
+  const dragStartScrollLeftRef = useRef(0);
   const [visiblePerPage, setVisiblePerPage] = useState(3);
   const [activePage, setActivePage] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const pageCount = Math.max(1, Math.ceil(sliderItems.length / visiblePerPage));
   const currentPage = Math.min(activePage, pageCount - 1);
 
@@ -43,6 +46,24 @@ export function TestimonialsSlider({ items }: { items: Testimonial[] }) {
 
     return () => window.removeEventListener("resize", syncVisiblePerPage);
   }, []);
+
+  useEffect(() => {
+    if (pageCount <= 1 || isDragging) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      const scroller = scrollerRef.current;
+      if (!scroller) {
+        return;
+      }
+
+      const page = Math.round(scroller.scrollLeft / Math.max(scroller.clientWidth, 1));
+      scroller.scrollTo({ left: ((page + 1) % pageCount) * scroller.clientWidth, behavior: "smooth" });
+    }, 4500);
+
+    return () => window.clearInterval(timer);
+  }, [isDragging, pageCount]);
 
   function handleScroll() {
     const scroller = scrollerRef.current;
@@ -62,12 +83,66 @@ export function TestimonialsSlider({ items }: { items: Testimonial[] }) {
     scroller.scrollTo({ left: page * scroller.clientWidth, behavior: "smooth" });
   }
 
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    const scroller = scrollerRef.current;
+    if (!scroller) {
+      return;
+    }
+
+    dragStartXRef.current = event.clientX;
+    dragStartScrollLeftRef.current = scroller.scrollLeft;
+    setIsDragging(true);
+    try {
+      scroller.setPointerCapture(event.pointerId);
+    } catch {
+      // Synthetic pointer events used by tests may not have an active pointer.
+    }
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    const scroller = scrollerRef.current;
+    if (!isDragging || !scroller) {
+      return;
+    }
+
+    event.preventDefault();
+    scroller.scrollLeft = dragStartScrollLeftRef.current - (event.clientX - dragStartXRef.current);
+  }
+
+  function finishDrag(event: PointerEvent<HTMLDivElement>) {
+    const scroller = scrollerRef.current;
+    if (!isDragging || !scroller) {
+      return;
+    }
+
+    try {
+      if (scroller.hasPointerCapture(event.pointerId)) {
+        scroller.releasePointerCapture(event.pointerId);
+      }
+    } catch {
+      // Pointer capture can already be gone after cancelled or synthetic events.
+    }
+
+    setIsDragging(false);
+    scrollToPage(Math.min(pageCount - 1, Math.round(scroller.scrollLeft / Math.max(scroller.clientWidth, 1))));
+  }
+
   return (
     <div>
       <div
         ref={scrollerRef}
         onScroll={handleScroll}
-        className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={finishDrag}
+        onPointerCancel={finishDrag}
+        className={`flex gap-6 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+          isDragging ? "cursor-grabbing snap-none scroll-auto select-none" : "cursor-grab snap-x snap-mandatory scroll-smooth"
+        }`}
       >
         {sliderItems.map((item) => (
           <article
