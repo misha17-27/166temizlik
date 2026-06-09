@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.18
+ * Version: 0.4.19
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.18';
+    private const VERSION = '0.4.19';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -1139,7 +1139,7 @@ final class One66_Headless_API
     {
         $featured_id = get_post_thumbnail_id($post);
         $acf = self::acf_fields($post->ID);
-        $content = apply_filters('the_content', $post->post_content);
+        $content = self::sanitize_content_html(apply_filters('the_content', $post->post_content));
 
         $item = [
             'id' => (int) $post->ID,
@@ -1165,6 +1165,14 @@ final class One66_Headless_API
         }
 
         return $item;
+    }
+
+    private static function sanitize_content_html(string $content): string
+    {
+        $content = preg_replace('/<style\b[^>]*>[\s\S]*?<\/style>/i', '', $content);
+        $content = preg_replace('/<script\b[^>]*>[\s\S]*?<\/script>/i', '', $content);
+
+        return is_string($content) ? $content : '';
     }
 
     private static function static_page_key_for_post(WP_Post $post): ?string
@@ -1207,13 +1215,14 @@ final class One66_Headless_API
             }
 
             $acf = self::acf_fields($post->ID);
+            $content = self::sanitize_content_html(apply_filters('the_content', $post->post_content));
             $items[$key] = [
                 'id' => (int) $post->ID,
                 'slug' => $post->post_name,
                 'title' => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
                 'link' => get_permalink($post),
                 'acf' => $acf,
-                'mappedAcf' => self::map_static_page_fields($key, $acf, apply_filters('the_content', $post->post_content)),
+                'mappedAcf' => self::map_static_page_fields($key, $acf, $content),
                 'seo' => self::seo($post->ID),
             ];
         }
@@ -1225,7 +1234,7 @@ final class One66_Headless_API
     {
         $post = self::static_page_post('contact', $lang);
         $fields = $post ? self::acf_fields($post->ID) : [];
-        $content = $post ? apply_filters('the_content', $post->post_content) : '';
+        $content = $post ? self::sanitize_content_html(apply_filters('the_content', $post->post_content)) : '';
 
         return [
             'phonePrimary' => self::acf_text(self::acf_first($fields, ['telefon', 'phone', 'phone_primary'])),
