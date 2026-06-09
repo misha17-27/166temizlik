@@ -13,6 +13,8 @@ function Link(props: ComponentProps<typeof NextLink>) {
   return <NextLink prefetch={false} {...props} />;
 }
 
+const menuLinkPrefetch = null;
+
 const socialIcons = [
   {
     label: "Facebook",
@@ -707,6 +709,7 @@ export function Header({
               <div key={item.label} className="group relative">
                 <Link
                   href={item.href}
+                  prefetch={menuLinkPrefetch}
                   style={isActive ? { color: "#0074ca" } : undefined}
                   className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 transition ${
                     isActive ? "bg-white" : "text-white hover:bg-white/12"
@@ -869,7 +872,7 @@ export function Header({
                           </span>
                         </button>
                       ) : (
-                        <Link href={item.href} onClick={closeMobileMenu} className="block py-1">
+                        <Link href={item.href} prefetch={menuLinkPrefetch} onClick={closeMobileMenu} className="block py-1">
                           {item.label}
                         </Link>
                       )}
