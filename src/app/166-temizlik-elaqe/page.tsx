@@ -104,19 +104,40 @@ function getContactContentImages(page: WordPressContentItem | null | undefined) 
   ).filter(Boolean);
 }
 
-function getSyncedContactCards(locale: Locale, contact: ContactPageData, contentImages: string[]) {
+function getContactAcfLabel(page: WordPressContentItem | null | undefined, key: string, fallback: string) {
+  const labels = page?.acfLabels;
+
+  if (!labels || Array.isArray(labels)) {
+    return fallback;
+  }
+
+  return labels[key] ?? fallback;
+}
+
+function getSyncedContactCards(
+  locale: Locale,
+  contact: ContactPageData,
+  contentImages: string[],
+  page: WordPressContentItem | null | undefined,
+) {
   const copy = staticPageCopy[locale].contact;
   const [primaryPhone, ...mobilePhones] = contact.phones;
   const primaryPhoneIcon = contentImages[0] || "https://admin.166temizlik.az/wp-content/uploads/2023/02/telephone.png";
   const mobilePhoneIcon = contentImages[1] || "https://admin.166temizlik.az/wp-content/uploads/2023/01/Phoneicon.png";
   const addressIcon = contentImages[contentImages.length - 3] || "https://admin.166temizlik.az/wp-content/uploads/2023/01/Location-Icon.png";
   const emailIcon = contentImages[contentImages.length - 2] || "https://admin.166temizlik.az/wp-content/uploads/2023/01/Mail-icon.png";
+  const cardLabels = {
+    phone: getContactAcfLabel(page, "telefon", copy.phone),
+    mobile: getContactAcfLabel(page, "mobil_telefon", copy.mobile),
+    address: getContactAcfLabel(page, "unvan", copy.address),
+    email: getContactAcfLabel(page, "email", copy.email),
+  };
 
   return [
     ...(primaryPhone
       ? [
           {
-            title: copy.phone,
+            title: cardLabels.phone,
             value: primaryPhone.value,
             href: primaryPhone.href,
             icon: primaryPhoneIcon,
@@ -124,19 +145,19 @@ function getSyncedContactCards(locale: Locale, contact: ContactPageData, content
         ]
       : []),
     ...mobilePhones.map((phone) => ({
-      title: copy.mobile,
+      title: cardLabels.mobile,
       value: phone.value,
       href: phone.href,
       icon: mobilePhoneIcon,
     })),
     {
-      title: copy.address,
+      title: cardLabels.address,
       value: contact.address.value,
       href: contact.address.href,
       icon: addressIcon,
     },
     {
-      title: copy.email,
+      title: cardLabels.email,
       value: contact.email.value,
       href: contact.email.href,
       icon: emailIcon,
@@ -166,7 +187,7 @@ export async function ContactPageContent({
   const settings = await getWordPressSettings(locale).catch(() => null);
   const contact = buildContactPageData(wpPage, settings, locale);
   const copy = staticPageCopy[locale].contact;
-  const contactCards = getSyncedContactCards(locale, contact, getContactContentImages(wpPage));
+  const contactCards = getSyncedContactCards(locale, contact, getContactContentImages(wpPage), wpPage);
   const contactSocialLinks = getContactSocialLinks(contact);
   const title = contact.contactTitle || wpPage?.title || copy.contactTitle;
   const questionsImage =
