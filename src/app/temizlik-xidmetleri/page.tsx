@@ -138,6 +138,11 @@ function getFirstParagraphText(content: string) {
   return paragraph ? cleanServiceCardText(stripHtml(paragraph)) : "";
 }
 
+function getPageHeroSubtitle(page: WordPressContentItem | null) {
+  const text = cleanServiceCardText(stripHtml(page?.excerpt || page?.content || ""));
+  return text.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? text;
+}
+
 function getServiceCardDescription(item: WordPressContentItem, fallback: string) {
   const canonicalSlug = getWordPressCanonicalSlug(item);
 
@@ -405,7 +410,7 @@ export async function ServicesPageContent({ locale = "az" }: { locale?: Locale }
   const page = await getStaticWordPressPage("services", locale);
   const orderedServices = await getServiceCards(locale, page);
   const title = getMappedAcfText(page, "heroTitle") || page?.title;
-  const subtitle = getMappedAcfText(page, "heroSubtitle");
+  const subtitle = getMappedAcfText(page, "heroSubtitle") || getPageHeroSubtitle(page);
   const heroImage = getMappedAcfImageUrl(page, "heroImage") || page?.featuredImage?.url;
 
   return (
