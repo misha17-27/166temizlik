@@ -44,6 +44,7 @@ export async function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
   const page = await getWordPressPage("bloq", locale).catch(() => null);
   const posts = await getBlogCards(locale);
   const title = page?.title || copy.blog.title;
+  const subtitle = stripHtml(page?.excerpt || page?.content || "") || copy.subtitle;
   const heroImage = page?.featuredImage?.url || pageHeroAssets.blog;
 
   return (
@@ -55,7 +56,7 @@ export async function BlogPageContent({ locale = "az" }: { locale?: Locale }) {
           <div className="absolute inset-0 bg-black/35" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
             <h1 className="text-[36px] font-bold leading-tight max-md:text-[30px]">{title}</h1>
-            <p className="mt-2 text-[18px] font-semibold max-md:text-[15px]">{copy.subtitle}</p>
+            <p className="mt-2 text-[18px] font-semibold max-md:text-[15px]">{subtitle}</p>
           </div>
         </div>
       </section>
