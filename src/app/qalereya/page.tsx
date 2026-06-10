@@ -4,7 +4,7 @@ import { WordPressSeoSchema } from "@/components/WordPressSeoSchema";
 import { getLocalizedGalleryCategories } from "@/lib/pages-data";
 import { staticPageCopy } from "@/lib/static-page-copy";
 import type { Locale } from "@/lib/routes";
-import { getWordPressGallery, getWordPressPage } from "@/lib/wordpress";
+import { getWordPressGallery, getWordPressPage, stripHtml, type WordPressContentItem } from "@/lib/wordpress";
 import { generateStaticWordPressPageMetadata } from "@/lib/wordpress-pages";
 
 export const dynamic = "force-dynamic";
@@ -129,6 +129,19 @@ function getGalleryMappedText(response: Record<string, unknown> | null, key: "ti
   return typeof value === "string" ? value.trim() : "";
 }
 
+function getGalleryPageSubtitle(page: Pick<WordPressContentItem, "title" | "excerpt" | "content">) {
+  const text = stripHtml(page.excerpt || page.content || "").trim();
+  if (!text) {
+    return "";
+  }
+
+  if (page.title && text.toLocaleLowerCase().startsWith(page.title.toLocaleLowerCase())) {
+    return text.slice(page.title.length).replace(/^[\s:|.,-]+/, "").trim();
+  }
+
+  return text;
+}
+
 async function getGalleryPageData(locale: Locale) {
   try {
     const [response, page] = await Promise.all([
@@ -147,7 +160,7 @@ async function getGalleryPageData(locale: Locale) {
       videoUrl,
       seo: page.seo,
       title: getGalleryMappedText(response, "title") || page.title,
-      subtitle: getGalleryMappedText(response, "subtitle"),
+      subtitle: getGalleryMappedText(response, "subtitle") || getGalleryPageSubtitle(page),
     };
   } catch {
     return {
