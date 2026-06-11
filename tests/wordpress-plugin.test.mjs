@@ -43,7 +43,22 @@ test("home endpoint maps published Pods slides with WPML fallback", () => {
   assert.match(plugin, /get_post_meta\(\$post->ID, 'mobile_slide', true\)/);
   assert.match(plugin, /get_post_meta\(\$post->ID, 'sort_order', true\)/);
   assert.match(plugin, /count\(\$slides\) < 2 && \$lang !== 'az'/);
-  assert.match(plugin, /array_slice\(\$slides, 0, 4\)/);
+  assert.match(plugin, /array_slice\(\$slides, 0, 8\)/);
+  assert.match(plugin, /localized_slide_image\(\$post->ID, \$lang, 'desktop'\)/);
+  assert.match(plugin, /localized_slide_image\(\$source_id, \$lang, 'desktop'\)/);
+  assert.match(plugin, /localized_slide_image\(\$post->ID, \$lang, 'mobile'\)/);
+  assert.match(plugin, /localized_slide_image\(\$source_id, \$lang, 'mobile'\)/);
+  assert.match(plugin, /slide_background_color\(\$post->ID\)/);
+  assert.match(plugin, /slide_background_color\(\$source_id\)/);
+  assert.match(plugin, /'desktopBgColor' => \$background_color/);
+  assert.match(plugin, /private static function source_post_id\(WP_Post \$post\): int/);
+  assert.match(plugin, /get_post_meta\(\$source_id, 'sort_order', true\)/);
+});
+
+test("home endpoint maps hourly prices for localized home pages", () => {
+  assert.match(plugin, /'hourlyPrices' => self::home_hourly_prices\(\$fields\)/);
+  assert.match(plugin, /private static function home_hourly_prices\(array \$fields\): array/);
+  assert.match(plugin, /'hourlyHelper' => self::acf_text\(self::acf_first\(\$fields,/);
 });
 
 test("saving a Pods slide revalidates localized home pages", () => {

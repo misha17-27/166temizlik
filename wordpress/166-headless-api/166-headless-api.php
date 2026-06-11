@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.19
+ * Version: 0.4.22
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.19';
+    private const VERSION = '0.4.22';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -929,7 +929,7 @@ final class One66_Headless_API
             self::switch_language($lang);
         }
 
-        return count($slides) >= 2 ? array_slice($slides, 0, 4) : [];
+        return count($slides) >= 2 ? array_slice($slides, 0, 8) : [];
     }
 
     private static function home_slides_for_language(string $lang): array
@@ -947,18 +947,30 @@ final class One66_Headless_API
         $slides = [];
 
         foreach ($query->posts as $post) {
-            $desktop = self::media((int) get_post_thumbnail_id($post));
+            $source_id = self::source_post_id($post);
+            $desktop = self::localized_slide_image($post->ID, $lang, 'desktop')
+                ?: ($source_id !== $post->ID ? self::localized_slide_image($source_id, $lang, 'desktop') : null)
+                ?: self::media((int) get_post_thumbnail_id($post));
             if (!$desktop) {
                 continue;
             }
 
-            $mobile = self::acf_image(get_post_meta($post->ID, 'mobile_slide', true)) ?: $desktop;
+            $mobile = self::localized_slide_image($post->ID, $lang, 'mobile')
+                ?: ($source_id !== $post->ID ? self::localized_slide_image($source_id, $lang, 'mobile') : null)
+                ?: self::acf_image(get_post_meta($post->ID, 'mobile_slide', true))
+                ?: ($source_id !== $post->ID ? self::acf_image(get_post_meta($source_id, 'mobile_slide', true)) : null)
+                ?: $desktop;
+            $background_color = self::slide_background_color($post->ID) ?: ($source_id !== $post->ID ? self::slide_background_color($source_id) : '');
             $sort_order = (int) get_post_meta($post->ID, 'sort_order', true);
+            if ($sort_order <= 0 && $source_id !== $post->ID) {
+                $sort_order = (int) get_post_meta($source_id, 'sort_order', true);
+            }
             $slides[] = [
                 'id' => (int) $post->ID,
                 'title' => html_entity_decode(get_the_title($post), ENT_QUOTES, 'UTF-8'),
                 'desktopImage' => $desktop,
                 'mobileImage' => $mobile,
+                'desktopBgColor' => $background_color,
                 'sortOrder' => $sort_order > 0 ? $sort_order : PHP_INT_MAX,
             ];
         }
@@ -968,6 +980,66 @@ final class One66_Headless_API
         });
 
         return $slides;
+    }
+
+    private static function localized_slide_image(int $post_id, string $lang, string $kind): ?array
+    {
+        if ($lang === 'az') {
+            return null;
+        }
+
+        $fields = $kind === 'mobile'
+            ? ["mobile_slide_{$lang}", "mobile_slayd_{$lang}"]
+            : ["slide_{$lang}", "slayd_{$lang}"];
+
+        foreach ($fields as $field) {
+            $image = self::acf_image(get_post_meta($post_id, $field, true));
+            if ($image) {
+                return $image;
+            }
+        }
+
+        return null;
+    }
+
+    private static function slide_background_color(int $post_id): string
+    {
+        $color = self::acf_text(self::acf_first([
+            'fon_rengi' => get_post_meta($post_id, 'fon_rengi', true),
+            'background_color' => get_post_meta($post_id, 'background_color', true),
+            'bg_color' => get_post_meta($post_id, 'bg_color', true),
+        ], ['fon_rengi', 'background_color', 'bg_color']));
+
+        return preg_match('/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i', $color) ? $color : '';
+    }
+
+    private static function source_post_id(WP_Post $post): int
+    {
+        if (!has_filter('wpml_element_trid') || !has_filter('wpml_get_element_translations')) {
+            return (int) $post->ID;
+        }
+
+        $element_type = 'post_' . $post->post_type;
+        $trid = apply_filters('wpml_element_trid', null, $post->ID, $element_type);
+        $translations = $trid ? apply_filters('wpml_get_element_translations', null, $trid, $element_type) : null;
+
+        if (!is_array($translations)) {
+            return (int) $post->ID;
+        }
+
+        foreach ($translations as $translation) {
+            if (isset($translation->source_language_code) && $translation->source_language_code === null) {
+                return (int) $translation->element_id;
+            }
+        }
+
+        foreach (['az', 'en'] as $fallback_lang) {
+            if (isset($translations[$fallback_lang]->element_id)) {
+                return (int) $translations[$fallback_lang]->element_id;
+            }
+        }
+
+        return (int) $post->ID;
     }
 
     private static function home_content_images(string $content): array
@@ -1393,6 +1465,8 @@ final class One66_Headless_API
             'servicesTitle' => self::acf_text(self::acf_first($fields, ['services_title', 'xidmetler_basliq'])),
             'packagesTitle' => self::acf_text(self::acf_first($fields, ['packages_title', 'paketler_basliq'])),
             'packages' => self::home_packages($fields),
+            'hourlyPrices' => self::home_hourly_prices($fields),
+            'hourlyHelper' => self::acf_text(self::acf_first($fields, ['hourly_helper', 'hourly_prices_helper', 'saatliq_qiymetler_qeyd'])),
             'about' => self::first_non_empty([
                 self::acf_first($fields, ['about', 'haqqinda'], []),
                 $about_text ? ['paragraphs' => [$about_text]] : [],
@@ -1408,6 +1482,53 @@ final class One66_Headless_API
                 $testimonials,
             ], []),
         ];
+    }
+
+    private static function home_hourly_prices(array $fields): array
+    {
+        $items = self::acf_first($fields, ['hourly_prices', 'hourlyPrices', 'saatliq_qiymetler'], []);
+
+        if (is_array($items)) {
+            $mapped = [];
+            foreach ($items as $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                $time = self::acf_text(self::acf_first($item, ['time', 'label', 'saat']));
+                $city = self::acf_text(self::acf_first($item, ['city', 'baku', 'baki', 'bakı']));
+                $village = self::acf_text(self::acf_first($item, ['village', 'villages', 'baku_villages', 'baki_kendleri', 'bakı_kəndləri']));
+
+                if ($time && $city && $village) {
+                    $mapped[] = [
+                        'time' => $time,
+                        'city' => $city,
+                        'village' => $village,
+                    ];
+                }
+            }
+
+            if ($mapped) {
+                return $mapped;
+            }
+        }
+
+        $mapped = [];
+        foreach ([1, 2, 3, 4, 5] as $index) {
+            $time = self::acf_text(self::acf_first($fields, ["hourly_price_{$index}_time", "saatliq_qiymet_{$index}_saat"]));
+            $city = self::acf_text(self::acf_first($fields, ["hourly_price_{$index}_city", "saatliq_qiymet_{$index}_baki"]));
+            $village = self::acf_text(self::acf_first($fields, ["hourly_price_{$index}_village", "saatliq_qiymet_{$index}_baki_kendleri"]));
+
+            if ($time && $city && $village) {
+                $mapped[] = [
+                    'time' => $time,
+                    'city' => $city,
+                    'village' => $village,
+                ];
+            }
+        }
+
+        return $mapped;
     }
 
     private static function home_packages(array $fields): array

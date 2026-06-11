@@ -16,6 +16,8 @@ type HomePayload = {
     desktopImage?: WordPressImageLike | null;
     mobileImage?: WordPressImageLike | null;
     desktopBgColor?: string;
+    backgroundColor?: string;
+    bgColor?: string;
   }>;
   services?: Array<{
     title?: string;
@@ -52,6 +54,12 @@ type HomePayload = {
     notes?: string[];
     noteHtml?: string;
   };
+  hourlyPrices?: Array<{
+    time?: string;
+    city?: string;
+    village?: string;
+  }>;
+  hourlyHelper?: string;
 };
 
 export type HomeServiceItem = {
@@ -72,6 +80,12 @@ export type HomePageData = {
   copy: {
     heroSlides: HeroSlide[];
     servicesTitle: string;
+    hourlyPrices?: Array<{
+      time: string;
+      city: string;
+      village: string;
+    }>;
+    hourlyHelper?: string;
     testimonials: Array<{
       name: string;
       text: string;
@@ -262,38 +276,27 @@ function buildHomePackagesFromPayload(packages: HomePayload["packages"]): HomePa
   };
 }
 
-const legacyHomeServiceSlugs = [
-  "ev-temizliyi-xidmeti",
-  "ofis-temizliyi",
-  "bag-evlerinin-temizliyi",
-  "erazi-temizliyi",
-  "fasad-temizliyi",
-  "pencere-temizliyi",
-  "cilciraq-temizliyi",
-  "perde-yuma",
-  "yumsaq-mebel-temizlenmesi",
-  "etirlendirme",
-  "baximsiz-ev-temizliyi",
-  "yangindan-sonra-ev-temizliyi",
-  "otel-temizlenmesi",
-  "restoran-temizlenmesi",
-  "temir-sonrasi-temizlik",
-  "kristallasdirma-xidmeti",
-  "hovuz-temizlenmesi-xidmeti",
-  "korporativ-temizlik-xidmeti",
-] as const;
+function buildHourlyPricesFromPayload(payload: HomePayload | null | undefined) {
+  const hourlyPrices = payload?.hourlyPrices
+    ?.map((item) => ({
+      time: item.time?.trim() ?? "",
+      city: item.city?.trim() ?? "",
+      village: item.village?.trim() ?? "",
+    }))
+    .filter((item) => item.time && item.city && item.village);
+
+  return hourlyPrices?.length ? hourlyPrices : undefined;
+}
+
+function slideBackgroundColor(slide: NonNullable<HomePayload["heroSlides"]>[number], index: number) {
+  return slide.desktopBgColor || slide.backgroundColor || slide.bgColor || heroSlideBackgrounds[index % heroSlideBackgrounds.length];
+}
 
 function getLegacyHomeImages(content: string) {
   return Array.from(
     content.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/gi),
     (match) => normalizeWordPressMediaUrl(match[1]) ?? "",
   ).filter((image) => image && !image.includes("/revslider-2/public/assets/assets/dummy.png"));
-}
-
-function getLegacyHomeServiceIcons(content: string) {
-  const images = getLegacyHomeImages(content);
-
-  return new Map(legacyHomeServiceSlugs.map((slug, index) => [slug, images[index] ?? ""]));
 }
 
 function getLegacyHomeSectionImages(content: string) {
@@ -362,6 +365,8 @@ function mergeHomePayload(primary: HomePayload | null | undefined, fallback: Hom
 
 export function buildHomePageData(locale: Locale, payload: HomePayload | null | undefined): HomePageData {
   const fallback = fallbackCopy[locale] ?? fallbackCopy.az;
+  const hourlyPrices = buildHourlyPricesFromPayload(payload);
+  const hourlyHelper = payload?.hourlyHelper?.trim();
   const heroSlides: HeroSlide[] = payload?.heroSlides?.length
     ? payload.heroSlides
         .map((slide, index): HeroSlide | null => {
@@ -377,7 +382,7 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
             eyebrow: slide.eyebrow,
             desktopImage,
             mobileImage,
-            desktopBgColor: slide.desktopBgColor ?? heroSlideBackgrounds[index % heroSlideBackgrounds.length],
+            desktopBgColor: slideBackgroundColor(slide, index),
             desktopWidth: slide.desktopImage?.width ?? 1920,
             desktopHeight: slide.desktopImage?.height ?? 1080,
             images: [],
@@ -442,6 +447,7 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
         accent: payload?.about?.accent ?? fallback.about.accent,
         paragraphs: payload?.about?.paragraphs?.length ? payload.about.paragraphs : fallback.about.paragraphs,
       },
+      ...(hourlyPrices ? { hourlyPrices, hourlyHelper: hourlyHelper ?? "" } : hourlyHelper ? { hourlyHelper } : {}),
     },
     services,
     beforeAfter,
@@ -452,21 +458,13 @@ export function buildHomePageData(locale: Locale, payload: HomePayload | null | 
 }
 
 export async function getHomePageData(locale: Locale) {
-  const { getWordPressCanonicalSlug, getWordPressHome, getWordPressPage, getWordPressServices } = await import("@/lib/wordpress");
+  const { getWordPressHome, getWordPressPage } = await import("@/lib/wordpress");
   const response = await getWordPressHome(locale as WordPressLocale).catch(() => null);
   const legacyPage = response ? null : await getWordPressPage("ana-sehife", locale as WordPressLocale).catch(() => null);
   const sourcePage = response?.page ?? legacyPage;
   const legacyPayload = sourcePage ? buildLegacyHomePayload(sourcePage.acf, sourcePage.content) : null;
   const pageData = buildHomePageData(locale, mergeHomePayload(response?.mappedAcf, legacyPayload));
-  const wordpressServices = await getWordPressServices(locale as WordPressLocale).catch(() => null);
-  const wordpressTitles = new Map(wordpressServices?.items.map((service) => [getWordPressCanonicalSlug(service), service.title]) ?? []);
-  const mappedServiceIcons = new Map(pageData.services.map((service) => [service.slug, service.icon]));
-  const legacyServiceIcons = sourcePage ? getLegacyHomeServiceIcons(sourcePage.content) : new Map<string, string>();
-  const services = getLocalizedServices(locale).map((service) => ({
-    ...service,
-    title: wordpressTitles.get(service.slug) || service.title,
-    icon: legacyServiceIcons.get(service.slug) || mappedServiceIcons.get(service.slug) || service.icon,
-  }));
+  const services = getLocalizedServices(locale);
 
   return {
     seo: sourcePage?.seo,
