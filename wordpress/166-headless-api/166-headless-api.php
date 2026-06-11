@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.23
+ * Version: 0.4.24
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.23';
+    private const VERSION = '0.4.24';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -153,6 +153,7 @@ final class One66_Headless_API
         add_filter('preview_post_link', [self::class, 'frontend_preview_post_link'], 20, 2);
         add_filter('get_sample_permalink_html', [self::class, 'frontend_sample_permalink_html'], 20, 5);
         add_action('admin_head', [self::class, 'hide_elementor_admin_controls']);
+        add_action('admin_bar_menu', [self::class, 'point_admin_bar_site_links_to_frontend'], 50);
         add_action('admin_bar_menu', [self::class, 'remove_elementor_admin_bar_controls'], 999);
         add_action('login_enqueue_scripts', [self::class, 'custom_login_logo']);
         add_filter('login_headerurl', [self::class, 'custom_login_logo_url']);
@@ -178,7 +179,7 @@ final class One66_Headless_API
 
     public static function custom_login_logo_url(): string
     {
-        return home_url('/');
+        return self::frontend_site_url() . '/';
     }
 
     public static function custom_login_logo_title(): string
@@ -296,6 +297,22 @@ final class One66_Headless_API
 
         foreach (['elementor_edit_page', 'elementor_app_site_editor', 'elementor_inspector'] as $node_id) {
             $wp_admin_bar->remove_node($node_id);
+        }
+    }
+
+    public static function point_admin_bar_site_links_to_frontend(WP_Admin_Bar $wp_admin_bar): void
+    {
+        $frontend_home = self::frontend_site_url() . '/';
+
+        foreach (['site-name', 'view-site'] as $node_id) {
+            $node = $wp_admin_bar->get_node($node_id);
+            if (!$node) {
+                continue;
+            }
+
+            $args = (array) $node;
+            $args['href'] = $frontend_home;
+            $wp_admin_bar->add_node($args);
         }
     }
 

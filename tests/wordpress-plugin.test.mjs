@@ -72,6 +72,14 @@ test("admin permalinks point to the configured frontend site", () => {
   assert.match(plugin, /private static function frontend_permalink_path\(WP_Post \$post\): string/);
 });
 
+test("admin bar site links point to the frontend home page", () => {
+  assert.match(plugin, /add_action\('admin_bar_menu', \[self::class, 'point_admin_bar_site_links_to_frontend'\]/);
+  assert.match(plugin, /public static function point_admin_bar_site_links_to_frontend\(WP_Admin_Bar \$wp_admin_bar\): void/);
+  assert.match(plugin, /foreach \(\['site-name', 'view-site'\] as \$node_id\)/);
+  assert.match(plugin, /\$args\['href'\] = \$frontend_home/);
+  assert.match(plugin, /return self::frontend_site_url\(\) \. '\/';/);
+});
+
 test("saving a Pods slide revalidates localized home pages", () => {
   assert.match(plugin, /'slayd'/);
   assert.match(plugin, /\$post->post_type === 'slayd'/);
