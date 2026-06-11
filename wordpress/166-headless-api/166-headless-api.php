@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.24
+ * Version: 0.4.25
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.24';
+    private const VERSION = '0.4.25';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -939,6 +939,15 @@ final class One66_Headless_API
     private static function frontend_url(string $path): string
     {
         return rtrim(self::frontend_site_url(), '/') . '/' . ltrim($path, '/');
+    }
+
+    private static function replace_site_url(string $value, string $site_url): string
+    {
+        return preg_replace(
+            '/https?:\/\/(?:www\.)?(?:admin\.)?166temizlik\.az/i',
+            rtrim($site_url, '/'),
+            $value
+        ) ?: $value;
     }
 
     private static function frontend_site_url(): string
@@ -2283,7 +2292,7 @@ final class One66_Headless_API
         $saved = get_post_meta($post_id, '_yoast_wpseo_schema_graph', true);
         $schema = self::decode_schema_value($saved);
         if ($schema !== null) {
-            return $schema;
+            return self::normalize_schema_urls($schema);
         }
 
         if ($presentation === null && function_exists('YoastSEO')) {
@@ -2299,13 +2308,30 @@ final class One66_Headless_API
                 if (isset($presentation->{$property})) {
                     $schema = self::decode_schema_value($presentation->{$property});
                     if ($schema !== null) {
-                        return $schema;
+                        return self::normalize_schema_urls($schema);
                     }
                 }
             }
         }
 
         return null;
+    }
+
+    private static function normalize_schema_urls($value)
+    {
+        if (is_array($value)) {
+            return array_map([self::class, 'normalize_schema_urls'], $value);
+        }
+
+        if (is_string($value)) {
+            if (str_contains($value, '/wp-content/')) {
+                return $value;
+            }
+
+            return self::replace_site_url($value, self::frontend_site_url());
+        }
+
+        return $value;
     }
 
     private static function decode_schema_value($value)

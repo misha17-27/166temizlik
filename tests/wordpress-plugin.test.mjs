@@ -19,6 +19,13 @@ test("Yoast SEO response exposes schema data", () => {
   assert.match(plugin, /yoast_schema/);
 });
 
+test("Yoast schema site URLs are normalized to the frontend domain", () => {
+  assert.match(plugin, /private static function normalize_schema_urls\(\$value\)/);
+  assert.match(plugin, /self::normalize_schema_urls\(\$schema\)/);
+  assert.match(plugin, /str_contains\(\$value, '\/wp-content\/'\)/);
+  assert.match(plugin, /self::replace_site_url\(\$value, self::frontend_site_url\(\)\)/);
+});
+
 test("settings endpoint merges contact page ACF fields", () => {
   assert.match(plugin, /\$contact = array_merge\(self::contact_page_fields\(\$lang\)/);
   assert.match(plugin, /self::contact_page_fields\(\$lang\)/);
