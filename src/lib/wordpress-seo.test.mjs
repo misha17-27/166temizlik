@@ -32,17 +32,17 @@ test("buildWordPressMetadata maps Yoast SEO fields to Next metadata", () => {
     title: "Yoast title",
     description: "Yoast description",
     alternates: {
-      canonical: "https://166temizlik.az/bloq",
+      canonical: "https://166temizlik.vercel.app/bloq",
     },
     openGraph: {
       title: "OG title",
       description: "OG description",
-      images: ["https://166temizlik.az/og.jpg"],
+      images: ["https://166temizlik.vercel.app/og.jpg"],
     },
     twitter: {
       title: "Twitter title",
       description: "Twitter description",
-      images: ["https://166temizlik.az/twitter.jpg"],
+      images: ["https://166temizlik.vercel.app/twitter.jpg"],
     },
     robots: {
       index: false,
@@ -87,7 +87,7 @@ test("buildWordPressMetadata lets frontend routes override Yoast canonical URLs"
 
   assert.deepEqual(metadata, {
     alternates: {
-      canonical: "https://166temizlik.az/ru/bloq/uborka-doma",
+      canonical: "https://166temizlik.vercel.app/ru/bloq/uborka-doma",
     },
   });
 });
@@ -109,12 +109,12 @@ test("buildWordPressMetadata maps alternate language URLs", () => {
 
   assert.deepEqual(metadata, {
     alternates: {
-      canonical: "https://166temizlik.az/qalereya",
+      canonical: "https://166temizlik.vercel.app/qalereya",
       languages: {
-        az: "https://166temizlik.az/qalereya",
-        ru: "https://166temizlik.az/ru/galereya",
-        tr: "https://166temizlik.az/tr/qalereya",
-        "x-default": "https://166temizlik.az/qalereya",
+        az: "https://166temizlik.vercel.app/qalereya",
+        ru: "https://166temizlik.vercel.app/ru/galereya",
+        tr: "https://166temizlik.vercel.app/tr/qalereya",
+        "x-default": "https://166temizlik.vercel.app/qalereya",
       },
     },
   });
@@ -148,13 +148,13 @@ test("WordPress admin URLs are rewritten to the public site URL", () => {
 
   assert.deepEqual(metadata, {
     alternates: {
-      canonical: "https://166temizlik.az/sirket-haqqinda",
+      canonical: "https://166temizlik.vercel.app/sirket-haqqinda",
     },
     openGraph: {
-      images: ["https://166temizlik.az/wp-content/uploads/social.jpg"],
+      images: ["https://admin.166temizlik.az/wp-content/uploads/social.jpg"],
     },
     twitter: {
-      images: ["https://166temizlik.az/wp-content/uploads/twitter.jpg"],
+      images: ["https://admin.166temizlik.az/wp-content/uploads/twitter.jpg"],
     },
   });
 
@@ -163,7 +163,7 @@ test("WordPress admin URLs are rewritten to the public site URL", () => {
       "@type": "WebPage",
       url: "https://admin.166temizlik.az/sirket-haqqinda/",
     }),
-    ['{"@type":"WebPage","url":"https://166temizlik.az/sirket-haqqinda"}'],
+    ['{"@type":"WebPage","url":"https://166temizlik.vercel.app/sirket-haqqinda"}'],
   );
 });
 
@@ -186,7 +186,7 @@ test("normalizeWordPressSchema aligns structured data URLs with frontend canonic
       },
     ),
     [
-      "{\"@type\":\"Article\",\"@id\":\"https://166temizlik.az/ru/bloq/uborka-doma#article\",\"isPartOf\":{\"@id\":\"https://166temizlik.az/ru/bloq/uborka-doma\"},\"image\":{\"url\":\"https://166temizlik.az/wp-content/uploads/image.jpg\"}}",
+      "{\"@type\":\"Article\",\"@id\":\"https://166temizlik.vercel.app/ru/bloq/uborka-doma#article\",\"isPartOf\":{\"@id\":\"https://166temizlik.vercel.app/ru/bloq/uborka-doma\"},\"image\":{\"url\":\"https://admin.166temizlik.az/wp-content/uploads/image.jpg\"}}",
     ],
   );
 });

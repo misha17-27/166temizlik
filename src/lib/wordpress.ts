@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const WORDPRESS_API_URL =
   process.env.WORDPRESS_API_URL ?? "https://admin.166temizlik.az/wp-json/headless/v1";
 export const PUBLIC_SITE_URL =
-  (process.env.PUBLIC_SITE_URL ?? "https://166temizlik.az").replace(/\/$/, "");
+  (process.env.PUBLIC_SITE_URL ?? "https://166temizlik.vercel.app").replace(/\/$/, "");
 export const WORDPRESS_MEDIA_URL = "https://admin.166temizlik.az/wp-content";
 const WORDPRESS_REVALIDATE_SECONDS = 60;
 const WORDPRESS_FETCH_TIMEOUT_MS = Number(process.env.WORDPRESS_FETCH_TIMEOUT_MS ?? 15000);
@@ -365,7 +365,15 @@ function cleanSeoValue(value: string | null | undefined) {
 }
 
 export function normalizePublicSiteUrl(value: string | undefined) {
-  return value?.replace(/https?:\/\/admin\.166temizlik\.az/gi, PUBLIC_SITE_URL);
+  if (!value) {
+    return value;
+  }
+
+  if (/https?:\/\/(?:admin\.)?166temizlik\.az\/wp-content\//i.test(value)) {
+    return normalizeWordPressMediaUrl(value);
+  }
+
+  return value.replace(/https?:\/\/(?:www\.)?(?:admin\.)?166temizlik\.az/gi, PUBLIC_SITE_URL);
 }
 
 export function normalizeCanonicalUrl(value: string | undefined) {
