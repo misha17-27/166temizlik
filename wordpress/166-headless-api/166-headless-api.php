@@ -2,7 +2,7 @@
 /**
  * Plugin Name: 166 Headless API
  * Description: Headless REST endpoints for the 166 Temizlik Next.js frontend.
- * Version: 0.4.22
+ * Version: 0.4.23
  * Author: 166 Temizlik
  */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 final class One66_Headless_API
 {
-    private const VERSION = '0.4.22';
+    private const VERSION = '0.4.23';
 
     private const NAMESPACE = 'headless/v1';
 
@@ -147,6 +147,11 @@ final class One66_Headless_API
         add_action('template_redirect', [self::class, 'block_elementor_preview']);
         add_filter('page_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
         add_filter('post_row_actions', [self::class, 'remove_elementor_row_actions'], 20, 2);
+        add_filter('page_link', [self::class, 'frontend_page_link'], 20, 2);
+        add_filter('post_link', [self::class, 'frontend_post_link'], 20, 2);
+        add_filter('post_type_link', [self::class, 'frontend_post_type_link'], 20, 2);
+        add_filter('preview_post_link', [self::class, 'frontend_preview_post_link'], 20, 2);
+        add_filter('get_sample_permalink_html', [self::class, 'frontend_sample_permalink_html'], 20, 5);
         add_action('admin_head', [self::class, 'hide_elementor_admin_controls']);
         add_action('admin_bar_menu', [self::class, 'remove_elementor_admin_bar_controls'], 999);
         add_action('login_enqueue_scripts', [self::class, 'custom_login_logo']);
@@ -225,6 +230,42 @@ final class One66_Headless_API
         }
 
         return $actions;
+    }
+
+    public static function frontend_page_link(string $link, int $post_id): string
+    {
+        $post = get_post($post_id);
+        return $post instanceof WP_Post ? self::frontend_permalink($post, $link) : $link;
+    }
+
+    public static function frontend_post_link(string $link, WP_Post $post): string
+    {
+        return self::frontend_permalink($post, $link);
+    }
+
+    public static function frontend_post_type_link(string $link, WP_Post $post): string
+    {
+        return self::frontend_permalink($post, $link);
+    }
+
+    public static function frontend_preview_post_link(string $link, WP_Post $post): string
+    {
+        return self::frontend_permalink($post, $link);
+    }
+
+    public static function frontend_sample_permalink_html(string $html, int $post_id, ?string $new_title, ?string $new_slug, ?WP_Post $post = null): string
+    {
+        $post = $post instanceof WP_Post ? $post : get_post($post_id);
+        if (!$post instanceof WP_Post) {
+            return $html;
+        }
+
+        $frontend_url = self::frontend_permalink($post, '');
+        if ($frontend_url === '') {
+            return $html;
+        }
+
+        return preg_replace('/https?:\/\/admin\.166temizlik\.az\/[^\s"<]+/i', esc_url($frontend_url), $html) ?: $html;
     }
 
     public static function hide_elementor_admin_controls(): void
@@ -326,7 +367,7 @@ final class One66_Headless_API
             'pluginVersion' => self::VERSION,
             'siteName' => get_bloginfo('name'),
             'description' => get_bloginfo('description'),
-            'homeUrl' => home_url('/'),
+            'homeUrl' => self::frontend_site_url() . '/',
             'logo' => $logo,
             'logoDark' => $logo_dark,
             'favicon' => $favicon,
@@ -825,6 +866,83 @@ final class One66_Headless_API
     {
         $blog_path = self::frontend_static_path('bloq', $lang);
         return rtrim($blog_path, '/') . '/' . trim($slug, '/');
+    }
+
+    private static function frontend_permalink(WP_Post $post, string $fallback = ''): string
+    {
+        $path = self::frontend_permalink_path($post);
+        if ($path === '') {
+            return $fallback;
+        }
+
+        return self::frontend_url($path);
+    }
+
+    private static function frontend_permalink_path(WP_Post $post): string
+    {
+        $slug = $post->post_name;
+        $lang = self::post_language($post->ID) ?: 'az';
+        $service_slug = self::canonical_service_slug($slug);
+
+        if ($post->post_type === 'page' && self::is_home_page($post)) {
+            return $lang === 'az' ? '/' : '/' . $lang . '/';
+        }
+
+        if ($post->post_type === 'page' && $service_slug) {
+            return self::frontend_service_path($service_slug, $lang);
+        }
+
+        if ($post->post_type === 'page') {
+            return self::frontend_static_path($slug, $lang) ?: self::frontend_path($slug, $lang);
+        }
+
+        if ($post->post_type === 'post') {
+            return self::frontend_blog_path($slug, $lang);
+        }
+
+        if ($post->post_type === 'vakansiya') {
+            return rtrim(self::frontend_static_path('vakansiya', $lang), '/') . '/' . trim($slug, '/');
+        }
+
+        if ($post->post_type === 'emakdaslar') {
+            return self::frontend_static_path('emekdaslarimiz', $lang);
+        }
+
+        if (in_array($post->post_type, ['partners', 'partner', 'partnyorlar'], true)) {
+            return self::frontend_static_path('partnyorlar', $lang);
+        }
+
+        if ($post->post_type === 'slayd') {
+            return $lang === 'az' ? '/' : '/' . $lang . '/';
+        }
+
+        return self::frontend_path($slug, $lang);
+    }
+
+    private static function frontend_url(string $path): string
+    {
+        return rtrim(self::frontend_site_url(), '/') . '/' . ltrim($path, '/');
+    }
+
+    private static function frontend_site_url(): string
+    {
+        $configured = '';
+
+        if (defined('ONE66_FRONTEND_SITE_URL')) {
+            $configured = (string) constant('ONE66_FRONTEND_SITE_URL');
+        }
+
+        if ($configured === '') {
+            $env = getenv('ONE66_FRONTEND_SITE_URL');
+            $configured = is_string($env) ? $env : '';
+        }
+
+        if ($configured === '') {
+            $configured = self::option_text('frontend_site_url') ?: self::option_text('public_site_url') ?: '';
+        }
+
+        $url = esc_url_raw($configured ?: 'https://166temizlik.vercel.app');
+        return rtrim($url, '/');
     }
 
     private static function frontend_path(string $path, string $lang): string

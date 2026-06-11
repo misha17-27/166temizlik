@@ -61,6 +61,17 @@ test("home endpoint maps hourly prices for localized home pages", () => {
   assert.match(plugin, /'hourlyHelper' => self::acf_text\(self::acf_first\(\$fields,/);
 });
 
+test("admin permalinks point to the configured frontend site", () => {
+  assert.match(plugin, /add_filter\('page_link', \[self::class, 'frontend_page_link'\]/);
+  assert.match(plugin, /add_filter\('preview_post_link', \[self::class, 'frontend_preview_post_link'\]/);
+  assert.match(plugin, /add_filter\('get_sample_permalink_html', \[self::class, 'frontend_sample_permalink_html'\]/);
+  assert.match(plugin, /private static function frontend_site_url\(\): string/);
+  assert.match(plugin, /ONE66_FRONTEND_SITE_URL/);
+  assert.match(plugin, /frontend_site_url/);
+  assert.match(plugin, /https:\/\/166temizlik\.vercel\.app/);
+  assert.match(plugin, /private static function frontend_permalink_path\(WP_Post \$post\): string/);
+});
+
 test("saving a Pods slide revalidates localized home pages", () => {
   assert.match(plugin, /'slayd'/);
   assert.match(plugin, /\$post->post_type === 'slayd'/);
